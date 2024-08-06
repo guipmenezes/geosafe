@@ -15,7 +15,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: <%= ENV.fetch("DB_HOST") { 'localhost' } %>
+  host: <%= ENV.fetch("DB_HOST") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: <%= ENV['DB_USER'] %>
   password: <%= ENV['DB_PASSWORD'] %>
@@ -28,7 +28,6 @@ default: &default
 development:
   <<: *default
   database: geosafe_development
-  port: <%= ENV.fetch("DB_PORT") { 5432 } %>
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
