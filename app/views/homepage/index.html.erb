@@ -1,3 +1,14 @@
-<div class="flex justify-start items-start">
-    <%= render(LogoComponent.new()) %>
+<div class="flex flex-row justify-between w-full">
+    <div class="flex justify-start">
+        <%= render(LogoComponent.new) %>
+        <div class="flex flex-row items-center text-sky-600">
+            <h3 class="flex pl-10 pr-5 font-semibold">Funcionalidades</h3>
+            <h3 class="flex pr-5 font-semibold">Por que contribuir</h3>
+            <h3 class="flex font-semibold">Planos</h3>
+        </div>  
+    </div>
+    <div class="flex justify-end align-center">
+        <button class="bg-sky-600 text-white font-semibold w-20 rounded-lg">Entre</button>
+        <button class="pl-5 text-sky-600 font-semibold">Cadastre-se</button>
+    </div>
 </div>
