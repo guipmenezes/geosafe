@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LogoComponent < ViewComponent::Base
+class Logo::LogoComponent < ViewComponent::Base
   extend Dry::Initializer
 
   option :size, optional: true, default: proc { :large }

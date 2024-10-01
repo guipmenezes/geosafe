@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     resource :password_reset,     only: [:new, :edit, :create, :update]
   end
 
-  root "home#index"
+  root "homepage#index"
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
