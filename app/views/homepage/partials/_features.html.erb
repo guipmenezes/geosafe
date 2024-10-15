@@ -1,6 +1,48 @@
 <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-12">
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-4xl font-bold text-center text-secondary300">Funcionalidades:</h1>
+  <div class="mb-12">
+    <div class="max-w-4xl mx-auto mb-8">
+      <h1 class="text-4xl font-bold text-center text-secondary300">Funcionalidades:</h1>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 mr-4">
+          <%= render Icon::IconComponent.new(name: "location", size: "lg") %>
+        </div>
+        <p>Com os alertas <span class="font-bold text-primary300">Geosafe</span> você pode estar <b>sempre ciente</b> do que está acontecendo ao seu redor com os <b>alertas gerados pelos próprios usuários</b>, podendo ser alertas de moradores ou <b>alertas de transitantes</b>.</p>
+      </div>
+      <div class="flex items-start">
+        <div class="flex-shrink-0 mr-4">
+          <%= render Icon::IconComponent.new(name: "search", size: "lg") %>
+        </div>
+        <p>Está pretendendo ir para algum local e não tem certeza de como está a <b>segurança nas proximidades?</b> Com a funcionalidade <b>Pesquisa Safe com os membros Geosafe+</b> não ficam na mão e conseguem saber os incidentes que estão ocorrendo no local em que estão planejando ir.</p>
+      </div>
+    </div>
   </div>
-  <%= render Icon::IconComponent.new(name: "location", classes: "w-12 h-12") %>
+  
+  <div>
+    <div class="max-w-4xl mx-auto mb-8">
+      <h1 class="text-4xl font-bold text-center text-secondary300">Por que contribuir?</h1>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 mr-4">
+          <%= render Icon::IconComponent.new(name: "group", size: "lg") %>
+        </div>
+        <div>
+          <p>Ao acumular <b>pontos de alertas pertinentes (Geopontos)</b>, torne-se um dos <b>Guardiões</b> da sua cidade, município ou região. Os <b>Guardiões</b> são personalidades verificadas que geram alertas relevantes e são apoiadas pelos moradores da cidade.</p>
+          <p><b>Guardiões ganham destaque e reconhecimento na Geosafe. Torne-se um Guardião!</b></p>
+        </div>
+      </div>
+      <div class="flex items-start">
+        <div class="flex-shrink-0 mr-4">
+          <%= render Icon::IconComponent.new(name: "money", size: "lg") %>
+        </div>
+        <div>
+          <p>Com os <b>Geopontos</b>, você tem o direito de trocá-los por diversos prêmios na plataforma, incluindo descontos em restaurantes, bares e até eletrodomésticos.</p>
+          <p>Lembrando que, para resgatar os prêmios da loja, você precisa ser <span class="font-bold text-primary300">Geosafe+</span></p>
+          <p>Para usuários sem assinatura, é possível resgatar assinaturas <span class="font-bold text-primary300">Geosafe+</span> na loja <span class="font-bold text-primary300">Geosafe</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

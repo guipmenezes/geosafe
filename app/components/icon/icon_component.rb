@@ -1,21 +1,20 @@
 # frozen_string_literal: true
 
 class Icon::IconComponent < ViewComponent::Base
-    def initialize(name:, classes: "")
+    def initialize(name:, classes: "", size: "md")
         @name = name
         @classes = classes
+        @size = size
     end
 
-    def svg_path
-        case @name
-        when "location"
-            "app/assets/images/location_icon.svg"
-        when "group"
-            "app/assets/images/group_icon.svg"
-        when "search"
-            "app/assets/images/search_icon.svg"
-        when "money"
-            "app/assets/images/money_icon.svg"
+    def component_size
+        case @size
+        when "sm"
+            "w-10 h-10"
+        when "md"
+            "w-20 h-20"
+        when "lg"
+            "w-24 h-24"
         end
     end
 end
