@@ -10,7 +10,7 @@
           <%= link_to "Planos", "#planos", class: "font-semibold" %>
         </div>
       </div>
-      <div class="flex items-center space-x-5">
+      <div class="flex items-center space-x-5 mt-4 sm:mt-0">
         <button class="bg-primary400 text-white font-semibold w-24 sm:w-20 py-2 sm:py-1 rounded-lg">Entre</button>
         <button class="text-primary500 font-semibold">Cadastre-se</button>
       </div>
@@ -18,7 +18,7 @@
   </header>
 
   <!-- Banner CTA com imagem e cantos arredondados -->
-  <div class="relative h-[85vh] overflow-hidden rounded-2xl sm:rounded-[2rem]">
+  <div class="relative h-[60vh] sm:h-[85vh] overflow-hidden rounded-2xl sm:rounded-[2rem] mx-2 sm:mx-4">
     <!-- Imagem de fundo -->
     <%= image_tag "mika-baumeister-nDciGidCdQo-unsplash.jpg", alt: "Imagem de homem segurando um celular com o mapa aberto.", class: "absolute inset-0 w-full h-full object-cover" %>
     
@@ -40,9 +40,9 @@
 
   <!-- Conteúdo principal (agora fora da viewport inicial) -->
   <main class="bg-white">
-    <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-12">
+    <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-8 sm:py-12">
       <div class="max-w-4xl mx-auto">
-        <p class="text-center text-lg sm:text-lg">
+        <p class="text-center text-base sm:text-lg">
           <span class="font-bold text-primary300">Geosafe</span> tem o objetivo de fornecer para você, por meio da <span class="font-bold text-secondary300">localização geográfica</span>, uma noção do que acontece nos diferentes
           locais em Brasília (por enquanto), para que os moradores <span class="font-bold text-secondary300">tenham noção</span> do que está acontecendo onde moram e também para os 
           locais que deseja visitar.
