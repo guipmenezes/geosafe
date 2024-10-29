@@ -1,0 +1,49 @@
+:root {
+    --primary-50: #D7F6F9;
+    --primary-100: #A3D8E4;
+    --primary-200: #7FC5D3;
+    --primary-300: #5BA2B9;
+    --primary-400: #4C7E8F;
+    --primary-500: #3B5E6E;
+    --primary-600: #2C4B5A;
+    --primary-700: #1C3E4F;
+    --primary-800: #0F2A3A;
+    --primary-900: #0C1F27;
+    --primary-1000: #08141A;
+
+    --secondary-50: #FFC990;
+    --secondary-100: #E6A06B;
+    --secondary-200: #C17D4A;
+    --secondary-300: #9F5B29;
+    --secondary-400: #7C3A08;
+    --secondary-500: #5A1A00;
+    --secondary-600: #8C4F2E;
+    --secondary-700: #6A2F0D;
+    --secondary-800: #4A1A00;
+    --secondary-900: #2C0C00;
+    --secondary-1000: #1A0800;
+
+    --grey-50: #FFFFFF;
+    --grey-100: #F9FAFB;
+    --grey-200: #DFDFDF;
+    --grey-300: #F2F4F7;
+    --grey-400: #EAECF0;
+    --grey-500: #D0D5DD;
+    --grey-600: #98A2B3;
+    --grey-700: #667085;
+    --grey-800: #475467;
+    --grey-900: #344054;
+    --grey-1000: #1D2939;
+}
+
+.text-primary-color {
+    color: var(--primary-500)
+}
+
+.text-primary-dark {
+    color: var(--primary-700)
+}
+
+.text-primary-dark {
+    color: var(--primary-300)
+}
