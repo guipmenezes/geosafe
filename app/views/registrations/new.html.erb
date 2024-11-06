@@ -1,35 +1,40 @@
-<h1>Sign up</h1>
+<div class="grid grid-cols-2 w-full h-screen border rounded-4xl">
+  <div class="h-full">
+    <%= image_tag "daniel-costa-wz5XO9Lo3E8-unsplash.jpg", alt: "Imagem do Catedral Metropolitana Nossa Senhora Aparecida, em Brasília.", class: "w-full h-full object-cover" %>
+  </div>
+  <div class="flex flex-col justify-center items-center">
+    <div class="flex flex-col items-start gap-8">
+      <h1 class="font-semibold text-4xl">Informações pessoais</h1>
+      <%= form_with(url: sign_up_path) do |form| %>
+        <div class="flex flex-col gap-2 pb-4 pb-4">
+          <%= form.label "Nome completo:", class: "font-medium" %>
+          <%= form.email_field :fullname, value: @user.full_name, required: true, autofocus: true, autocomplete: "fullname" %>
+        </div>
 
-<%= form_with(url: sign_up_path) do |form| %>
-  <% if @user.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+        <div class="flex flex-col gap-2 pb-4 pb-4">
+          <%= form.label "Nome de usuário:", class: "font-medium" %>
+          <%= form.email_field :username, value: @user.username, required: true, autofocus: true, autocomplete: "fullname" %>
+        </div>
 
-      <ul>
-        <% @user.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+        <div class="flex flex-col gap-2 pb-4">
+          <%= form.label "Email:", class: "font-medium" %>
+          <%= form.email_field :email, value: @user.email, required: true, autofocus: true, autocomplete: "email" %>
+        </div>
+
+        <div class="flex flex-col gap-2 pb-4">
+          <%= form.label "Senha:", class: "font-medium" %>
+          <%= form.password_field :password, required: true, autocomplete: "new-password" %>
+        </div>
+
+        <div class="flex flex-col gap-2 pb-4">
+          <%= form.label "Confirme sua senha:", class: "font-medium" %>
+          <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
+        </div>
+
+        <div>
+          <%= form.submit "Sign up" %>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :email, style: "display: block" %>
-    <%= form.email_field :email, value: @user.email, required: true, autofocus: true, autocomplete: "email" %>
   </div>
-
-  <div>
-    <%= form.label :password, style: "display: block" %>
-    <%= form.password_field :password, required: true, autocomplete: "new-password" %>
-    <div>12 characters minimum.</div>
-  </div>
-
-  <div>
-    <%= form.label :password_confirmation, style: "display: block" %>
-    <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
-  </div>
-
-  <div>
-    <%= form.submit "Sign up" %>
-  </div>
-<% end %>
+</div>
