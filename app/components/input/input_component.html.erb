@@ -1,0 +1,12 @@
+<div class="<%= @extra_classes %> flex gap-2 flex-col w-full">
+  <% if @label.present? %>
+    <label class="font-medium text-md"><%= @label %></label>
+  <% end %>
+  <div class="w-full relative flex items-center">
+    <% if @form.present? %>
+      <%= @form.text_field @name, html_options %>
+    <% else %>
+      <%= text_field_tag @name, @value, html_options %>
+    <% end %>
+  </div>
+</div>
