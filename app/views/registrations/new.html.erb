@@ -1,40 +1,37 @@
-<div class="grid grid-cols-2 w-full h-screen border rounded-4xl">
+<div class="grid grid-cols-2 w-full h-screen">
   <div class="h-full">
     <%= image_tag "daniel-costa-wz5XO9Lo3E8-unsplash.jpg", alt: "Imagem do Catedral Metropolitana Nossa Senhora Aparecida, em Brasília.", class: "w-full h-full object-cover" %>
   </div>
   <div class="flex flex-col justify-center items-center">
-    <div class="flex flex-col items-start gap-8">
-      <h1 class="font-semibold text-4xl">Informações pessoais</h1>
-      <%= form_with(url: sign_up_path) do |form| %>
-        <div class="flex flex-col gap-2 pb-4 pb-4">
-          <%= form.label "Nome completo:", class: "font-medium" %>
-          <%= form.email_field :fullname, value: @user.full_name, required: true, autofocus: true, autocomplete: "fullname" %>
-        </div>
+    <div class="flex flex-col items-start gap-8 p-20 w-full">
+      <h1 class="font-semibold text-2xl">Seja bem-vindo(a), para começar nós precisamos que você preencha os seguintes campos</h1>
+      <div class="w-full">
+        <%= form_with(url: sign_up_path) do |form| %>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :fullname, form: form, value: @user.full_name, label: "Nome completo:", required: true, autofocus: true, autocomplete: "fullname", placeholder: "Digite o seu nome completo aqui.")) %>
+          </div>
 
-        <div class="flex flex-col gap-2 pb-4 pb-4">
-          <%= form.label "Nome de usuário:", class: "font-medium" %>
-          <%= form.email_field :username, value: @user.username, required: true, autofocus: true, autocomplete: "fullname" %>
-        </div>
+          <div class="flex flex-col gap-2 pb-4 pb-4">
+            <%= render(Input::InputComponent.new(name: :username, form: form, value: @user.username, required: true, autofocus: true, autocomplete: "username", label: "Nome de usuário:", placeholder: "Crie o seu nome de usuário.")) %>
+          </div>
 
-        <div class="flex flex-col gap-2 pb-4">
-          <%= form.label "Email:", class: "font-medium" %>
-          <%= form.email_field :email, value: @user.email, required: true, autofocus: true, autocomplete: "email" %>
-        </div>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :email, form: form, value: @user.email, required: true, autofocus: true, autocomplete: "email", label: "Email:", placeholder: "Insira aqui o seu principal e-mail.")) %>
+          </div>
 
-        <div class="flex flex-col gap-2 pb-4">
-          <%= form.label "Senha:", class: "font-medium" %>
-          <%= form.password_field :password, required: true, autocomplete: "new-password" %>
-        </div>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :password, form: form, required: true, autofocus: true, autocomplete: "new-password", label: "Senha:", placeholder: "Crie uma nova senha.", password: true)) %>
+          </div>
 
-        <div class="flex flex-col gap-2 pb-4">
-          <%= form.label "Confirme sua senha:", class: "font-medium" %>
-          <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
-        </div>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :password_confirmation, form: form, required: true, autofocus: true, autocomplete: "new-password", label: "Confirme a sua senha:", placeholder: "Digite a mesma senha criada no passo anterior.", password: true)) %>
+          </div>
 
-        <div class="flex justify-center items-center">
-          <%= render(Button::ButtonComponent.new(text: "AVANÇAR", type: "submit", extra_classes: "w-40 h-10")) %>
-        </div>
-      <% end %>
+          <div class="flex justify-center items-center">
+            <%= render(Button::ButtonComponent.new(text: "AVANÇAR", type: "submit", extra_classes: "w-1/3 h-10 pt-5")) %>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>
