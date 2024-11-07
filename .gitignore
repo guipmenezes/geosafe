@@ -38,3 +38,6 @@
 !/app/assets/builds/.keep
 
 /config/application.yml
+
+# Ignore all the IDE files
+/idea/*
