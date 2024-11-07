@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_06_014931) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_06_162213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_06_014931) do
     t.boolean "verified", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "full_name"
+    t.string "username"
+    t.integer "geopoints"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
