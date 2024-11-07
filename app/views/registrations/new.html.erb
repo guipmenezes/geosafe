@@ -31,8 +31,8 @@
           <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
         </div>
 
-        <div>
-          <%= form.submit "Sign up" %>
+        <div class="flex justify-center items-center">
+          <%= render(Button::ButtonComponent.new(text: "AVANÇAR", type: "submit", extra_classes: "w-40 h-10")) %>
         </div>
       <% end %>
     </div>
