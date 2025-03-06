@@ -25,11 +25,10 @@
 
   <!-- Banner CTA com imagem e cantos arredondados -->
   <div class="relative h-[60vh] sm:h-[85vh] overflow-hidden rounded-2xl sm:rounded-[2rem] mx-2 sm:mx-4">
-    <!-- Imagem de fundo -->
     <%= image_tag "mika-baumeister-nDciGidCdQo-unsplash.jpg", alt: "Imagem de homem segurando um celular com o mapa aberto.", class: "absolute inset-0 w-full h-full object-cover" %>
 
     <!-- Gradiente de sobreposição -->
-    <div class="absolute inset-0 bg-gradient-to-r from-primary900/90 via-primary700/80 to-transparent"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-primary900/90 via-primary700/80 to-transparent z-10"></div>
 
     <!-- Conteúdo -->
     <div class="relative z-20 h-full flex items-center">
@@ -42,6 +41,13 @@
         <% end %>
       </div>
     </div>
+
+    <!-- Créditos da imagem -->
+    <a href="https://unsplash.com/pt-br/@kommumikation" class="absolute bottom-2 right-4 z-30">
+      <p class="text-white text-xs bg-black/50 px-2 py-1 rounded-md">
+        Foto por Mika Baumeister
+      </p>
+    </a>
   </div>
 
   <!-- Conteúdo principal (agora fora da viewport inicial) -->

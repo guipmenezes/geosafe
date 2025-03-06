@@ -1,17 +1,18 @@
-<div class="grid grid-cols-2 w-full h-screen">
-  <div class="h-full">
-    <%= image_tag "daniel-costa-wz5XO9Lo3E8-unsplash.jpg", alt: "Imagem do Catedral Metropolitana Nossa Senhora Aparecida, em Brasília.", class: "w-full h-full object-cover" %>
+<div class="grid grid-cols-2 w-full h-screen" data-controller="registrations--form">
+  <div class="h-full relative">
+    <%= image_tag "daniel-costa-wz5XO9Lo3E8-unsplash.jpg", alt: "Imagem do Catedral Metropolitana Nossa Senhora Aparecida, em Brasília. Foto tirada pelo fotógrafo Daniel Costa.", class: "w-full h-full object-cover" %>
+    <a href="https://unsplash.com/pt-br/@danielpcosta"><p class="absolute bottom-4 left-4 text-white bg-black bg-opacity-50 px-2 py-1 rounded">Foto por Daniel Costa</p></a>
   </div>
   <div class="flex flex-col justify-center items-center">
     <div class="flex flex-col items-start gap-8 p-20 w-full">
       <h1 class="font-semibold text-2xl">Seja bem-vindo(a), para começar nós precisamos que você preencha os seguintes campos</h1>
       <div class="w-full">
-        <%= form_with(url: sign_up_path) do |form| %>
+        <%= form_with(model: @user, url: sign_up_path) do |form| %>
           <div class="flex flex-col gap-2 pb-4">
-            <%= render(Input::InputComponent.new(name: :fullname, form: form, value: @user.full_name, label: "Nome completo:", required: true, autofocus: true, autocomplete: "fullname", placeholder: "Digite o seu nome completo aqui.")) %>
+            <%= render(Input::InputComponent.new(name: :full_name, form: form, value: @user.full_name, label: "Nome completo:", required: true, autofocus: true, autocomplete: "fullname", placeholder: "Digite o seu nome completo aqui.")) %>
           </div>
 
-          <div class="flex flex-col gap-2 pb-4 pb-4">
+          <div class="flex flex-col gap-2 pb-4">
             <%= render(Input::InputComponent.new(name: :username, form: form, value: @user.username, required: true, autofocus: true, autocomplete: "username", label: "Nome de usuário:", placeholder: "Crie o seu nome de usuário.")) %>
           </div>
 
