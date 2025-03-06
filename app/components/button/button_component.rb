@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class Button::ButtonComponent < ViewComponent::Base
-  def initialize(text:, style: "primary", type: "button", extra_classes: "", disabled: false)
+  def initialize(text:, style: "primary", type: "button", extra_classes: "", disabled: false, html_attributes: {})
     @text = text
     @style = style
     @type = type
     @extra_classes = extra_classes
     @disabled = disabled
+    @html_attributes = html_attributes
   end
 
   def classes

@@ -1,1 +1,1 @@
-<button class="<%= classes %>" type="<%= @type %>"><%= @text %></button>
+<button class="<%= classes %>" type="<%= @type %>" <%= @html_attributes.map { |k, v| "#{k}=\"#{v}\"" }.join(" ") %>><%= @text %></button>
