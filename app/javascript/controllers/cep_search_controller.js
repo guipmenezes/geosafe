@@ -27,12 +27,10 @@ export default class extends Controller {
         return response.json();
       })
       .then(data => {
-        if (data.erro) {
+        if (data.error) {
           console.error("CEP não encontrado");
           return;
         }
-
-        console.log("Dados do CEP:", data);
 
         if (this.hasLogradouroTarget) this.logradouroTarget.value = data.logradouro;
         if (this.hasBairroTarget) this.bairroTarget.value = data.bairro;

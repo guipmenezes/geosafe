@@ -4,9 +4,11 @@
       <h1 class="font-semibold text-2xl">Ótimo, agora para aprimorar a sua experiência, precisamos de informações sobre o seu endereço</h1>
       <div class="w-full">
         <%= form_with(model: @address, url: create_address_path, data: { controller: "cep-search" }) do |form| %>
+          <%= form.hidden_field :user_id, value: params[:user].to_i %>
+          <% puts params %>
           <div class="flex flex-col gap-2 pb-4">
             <%= render(Input::InputComponent.new(
-              name: :cep,
+              name: "address[cep]",
               form: form,
               label: "CEP:",
               required: true,
@@ -23,7 +25,7 @@
 
           <div class="flex flex-col gap-2 pb-4">
             <%= render(Input::InputComponent.new(
-              name: :address,
+              name: "address[address]",
               form: form,
               required: true,
               autofocus: true,
@@ -40,9 +42,20 @@
 
           <div class="flex flex-col gap-2 pb-4">
             <%= render(Input::InputComponent.new(
-              name: :complement,
+              name: "address[number]",
               form: form,
               required: true,
+              autofocus: true,
+              autocomplete: "number",
+              label: "Número",
+              placeholder: "Digite o número do seu endereço.",
+            )) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(
+              name: "address[complement]",
+              form: form,
               autofocus: true,
               autocomplete: "complement",
               label: "Complemento:",
@@ -52,7 +65,7 @@
 
           <div class="flex flex-col gap-2 pb-4">
             <%= render(Input::InputComponent.new(
-              name: :city,
+              name: "address[city]",
               form: form,
               required: true,
               autofocus: true,
@@ -69,7 +82,7 @@
 
           <div class="flex flex-col gap-2 pb-4">
             <%= render(Input::InputComponent.new(
-              name: :state,
+              name: "address[state]",
               form: form,
               required: true,
               autofocus: true,
@@ -86,7 +99,7 @@
 
           <div class="flex flex-col gap-2 pb-4">
             <%= render(Input::InputComponent.new(
-              name: :uf,
+              name: "address[uf]",
               form: form,
               required: true,
               autofocus: true,
