@@ -10,9 +10,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_06_014931) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_12_024423) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "cep"
+    t.string "uf"
+    t.string "address"
+    t.string "complement"
+    t.string "city"
+    t.string "state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "number"
+  end
+
+  create_table "plan_subscriptions", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "plan_id"
+    t.date "duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "plans", force: :cascade do |t|
+    t.integer "name"
+    t.integer "price_cents"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -29,6 +58,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_06_014931) do
     t.boolean "verified", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "full_name"
+    t.string "username"
+    t.integer "geopoints"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

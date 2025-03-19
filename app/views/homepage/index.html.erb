@@ -1,8 +1,9 @@
-<div class="flex flex-col min-h-screen">
+<div class="flex flex-col min-h-screen container mx-auto mt-5 px-5">
   <!-- Barra superior com logo e informações -->
-  <header class="w-full px-4 sm:px-5 py-4 sm:py-5">
-    <div class="flex flex-col sm:flex-row justify-between items-center w-full">
-      <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0">
+  <header class="w-full px-4 py-4 sm:px-5 md:py-6 lg:py-8 lg:px-8">
+    <div class="flex flex-col md:flex-row justify-between items-center w-full space-y-4 md:space-y-0">
+      <!-- Logo e links -->
+      <div class="flex flex-col md:flex-row items-center md:space-x-8 w-full md:w-auto">
         <%= render(Logo::LogoComponent.new) %>
         <div class="flex flex-col sm:flex-row items-center text-primary500 space-y-2 sm:space-y-0 sm:space-x-5 sm:ml-10 mt-4 sm:mt-0">
           <%= link_to "Funcionalidades", "#funcionalidades", class: "font-semibold" %>
@@ -10,32 +11,43 @@
           <%= link_to "Planos", "#planos", class: "font-semibold" %>
         </div>
       </div>
-      <div class="flex items-center space-x-5 mt-4 sm:mt-0">
-        <button class="bg-primary400 text-white font-semibold w-24 sm:w-20 py-2 sm:py-1 rounded-lg">Entre</button>
-        <button class="text-primary500 font-semibold">Cadastre-se</button>
+
+      <!-- Botões de ação -->
+      <div class="flex items-center mt-4 lg:mt-0 space-x-4 lg:space-x-6">
+        <%= render(Button::ButtonComponent.new(text: "Entre", style: "primary", extra_classes: "w-24 sm:w-20 md:w-28 lg:w-32")) %>
+        <%= link_to sign_up_path do %>
+          <%= render(Button::ButtonComponent.new(text: "Cadastre-se", style: "secondary", extra_classes: "w-24 sm:w-20 md:w-28 lg:w-32")) %>
+        <% end %>
       </div>
     </div>
   </header>
 
+
   <!-- Banner CTA com imagem e cantos arredondados -->
   <div class="relative h-[60vh] sm:h-[85vh] overflow-hidden rounded-2xl sm:rounded-[2rem] mx-2 sm:mx-4">
-    <!-- Imagem de fundo -->
     <%= image_tag "mika-baumeister-nDciGidCdQo-unsplash.jpg", alt: "Imagem de homem segurando um celular com o mapa aberto.", class: "absolute inset-0 w-full h-full object-cover" %>
-    
+
     <!-- Gradiente de sobreposição -->
-    <div class="absolute inset-0 bg-gradient-to-r from-primary900/90 via-primary700/80 to-transparent"></div>
-    
+    <div class="absolute inset-0 bg-gradient-to-r from-primary900/90 via-primary700/80 to-transparent z-10"></div>
+
     <!-- Conteúdo -->
     <div class="relative z-20 h-full flex items-center">
       <div class="text-white p-6 sm:p-10 max-w-xl sm:max-w-2xl">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-semibold mb-4 sm:mb-6">
           Tenha consciência do que acontece ao seu redor
         </h1>
-        <button class="bg-primary400 text-white flex justify-center items-center font-semibold text-sm sm:text-base py-2 sm:py-3 px-4 sm:px-6 rounded-lg hover:bg-[#4A7DAB] transition duration-300">
-          CADASTRE-SE NA GEOSAFE
-        </button>
+        <%= link_to sign_up_path do %>
+          <%= render(Button::ButtonComponent.new(text: "CADASTRE-SE NA GEOSAFE", extra_classes: "h-12 px-4 sm:px-6 hover:bg-[#4A7DAB] transition duration-300")) %>
+        <% end %>
       </div>
     </div>
+
+    <!-- Créditos da imagem -->
+    <a href="https://unsplash.com/pt-br/@kommumikation" class="absolute bottom-2 right-4 z-30">
+      <p class="text-white text-xs bg-black/50 px-2 py-1 rounded-md">
+        Foto por Mika Baumeister
+      </p>
+    </a>
   </div>
 
   <!-- Conteúdo principal (agora fora da viewport inicial) -->
@@ -43,8 +55,12 @@
     <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-8 sm:py-12">
       <div class="max-w-4xl mx-auto">
         <p class="text-center text-base sm:text-lg">
-          <span class="font-bold text-primary300">Geosafe</span> tem o objetivo de fornecer para você, por meio da <span class="font-bold text-secondary300">localização geográfica</span>, uma noção do que acontece nos diferentes
-          locais em Brasília (por enquanto), para que os moradores <span class="font-bold text-secondary300">tenham noção</span> do que está acontecendo onde moram e também para os 
+          <span class="font-bold text-primary300">Geosafe</span> tem o objetivo de fornecer para você, por meio da
+          <span class="font-bold text-secondary300">localização geográfica</span>, uma noção do que acontece nos
+          diferentes
+          locais em Brasília (por enquanto), para que os moradores
+          <span class="font-bold text-secondary300">tenham noção</span> do que está acontecendo onde moram e também para
+          os
           locais que deseja visitar.
         </p>
       </div>

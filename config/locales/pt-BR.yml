@@ -141,6 +141,12 @@ pt-BR:
 
   # ActiveRecord
   activerecord:
+    attributes:
+      user:
+        full_name: "Nome completo"
+        username: "Nome de usuário"
+        password: "Senha"
+        password_confirmation: "Confirmação de senha"
     errors:
       template:
         header:
@@ -151,12 +157,12 @@ pt-BR:
         inclusion: "não está incluído na lista"
         exclusion: "não está disponível"
         invalid: "não é válido"
-        confirmation: "não está de acordo com a confirmação"
+        confirmation: "não está de acordo com a senha"
         accepted: "deve ser aceito"
         empty: "não pode ficar vazio"
         blank: "não pode ficar em branco"
         too_long: "é muito longo (máximo: %{count} caracteres)"
-        too_short: "é muito curto (mínimo: %{count} caracteres)"
+        too_short: "é muito curta (mínimo: %{count} caracteres)"
         wrong_length: "não possui o tamanho esperado (%{count} caracteres)"
         taken: "já está em uso"
         not_a_number: "não é um número"

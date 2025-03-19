@@ -1,35 +1,38 @@
-<h1>Sign up</h1>
+<div class="grid grid-cols-2 w-full h-screen" data-controller="registrations--form">
+  <div class="h-full relative">
+    <%= image_tag "daniel-costa-wz5XO9Lo3E8-unsplash.jpg", alt: "Imagem do Catedral Metropolitana Nossa Senhora Aparecida, em Brasília. Foto tirada pelo fotógrafo Daniel Costa.", class: "w-full h-full object-cover" %>
+    <a href="https://unsplash.com/pt-br/@danielpcosta"><p class="absolute bottom-4 left-4 text-white bg-black bg-opacity-50 px-2 py-1 rounded">Foto por Daniel Costa</p></a>
+  </div>
+  <div class="flex flex-col justify-center items-center">
+    <div class="flex flex-col items-start gap-8 p-20 w-full">
+      <h1 class="font-semibold text-2xl">Seja bem-vindo(a), para começar nós precisamos que você preencha os seguintes campos</h1>
+      <div class="w-full">
+        <%= form_with(model: @user, url: sign_up_path) do |form| %>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :full_name, form: form, value: @user.full_name, label: "Nome completo:", required: true, autofocus: true, autocomplete: "fullname", placeholder: "Digite o seu nome completo aqui.")) %>
+          </div>
 
-<%= form_with(url: sign_up_path) do |form| %>
-  <% if @user.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :username, form: form, value: @user.username, required: true, autofocus: true, autocomplete: "username", label: "Nome de usuário:", placeholder: "Crie o seu nome de usuário.")) %>
+          </div>
 
-      <ul>
-        <% @user.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :email, form: form, value: @user.email, required: true, autofocus: true, autocomplete: "email", label: "Email:", placeholder: "Insira aqui o seu principal e-mail.")) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :password, form: form, required: true, autofocus: true, autocomplete: "new-password", label: "Senha:", placeholder: "Crie uma nova senha.", password: true)) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :password_confirmation, form: form, required: true, autofocus: true, autocomplete: "new-password", label: "Confirme a sua senha:", placeholder: "Digite a mesma senha criada no passo anterior.", password: true)) %>
+          </div>
+
+          <div class="flex justify-center items-center">
+            <%= render(Button::ButtonComponent.new(text: "AVANÇAR", type: "submit", extra_classes: "w-1/3 h-10 pt-5")) %>
+          </div>
         <% end %>
-      </ul>
+      </div>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :email, style: "display: block" %>
-    <%= form.email_field :email, value: @user.email, required: true, autofocus: true, autocomplete: "email" %>
   </div>
-
-  <div>
-    <%= form.label :password, style: "display: block" %>
-    <%= form.password_field :password, required: true, autocomplete: "new-password" %>
-    <div>12 characters minimum.</div>
-  </div>
-
-  <div>
-    <%= form.label :password_confirmation, style: "display: block" %>
-    <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
-  </div>
-
-  <div>
-    <%= form.submit "Sign up" %>
-  </div>
-<% end %>
+</div>

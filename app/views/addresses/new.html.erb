@@ -1,0 +1,129 @@
+<div class="grid grid-cols-2 w-full h-screen">
+  <div class="flex flex-col justify-center items-center">
+    <div class="flex flex-col items-start gap-8 p-20 w-full">
+      <h1 class="font-semibold text-2xl">Ótimo, agora para aprimorar a sua experiência, precisamos de informações sobre o seu endereço</h1>
+      <div class="w-full">
+        <%= form_with(model: @address, url: create_address_path, data: { controller: "cep-search" }) do |form| %>
+          <%= form.hidden_field :user_id, value: params[:user].to_i %>
+          <% puts params %>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(
+              name: "address[cep]",
+              form: form,
+              label: "CEP:",
+              required: true,
+              autofocus: true,
+              autocomplete: "cep",
+              placeholder: "Digite o CEP de sua residência.",
+              html_attributes: {
+                data: {
+                  action: "blur->cep-search#fetchCep"
+                }
+              }
+            )) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(
+              name: "address[address]",
+              form: form,
+              required: true,
+              autofocus: true,
+              autocomplete: "address",
+              label: "Endereço",
+              placeholder: "Digite o seu endereço.",
+              html_attributes: {
+                data: {
+                  "cep-search-target": "logradouro"
+                }
+              }
+            )) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(
+              name: "address[number]",
+              form: form,
+              required: true,
+              autofocus: true,
+              autocomplete: "number",
+              label: "Número",
+              placeholder: "Digite o número do seu endereço.",
+            )) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(
+              name: "address[complement]",
+              form: form,
+              autofocus: true,
+              autocomplete: "complement",
+              label: "Complemento:",
+              placeholder: "Digite o complemento do seu endereço."
+            )) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(
+              name: "address[city]",
+              form: form,
+              required: true,
+              autofocus: true,
+              autocomplete: "city",
+              label: "Cidade:",
+              placeholder: "Digite a sua cidade.",
+              html_attributes: {
+                data: {
+                  "cep-search-target": "cidade"
+                }
+              }
+            )) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(
+              name: "address[state]",
+              form: form,
+              required: true,
+              autofocus: true,
+              autocomplete: "state",
+              label: "Estado:",
+              placeholder: "Digite o seu estado.",
+              html_attributes: {
+                data: {
+                  "cep-search-target": "bairro"
+                }
+              }
+            )) %>
+          </div>
+
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(
+              name: "address[uf]",
+              form: form,
+              required: true,
+              autofocus: true,
+              autocomplete: "uf",
+              label: "UF:",
+              placeholder: "Digite a UF do Estado em que você reside.",
+              html_attributes: {
+                data: {
+                  "cep-search-target": "estado"
+                }
+              }
+            )) %>
+          </div>
+
+          <!-- Redirecionar para o caminho oferecer planos -->
+          <div class="flex justify-center items-center">
+            <%= render(Button::ButtonComponent.new(text: "CONCLUIR", type: "submit", extra_classes: "w-1/3 h-10 pt-5")) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="h-full relative">
+    <%= image_tag "daniel-costa-wM8JvqyvYrg-unsplash.jpg", alt: "Imagem do Catedral Metropolitana Nossa Senhora Aparecida, em Brasília. Foto tirada pelo fotógrafo Daniel Costa.", class: "w-full h-full object-cover" %>
+    <a href="https://unsplash.com/pt-br/@danielpcosta"><p class="absolute bottom-4 left-4 text-white bg-black bg-opacity-50 px-2 py-1 rounded">Foto por Daniel Costa</p></a>
+  </div>
+</div>
