@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   has_secure_password
 
@@ -21,7 +23,7 @@ class User < ApplicationRecord
 
   normalizes :email, with: -> { _1.strip.downcase }
   normalizes :username, with: -> { _1.strip.downcase }
-  normalizes :full_name, with: -> { _1.strip }
+  normalizes :full_name, with: lambda(&:strip)
 
   before_validation if: :email_changed?, on: :update do
     self.verified = false

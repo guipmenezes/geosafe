@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   get 'homepage', to: 'homepage#index'
   get  'sign_in', to: 'sessions#new'
