@@ -4,7 +4,6 @@ class AddressesController < ApplicationController
   def new
   end
 
-  #TODO: adicionar uma validação para o caso de algum campo vir nulo
   # Próximo passo: redirecionar o cliente para a compra do plano e login
   def create
     @address = Address.new(address_params)
