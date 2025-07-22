@@ -8,9 +8,9 @@ class Logo::LogoComponent < ViewComponent::Base
   def logo_size
     case @size
     when :large
-      "text-4xl"
+      'text-4xl'
     when :normal
-      "text-lg"
+      'text-lg'
     end
   end
 end

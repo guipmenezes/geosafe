@@ -1,8 +1,7 @@
 class AddressesController < ApplicationController
   skip_before_action :authenticate, only: :create
 
-  def new
-  end
+  def new; end
 
   # Próximo passo: redirecionar o cliente para a compra do plano e login
   def create
@@ -10,7 +9,7 @@ class AddressesController < ApplicationController
     @address.user_id = params[:user_id].to_i
 
     if @address.save
-      redirect_to plans_show_path, notice: "Endereço cadastrado com sucesso"
+      redirect_to plans_show_path, notice: 'Endereço cadastrado com sucesso'
     else
       render :new, status: :unprocessable_entity
     end

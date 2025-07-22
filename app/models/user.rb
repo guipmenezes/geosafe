@@ -8,7 +8,6 @@ class User < ApplicationRecord
     password_salt.last(10)
   end
 
-
   has_many :sessions, dependent: :destroy
   has_one :address, dependent: :destroy
 
@@ -18,7 +17,7 @@ class User < ApplicationRecord
   validate :password_matches_confirmation
   validates :full_name, presence: true, length: { minimum: 3, maximum: 100 }
   validates :username, presence: true, uniqueness: true, length: { minimum: 3, maximum: 30 },
-                      format: { with: /\A[a-zA-Z0-9_]+\z/, message: "apenas permite letras, números e underline" }
+                       format: { with: /\A[a-zA-Z0-9_]+\z/, message: 'apenas permite letras, números e underline' }
 
   normalizes :email, with: -> { _1.strip.downcase }
   normalizes :username, with: -> { _1.strip.downcase }
@@ -37,6 +36,7 @@ class User < ApplicationRecord
   def password_matches_confirmation
     return if password.blank? || password_confirmation.blank?
     return if password == password_confirmation
-    errors.add(:password_confirmation, "deve ser igual à senha")
+
+    errors.add(:password_confirmation, 'deve ser igual à senha')
   end
 end
