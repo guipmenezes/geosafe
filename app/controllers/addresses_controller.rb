@@ -10,7 +10,7 @@ class AddressesController < ApplicationController
     @address.user_id = params[:user_id].to_i
 
     if @address.save
-      redirect_to root_path, notice: "Endereço cadastrado com sucesso"
+      redirect_to plans_show_path, notice: "Endereço cadastrado com sucesso"
     else
       render :new, status: :unprocessable_entity
     end
