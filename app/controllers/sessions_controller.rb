@@ -12,10 +12,7 @@ class SessionsController < ApplicationController
   def new; end
 
   def create
-    if (user = User.authenticate_by(email: params[:email], password: params[:password]))
-      @session = user.sessions.create!
-      cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true }
-
+    if authenticate_and_create_session
       redirect_to root_path, notice: 'Signed in successfully'
     else
       redirect_to sign_in_path(email_hint: params[:email]), alert: 'That email or password is incorrect'
@@ -31,5 +28,14 @@ class SessionsController < ApplicationController
 
   def set_session
     @session = Current.user.sessions.find(params[:id])
+  end
+
+  def authenticate_and_create_session
+    user = User.authenticate_by(email: params[:email], password: params[:password])
+    return false unless user
+
+    @session = user.sessions.create!
+    cookies.signed.permanent[:session_token] = { value: @session.id, httponly: true }
+    true
   end
 end

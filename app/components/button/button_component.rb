@@ -2,13 +2,14 @@
 
 module Button
   class ButtonComponent < ViewComponent::Base
-    def initialize(text:, style: 'primary', type: 'button', extra_classes: '', disabled: false, html_attributes: {})
+    def initialize(text:, **options)
+      super
       @text = text
-      @style = style
-      @type = type
-      @extra_classes = extra_classes
-      @disabled = disabled
-      @html_attributes = html_attributes
+      @style = options[:style] || 'primary'
+      @type = options[:type] || 'button'
+      @extra_classes = options[:extra_classes] || ''
+      @disabled = options[:disabled] || false
+      @html_attributes = options[:html_attributes] || {}
     end
 
     def classes

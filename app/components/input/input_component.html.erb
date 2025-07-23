@@ -6,9 +6,9 @@
     <div class="w-full relative">
       <div class="w-full">
         <% if @form.present? %>
-          <%= @form.text_field @name, html_options %>
+          <%= @form.text_field @name, html_options.merge(autocomplete: @options[:autocomplete]) %>
         <% else %>
-          <%= text_field_tag @name, @value, html_options %>
+          <%= text_field_tag @name, @value, html_options.merge(autocomplete: @options[:autocomplete]) %>
         <% end %>
       </div>
       <% if @errors.any? %>

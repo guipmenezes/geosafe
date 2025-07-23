@@ -2,21 +2,30 @@
 
 module Input
   class InputComponent < ViewComponent::Base
-    def initialize(name:, form: nil, value: '', required: false, autofocus: false, autocomplete: '', label: '',
-                   password: false, placeholder: '', extra_classes: '', disabled: false, html_attributes: {})
+    DEFAULT_OPTIONS = {
+      value: '',
+      required: false,
+      autofocus: false,
+      autocomplete: '',
+      label: '',
+      password: false,
+      placeholder: '',
+      extra_classes: '',
+      disabled: false,
+      html_attributes: {}
+    }.freeze
+
+    def initialize(name:, form: nil, **options)
+      super
       @form = form
       @name = name
-      @value = value
-      @required = required
-      @autofocus = autofocus
-      @autocomplete = autocomplete
-      @label = label
-      @extra_classes = extra_classes
-      @password = password
-      @placeholder = placeholder
-      @disabled = disabled
-      @html_attributes = html_attributes
-      @errors = form&.object&.errors&.full_messages_for(name) || []
+      @options = DEFAULT_OPTIONS.merge(options)
+      @errors = get_errors(name)
+    end
+
+    def get_errors(name)
+      object = @form&.object
+      object&.errors&.full_messages_for(name) || []
     end
 
     def html_options
@@ -24,23 +33,24 @@ module Input
 
       classes = "w-full border border-solid #{error_border_class} rounded-full text-gray-900 placeholder-gray-500 transition-all"
 
-      classes += " #{focus_classes}" unless @disabled
+      classes += " #{focus_classes}" unless @options[:disabled]
 
       options = {
-        placeholder: @placeholder,
+        placeholder: @options[:placeholder],
         class: classes,
-        required: @required,
-        disabled: @disabled,
-        type: (type_password? ? 'password' : 'text').to_s
-      }.merge(@html_attributes)
+        required: @options[:required],
+        disabled: @options[:disabled],
+        type: (type_password? ? 'password' : 'text').to_s,
+        autocomplete: @options[:autocomplete]
+      }.merge(@options[:html_attributes])
 
-      options[:value] = @value if @value.present?
+      options[:value] = @options[:value] if @options[:value].present?
 
       options
     end
 
     def type_password?
-      @password
+      @options[:password]
     end
 
     def error_border_class
