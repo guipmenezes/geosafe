@@ -30,7 +30,7 @@ class SessionsController < ApplicationController
     @session = Current.user.sessions.find(params[:id])
   end
 
-  def authenticate_and_create_session
+  def authenticate_and_create_session?
     user = User.authenticate_by(email: params[:email], password: params[:password])
     return false unless user
 
