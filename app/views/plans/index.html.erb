@@ -1,13 +1,15 @@
-<div class="container mx-auto mt-10">
+<div class="container mx-auto mt-10 md:py-3 px-4">
   <h1 class="font-bold text-4xl text-center">Planos</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
+  <div class="flex flex-wrap justify-center gap-8 mt-10 sm:px-4">
     <% @plans.each do |plan| %>
-      <div class="border rounded-lg p-6 shadow-lg">
-        <h2 class="text-2xl font-bold mb-4"><%= plan.name %></h2>
-        <p class="text-gray-600 mb-4"><%= plan.description %></p>
-        <p class="text-4xl font-bold mb-4">R$<%= plan.price %></p>
-        <%= render(Button::ButtonComponent.new(text: "Assinar", style: "primary", extra_classes: "w-full")) %>
+      <div class="w-full max-w-sm flex flex-col border rounded-lg p-6 shadow-lg">
+        <div class="flex-grow">
+          <h2 class="text-2xl text-center font-bold mb-4"><%= plan.name %></h2>
+          <p class="text-gray-600 mb-4"><%= plan.description %></p>
+          <p class="text-4xl text-center font-bold mb-4">R$ <%= plan.formatted_price %></p>
+        </div>
+        <%= render(Button::ButtonComponent.new(text: "Assinar", style: "primary", extra_classes: "w-full mt-auto")) %>
       </div>
     <% end %>
   </div>
