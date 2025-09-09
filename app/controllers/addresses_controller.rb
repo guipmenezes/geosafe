@@ -5,13 +5,12 @@ class AddressesController < ApplicationController
 
   def new; end
 
-  # Próximo passo: redirecionar o cliente para a compra do plano e login
   def create
     @address = Address.new(address_params)
     @address.user_id = params[:user_id].to_i
 
     if @address.save
-      redirect_to plans_show_path, notice: 'Endereço cadastrado com sucesso'
+      redirect_to plans_path, notice: 'Endereço cadastrado com sucesso'
     else
       render :new, status: :unprocessable_entity
     end
