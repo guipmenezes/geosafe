@@ -9,6 +9,6 @@ class Plan < ApplicationRecord
   end
 
   def formatted_price
-    sprintf("%.2f", price).tr('.', ',')
+    format('%.2f', price).tr('.', ',')
   end
 end
