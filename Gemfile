@@ -55,6 +55,11 @@ gem 'figaro'
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[mri windows]
+
+  # Linters for code style and ERB templates
+  gem 'rubocop', require: false
+  gem 'rubocop-rails', require: false
+  gem 'erb_lint', require: false
 end
 
 group :development do
