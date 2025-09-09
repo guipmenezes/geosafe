@@ -37,7 +37,7 @@ jobs:
         run: bundle exec rubocop
 
       - name: Lint with ERB Lint
-        run: bundle exec erblint --lint-all
+        run: bundle exec erb_lint --lint-all
 
       - name: Set up test database
         env:
