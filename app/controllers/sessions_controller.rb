@@ -12,10 +12,11 @@ class SessionsController < ApplicationController
   def new; end
 
   def create
-    if authenticate_and_create_session
+    if authenticate_and_create_session?
       redirect_to root_path, notice: 'Signed in successfully'
     else
-      redirect_to sign_in_path(email_hint: params[:email]), alert: 'That email or password is incorrect'
+      flash.now[:alert] = 'That email or password is incorrect'
+      render :new, status: :unprocessable_entity
     end
   end
 

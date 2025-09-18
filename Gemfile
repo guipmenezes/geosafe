@@ -78,6 +78,7 @@ group :test do
   gem 'capybara'
   gem 'rspec', '~> 3.0'
   gem 'rspec-rails'
+  gem 'view_component-contrib'
   gem 'selenium-webdriver'
 end
 

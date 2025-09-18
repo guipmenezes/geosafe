@@ -18,4 +18,8 @@ class ApplicationController < ActionController::Base
     Current.user_agent = request.user_agent
     Current.ip_address = request.ip
   end
+
+  def default_url_options
+    { host: request.host, port: request.port }
+  end
 end

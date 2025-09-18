@@ -23,7 +23,9 @@
         </div>
 
         <div class="flex items-center space-x-4 mt-4 md:mt-0 md:ml-10">
-          <%= render(Button::ButtonComponent.new(text: "Entre", style: "primary", extra_classes: "w-full md:w-28 lg:w-32")) %>
+          <%= link_to sign_in_path, class: "w-full" do %>
+            <%= render(Button::ButtonComponent.new(text: "Entre", style: "primary", extra_classes: "w-full md:w-28 lg:w-32")) %>
+          <% end %>
           <%= link_to sign_up_path, class: "w-full" do %>
             <%= render(Button::ButtonComponent.new(text: "Cadastre-se", style: "secondary", extra_classes: "w-full md:w-28 lg:w-32")) %>
           <% end %>

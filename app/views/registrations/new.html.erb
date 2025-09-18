@@ -31,6 +31,9 @@
           <div class="flex justify-center items-center">
             <%= render(Button::ButtonComponent.new(text: "AVANÇAR", type: "submit", extra_classes: "w-1/3 h-10 pt-5")) %>
           </div>
+          <div class="flex justify-center w-full pt-4">
+            <%= link_to "Já possui uma conta? Entre", sign_in_path, class: "text-blue-500 hover:text-blue-700" %>
+          </div>
         <% end %>
       </div>
     </div>

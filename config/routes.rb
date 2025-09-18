@@ -18,8 +18,7 @@ Rails.application.routes.draw do
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  get 'addresses/new', to: 'addresses#new', as: :new_address
-  post 'addresses/create', to: 'addresses#create', as: :create_address
+  resources :addresses, only: %i[new create]
 
   resources :plans, only: [:index]
 end

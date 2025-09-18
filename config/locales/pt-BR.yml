@@ -147,6 +147,13 @@ pt-BR:
         username: "Nome de usuário"
         password: "Senha"
         password_confirmation: "Confirmação de senha"
+      address:
+        cep: "CEP"
+        uf: "UF"
+        city: "Cidade"
+        state: "Estado"
+        address: "Endereço"
+        number: "Número"
     errors:
       template:
         header:

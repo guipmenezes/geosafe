@@ -15,11 +15,10 @@ class RegistrationsController < ApplicationController
       cookies.signed.permanent[:session_token] = { value: session_record.id, httponly: true }
 
       send_email_verification
-      redirect_to new_address_path(user: @user),
+      redirect_to new_address_path,
                   notice: 'Maravilha, agora utilize o seu endereço para receber alertas da Geosafe!'
     else
-      render :new, status: :unprocessable_entity,
-                   notice: 'Ops, algo deu errado! Não conseguimos prosseguir com o seu cadastro.'
+      render :new, status: :unprocessable_entity
     end
   end
 
