@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   post 'sign_in', to: 'sessions#create'
   get  'sign_up', to: 'registrations#new'
   post 'sign_up', to: 'registrations#create'
+  get 'home', to: 'home#index'
   resources :sessions, only: %i[index show destroy]
   resource  :password, only: %i[edit update]
   namespace :identity do

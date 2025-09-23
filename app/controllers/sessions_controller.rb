@@ -13,9 +13,9 @@ class SessionsController < ApplicationController
 
   def create
     if authenticate_and_create_session?
-      redirect_to root_path, notice: 'Signed in successfully'
+      redirect_to home_path, notice: 'Login bem sucedido!'
     else
-      flash.now[:alert] = 'That email or password is incorrect'
+      flash.now[:alert] = 'O seu e-mail ou senha estão incorretos.'
       render :new, status: :unprocessable_entity
     end
   end
