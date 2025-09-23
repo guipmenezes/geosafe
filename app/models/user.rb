@@ -16,7 +16,8 @@ class User < ApplicationRecord
   has_many :plans, through: :plan_subscriptions
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, allow_nil: true, length: { minimum: 12 }, format: { with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{12,}\z/, message: 'deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial' }
+  validates :password, allow_nil: true, length: { minimum: 12 },
+                       format: { with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{12,}\z/, message: 'deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial' }
   validates :password_confirmation, presence: true, if: :password_digest_changed?
   validate :password_matches_confirmation
   validates :full_name, presence: true, length: { minimum: 3, maximum: 100 }

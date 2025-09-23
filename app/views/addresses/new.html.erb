@@ -4,7 +4,6 @@
       <h1 class="font-semibold text-2xl">Ótimo, agora para aprimorar a sua experiência, precisamos de informações sobre o seu endereço</h1>
       <div class="w-full">
         <%= form_with(model: @address, url: addresses_path, data: { controller: "cep-search" }) do |form| %>
-          
           <div class="flex flex-col gap-2 pb-4">
             <%= render(Input::InputComponent.new(
               name: "address[cep]",

@@ -78,8 +78,8 @@ group :test do
   gem 'capybara'
   gem 'rspec', '~> 3.0'
   gem 'rspec-rails'
-  gem 'view_component-contrib'
   gem 'selenium-webdriver'
+  gem 'view_component-contrib'
 end
 
 gem 'authentication-zero', '~> 3.0'
