@@ -14,8 +14,8 @@ RSpec.describe 'Registrations', type: :request do
     context 'with valid parameters' do
       it 'creates a new user and redirects to the root url' do
         expect do
-          post sign_up_path, params: { user: { full_name: 'Test Example', username: 'testexample', email: 'test@example.com', password: 'Password123!',
-                                               password_confirmation: 'Password123!' } }
+          post sign_up_path, params: { user: { full_name: 'Test Example', username: 'testexample', email: 'test@example.com',
+                                               password: 'Password123!', password_confirmation: 'Password123!' } }
         end.to change(User, :count).by(1)
         expect(response).to redirect_to(new_address_url)
       end
