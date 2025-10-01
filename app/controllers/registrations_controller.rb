@@ -10,7 +10,7 @@ class RegistrationsController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    if @user.save
+    if @user.save!
       session_record = @user.sessions.create!
       cookies.signed.permanent[:session_token] = { value: session_record.id, httponly: true }
 
@@ -18,7 +18,7 @@ class RegistrationsController < ApplicationController
       redirect_to new_address_path,
                   notice: 'Maravilha, agora utilize o seu endereço para receber alertas da Geosafe!'
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 

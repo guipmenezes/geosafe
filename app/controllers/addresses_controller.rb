@@ -10,7 +10,7 @@ class AddressesController < ApplicationController
     if @address.save
       redirect_to plans_path, notice: 'Endereço cadastrado com sucesso'
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 

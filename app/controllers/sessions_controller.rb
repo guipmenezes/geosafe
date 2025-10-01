@@ -16,13 +16,13 @@ class SessionsController < ApplicationController
       redirect_to home_path, notice: 'Login bem sucedido!'
     else
       flash.now[:alert] = 'O seu e-mail ou senha estão incorretos.'
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
   def destroy
     @session.destroy
-    redirect_to(sessions_path, notice: 'That session has been logged out')
+    redirect_to(sign_in_path, notice: 'A sua sessão expirou, logout feito.')
   end
 
   private
