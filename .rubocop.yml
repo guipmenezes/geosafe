@@ -1,0 +1,29 @@
+
+# .rubocop.yml
+# The configuration for RuboCop.
+
+AllCops:
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - 'bin/**/*'
+    - 'db/schema.rb'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+
+Metrics/BlockLength:
+  Max: 50
+  Exclude:
+    - '**/*_spec.rb'
+    - '**/*_test.rb'
+    - 'config/routes.rb'
+    - 'Rakefile'
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 20
+
+Layout/LineLength:
+  Max: 150

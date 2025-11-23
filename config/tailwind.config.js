@@ -13,6 +13,11 @@ module.exports = {
       fontFamily: {
         sans: ['Poppins', ...defaultTheme.fontFamily.sans],
       },
+      fontWeight: {
+        normal: 400,
+        semibold: 500,
+        bold: 700,
+      },
       colors: {
         'primary50': '#D7F6F9',
         'primary100': '#A3D8E4',

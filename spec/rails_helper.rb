@@ -1,11 +1,15 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 require 'view_component/test_helpers'
+# require 'view_component/contrib/rspec/view_component'
 require 'capybara/rspec'
+require 'capybara/cuprite'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is running in production
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+abort('The Rails environment is running in production mode!') if Rails.env.production?
 # Uncomment the line below in case you have `--require rails_helper` in the `.rspec` file
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
@@ -25,7 +29,7 @@ require 'rspec/rails'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -48,6 +52,27 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
   config.include ActionView::Helpers::AssetUrlHelper
+  config.include ControllerMacros, type: :request
+  config.include SystemHelpers, type: :system
+  config.include ActiveSupport::Testing::TimeHelpers
+
+  config.before(:each, type: :system) do
+    driven_by(:cuprite)
+  end
+
+  Capybara.register_driver(:cuprite) do |app|
+    Capybara::Cuprite::Driver.new(app,
+                                  window_size: [1200, 800],
+                                  timeout: 60,
+                                  browser_options: { 'no-sandbox': nil })
+  end
+
+  Capybara.javascript_driver = :cuprite
+  Capybara.default_driver = :rack_test
+
+  Capybara.server_port = 3000
+  Capybara.app_host = 'http://localhost'
+  Capybara.default_max_wait_time = 10 # Increase from default 2 seconds
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false

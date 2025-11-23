@@ -1,30 +1,30 @@
-<p style="color: green"><%= notice %></p>
-<p style="color: red"><%= alert %></p>
-
-<h1>Sign in</h1>
-
-<%= form_with(url: sign_in_path) do |form| %>
-  <div>
-    <%= form.label :email, style: "display: block" %>
-    <%= form.email_field :email, value: params[:email_hint], required: true, autofocus: true, autocomplete: "email" %>
+<div class="grid grid-cols-2 w-full h-screen">
+  <div class="h-full relative">
+    <%= image_tag "daniel-costa-jKRd3AjAnZI-unsplash.jpg", alt: "Imagem de uma pessoa escalando uma montanha com um céu azul e com nuvens ao fundo. Foto tirada pelo fotógrafo Wia Spale.", class: "w-full h-full object-cover" %>
+    <a href="https://unsplash.com/pt-br/@danielpcosta"><p class="absolute bottom-4 left-4 text-white bg-black bg-opacity-50 px-2 py-1 rounded">Foto por Daniel Costa</p></a>
   </div>
+  <div class="flex flex-col justify-center items-center">
+    <div class="flex flex-col items-start gap-8 p-20 w-full">
+      <h1 class="font-semibold text-2xl">Para entrar no GeoSafe, insira o seu e-mail e senha.</h1>
+      <div class="w-full">
+        <%= form_with(url: sign_in_path) do |form| %>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :email, form: form, value: params[:email_hint], required: true, autofocus: true, autocomplete: "email", label: "Email:", placeholder: "Insira aqui o seu principal e-mail.")) %>
+          </div>
 
-  <div>
-    <%= form.label :password, style: "display: block" %>
-    <%= form.password_field :password, required: true, autocomplete: "current-password" %>
+          <div class="flex flex-col gap-2 pb-4">
+            <%= render(Input::InputComponent.new(name: :password, form: form, required: true, autocomplete: "current-password", label: "Senha:", placeholder: "Insira a sua senha.", password: true)) %>
+          </div>
+
+          <div class="flex justify-center items-center">
+            <%= render(Button::ButtonComponent.new(text: "ENTRAR", type: "submit", extra_classes: "w-1/3 h-10 pt-5")) %>
+          </div>
+          <div class="flex flex-col justify-center items-center gap-2 w-full pt-8">
+            <%= link_to "Não possui uma conta? Cadastre-se", sign_up_path, class: "text-gray-600 hover:text-blue-700" %>
+            <%= link_to "Esqueceu a sua senha?", new_identity_password_reset_path, class: "text-gray-600 hover:text-blue-700" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
-
-  <div>
-    <%= form.submit "Sign in" %>
-  </div>
-<% end %>
-
-<br>
-
-
-<br>
-
-<div>
-  <%= link_to "Sign up", sign_up_path %> |
-  <%= link_to "Forgot your password?", new_identity_password_reset_path %>
 </div>
