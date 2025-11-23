@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
   before_action :set_current_request_details
   before_action :authenticate
 
+  layout :set_layout
+
   private
 
   def authenticate
@@ -12,6 +14,10 @@ class ApplicationController < ActionController::Base
     else
       redirect_to sign_in_path
     end
+  end
+
+  def set_layout
+    Current.user ? "logged_in" : "application"
   end
 
   def set_current_request_details
