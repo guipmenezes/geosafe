@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_layout
-    Current.user ? "logged_in" : "application"
+    Current.user ? 'logged_in' : 'application'
   end
 
   def set_current_request_details
