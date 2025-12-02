@@ -1,6 +1,6 @@
-<div class="flex flex-row w-full">
+<div class="flex flex-row gap-4 w-full">
   <div class="bg-red-500 w-[600px] h-[600px]"></div>
-  <div class="name">
-    <p>Filtro</p>
+  <div>
+    <%= render(DropdownComponent.new(title: "Filtro", options: @options)) %>
   </div>
 </div>
