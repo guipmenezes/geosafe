@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DropdownComponent < ViewComponent::Base
+class Dropdown::DropdownComponent < ViewComponent::Base
   def initialize(title:, options:)
     super()
     @title = title
