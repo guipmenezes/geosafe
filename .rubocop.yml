@@ -19,6 +19,14 @@ Metrics/BlockLength:
     - 'config/routes.rb'
     - 'Rakefile'
 
+Metrics/ParameterLists:
+  Max: 6
+  Exclude:
+    - '**/*_spec.rb'
+    - '**/*_test.rb'
+    - 'config/routes.rb'
+    - 'Rakefile'
+
 Style/Documentation:
   Enabled: false
 
