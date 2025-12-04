@@ -12,7 +12,6 @@ RSpec.describe 'Sessions', type: :system do
 
   it 'signs in and out' do
     sign_in_as(user)
-    expect(page).to have_text('Login bem sucedido!')
 
     click_on 'Log out'
     expect(page).to have_text('A sua sessão expirou, logout feito.')

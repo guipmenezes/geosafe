@@ -14,6 +14,7 @@ class User < ApplicationRecord
   has_one :address, dependent: :destroy
   has_many :plan_subscriptions
   has_many :plans, through: :plan_subscriptions
+  has_many :alerts, dependent: :destroy
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, allow_nil: true, length: { minimum: 12 },

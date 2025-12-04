@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :alerts, only: %i[create new]
   get 'homepage', to: 'homepage#index'
   get  'sign_in', to: 'sessions#new'
   post 'sign_in', to: 'sessions#create'
