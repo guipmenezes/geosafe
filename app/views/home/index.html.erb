@@ -1,23 +1,22 @@
-<div>
-  <div class="flex justify-end p-4">
-    <%= render(Modal::ModalComponent.new(title: "Create Alert")) do |component| %>
-      <% component.with_trigger do %>
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Create Alert
-        </button>
-      <% end %>
-
-      <%= render 'alerts/form', alert: @alert %>
-    <% end %>
-  </div>
-
-  <div class="flex flex-row gap-4 w-full">
-    <div class="bg-red-500 w-[600px] h-[600px]"></div>
-    <div>
+<div class="grid grid-cols-2 gap-4 w-full h-screen">
+  <div class="bg-red-500 w-full"></div>
+  <div>
+    <div class="flex flex-row items-center justify-between">
       <%= render(Dropdown::DropdownComponent.new(title: "Filtro", options: @options)) %>
-      <div>
-        <%= render(AlertCard::AlertCardComponent.new(type: "Incidente", alert: "Good", resident: "Yes", location: "QNG 33 Casa 35", relevant: "16", inappropriate: "5")) %>
+      <div class="flex justify-end p-4">
+        <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
+          <% component.with_trigger do %>
+            <button class="bg-primary500 hover:bg-primary700 text-white font-bold py-2 px-4 rounded">
+              Create Alert
+            </button>
+          <% end %>
+
+          <%= render 'alerts/form', alert: @alert %>
+        <% end %>
       </div>
+    </div>
+    <div>
+      <%= render(AlertCard::AlertCardComponent.new(type: "Incidente", alert: "Good", resident: "Yes", location: "QNG 33 Casa 35", relevant: "16", inappropriate: "5")) %>
     </div>
   </div>
 </div>

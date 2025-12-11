@@ -9,7 +9,7 @@ class AlertsController < ApplicationController
     @alert = Current.user.alerts.new(alert_params)
 
     if @alert.save
-      redirect_to home_path, notice: 'Alert was successfully created.'
+      redirect_to home_path, notice: 'Alerta criado com sucesso.'
     else
       render :new, status: :unprocessable_entity
     end
