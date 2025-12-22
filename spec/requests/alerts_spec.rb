@@ -19,7 +19,7 @@ RSpec.describe 'Alerts', type: :request do
   describe 'POST /create' do
     context 'with valid parameters' do
       let(:valid_attributes) do
-        { alert: { alert: 1, location: 'Test Location', resident: true } }
+        { alert: { alert: AlertCodes::HOME, location: 'Test Location', resident: true, alert_type: TypeCodes::GOOD } }
       end
 
       it 'creates a new Alert' do

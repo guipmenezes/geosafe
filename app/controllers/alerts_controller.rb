@@ -18,6 +18,6 @@ class AlertsController < ApplicationController
   private
 
   def alert_params
-    params.require(:alert).permit(:alert, :location, :resident)
+    params.require(:alert).permit(:alert, :location, :resident, :alert_type)
   end
 end
