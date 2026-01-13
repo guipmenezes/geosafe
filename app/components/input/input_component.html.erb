@@ -1,7 +1,7 @@
 <div class="<%= @extra_classes %> flex gap-2 flex-col w-full">
   <div class="flex flex-col gap-1">
-    <% if @label.present? %>
-      <label class="font-medium text-md"><%= @label %></label>
+    <% if @options[:label].present? %>
+      <label class="font-medium text-md"><%= @options[:label] %></label>
     <% end %>
     <div class="w-full relative">
       <div class="w-full">

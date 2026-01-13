@@ -15,10 +15,10 @@ class Alert < ApplicationRecord
   validates :user_id, presence: true
 
   def self.alert_type_options
-    { 'Good' => GOOD, 'Alert' => ALERT, 'Danger' => DANGER }
+    { 'Seguro' => GOOD, 'Atenção' => ALERT, 'Perigo' => DANGER }
   end
 
   def self.alert_options
-    { 'Home' => HOME, 'Street' => STREET }
+    { 'Residencial' => HOME, 'Na Rua' => STREET }
   end
 end
