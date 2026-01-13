@@ -1,0 +1,24 @@
+<div class="<%= @options[:extra_classes] %> flex gap-2 flex-col w-full">
+  <div class="flex flex-col gap-1">
+    <% if @options[:label].present? %>
+      <%= render Label::LabelComponent.new(form: @form, name: @name, text: @options[:label]) %>
+    <% end %>
+    <div class="w-full relative">
+      <div class="w-full">
+        <% if @form.present? %>
+          <%= @form.select @name, @collection, select_options, html_options %>
+        <% else %>
+          <%# For select_tag, we need to convert collection to options tags if it's not already %>
+          <%= select_tag @name, options_for_select(@collection, @options[:selected]), html_options.merge(select_options) %>
+        <% end %>
+      </div>
+      <% if @errors.any? %>
+        <div class="text-red-500 text-sm mt-1 pl-4">
+          <% @errors.each do |error| %>
+            <p><%= error %></p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
