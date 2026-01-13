@@ -1,0 +1,7 @@
+<% if @form.present? && @name.present? %>
+  <%= @form.label @name, @text, class: @classes %>
+<% elsif @name.present? %>
+  <%= label_tag @name, @text, class: @classes %>
+<% else %>
+  <label class="<%= @classes %>"><%= @text %></label>
+<% end %>
