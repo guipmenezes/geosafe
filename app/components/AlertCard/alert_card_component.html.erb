@@ -1,41 +1,49 @@
-<div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 border-l-4 <%= case @type
-                                                                  when 1 then 'border-green-500'
-                                                                  when 2 then 'border-yellow-500'
-                                                                  when 3 then 'border-red-500'
-                                                                  else 'border-grey300'
-                                                                  end %>">
-  <div class="flex justify-between items-start mb-3">
-    <div>
-      <span class="text-[10px] font-bold uppercase tracking-widest text-grey500 px-2 py-0.5 bg-grey100 rounded-md"><%= @alert == 1 ? "Residencial" : "Na Rua" %></span>
-      <h3 class="text-base font-semibold text-grey900 mt-2"><%= @location %></h3>
+<%= turbo_frame_tag dom_id(@alert) do %>
+  <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 border-l-4 <%= case type
+                                                                    when 1 then 'border-green-500'
+                                                                    when 2 then 'border-yellow-500'
+                                                                    when 3 then 'border-red-500'
+                                                                    else 'border-grey300'
+                                                                    end %>">
+    <div class="flex justify-between items-start mb-3">
+      <div>
+        <span class="text-[10px] font-bold uppercase tracking-widest text-grey500 px-2 py-0.5 bg-grey100 rounded-md"><%= alert_name %></span>
+        <h3 class="text-base font-semibold text-grey900 mt-2"><%= location %></h3>
+      </div>
+      <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider <%= case type
+                                                          when 1 then 'bg-green-50 text-green-700'
+                                                          when 2 then 'bg-yellow-50 text-yellow-700'
+                                                          when 3 then 'bg-red-50 text-red-700'
+                                                          else 'bg-grey100 text-grey700'
+                                                          end %>">
+        <%= alert_type_name %>
+      </span>
     </div>
-    <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider <%= case @type
-                                                        when 1 then 'bg-green-50 text-green-700'
-                                                        when 2 then 'bg-yellow-50 text-yellow-700'
-                                                        when 3 then 'bg-red-50 text-red-700'
-                                                        else 'bg-grey100 text-grey700'
-                                                        end %>">
-      <%= case @type
-          when 1 then 'Seguro'
-          when 2 then 'Atenção'
-          when 3 then 'Perigo'
-          else 'Desconhecido'
-          end %>
-    </span>
-  </div>
 
-  <div class="flex items-center gap-6 mt-4 pt-4 border-t border-grey100 text-xs text-grey600 font-medium">
-    <div class="flex items-center gap-1.5 hover:text-primary500 cursor-pointer transition-colors">
-      <div class="p-1 bg-grey50 rounded-full">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-      </div>
-      <span class="font-bold text-grey900"><%= @relevant %></span> <span class="hidden sm:inline">Relevante</span>
-    </div>
-    <div class="flex items-center gap-1.5 hover:text-red-500 cursor-pointer transition-colors">
-      <div class="p-1 bg-grey50 rounded-full">
-         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </div>
-      <span class="font-bold text-grey900"><%= @inappropriate %></span> <span class="hidden sm:inline">Inapropriado</span>
+    <div class="flex items-center gap-6 mt-4 pt-4 border-t border-grey100 text-xs text-grey600 font-medium">
+      <% user_vote = @alert.user_vote(Current.user) %>
+      
+      <%= button_to alert_votes_path(@alert, vote_type: :relevant), 
+                     class: "flex items-center gap-1.5 transition-colors #{user_vote&.relevant? ? 'text-primary500' : 'hover:text-primary500'}",
+                     method: :post do %>
+        <div class="p-1 <%= user_vote&.relevant? ? 'bg-primary50' : 'bg-grey50' %> rounded-full">
+          <svg class="w-3.5 h-3.5" fill="<%= user_vote&.relevant? ? 'currentColor' : 'none' %>" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <span class="font-bold text-grey900"><%= relevant_count %></span> <span class="hidden sm:inline">Relevante</span>
+      <% end %>
+
+      <%= button_to alert_votes_path(@alert, vote_type: :inappropriate), 
+                     class: "flex items-center gap-1.5 transition-colors #{user_vote&.inappropriate? ? 'text-red-500' : 'hover:text-red-500'}",
+                     method: :post do %>
+        <div class="p-1 <%= user_vote&.inappropriate? ? 'bg-red-50' : 'bg-grey50' %> rounded-full">
+           <svg class="w-3.5 h-3.5" fill="<%= user_vote&.inappropriate? ? 'currentColor' : 'none' %>" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+           </svg>
+        </div>
+        <span class="font-bold text-grey900"><%= inappropriate_count %></span> <span class="hidden sm:inline">Inapropriado</span>
+      <% end %>
     </div>
   </div>
-</div>
+<% end %>

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  resources :alerts, only: %i[create new]
+  resources :alerts, only: %i[create new] do
+    resources :votes, only: %i[create], controller: 'alert_votes'
+  end
   get 'homepage', to: 'homepage#index'
   get  'sign_in', to: 'sessions#new'
   post 'sign_in', to: 'sessions#create'

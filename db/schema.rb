@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_16_014401) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_16_025600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,17 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_16_014401) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "number"
+  end
+
+  create_table "alert_votes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "alert_id", null: false
+    t.integer "vote_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["alert_id"], name: "index_alert_votes_on_alert_id"
+    t.index ["user_id", "alert_id"], name: "index_alert_votes_on_user_id_and_alert_id", unique: true
+    t.index ["user_id"], name: "index_alert_votes_on_user_id"
   end
 
   create_table "alerts", force: :cascade do |t|
@@ -75,5 +86,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_16_014401) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "alert_votes", "alerts"
+  add_foreign_key "alert_votes", "users"
   add_foreign_key "sessions", "users"
 end

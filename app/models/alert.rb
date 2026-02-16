@@ -6,12 +6,17 @@ class Alert < ApplicationRecord
   include TypeCodes
   include AlertCodes
 
-  belongs_to :user, dependent: :destroy
+  belongs_to :user
+  has_many :alert_votes, dependent: :destroy
 
   validates :alert, presence: true, inclusion: { in: [HOME, STREET] }
   validates :location, presence: true
   validates :alert_type, presence: true, inclusion: { in: [GOOD, ALERT, DANGER] }
   validates :user_id, presence: true
+
+  def user_vote(user)
+    alert_votes.find_by(user: user)
+  end
 
   def self.alert_type_options
     { 'Seguro' => GOOD, 'Atenção' => ALERT, 'Perigo' => DANGER }

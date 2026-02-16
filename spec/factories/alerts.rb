@@ -3,10 +3,9 @@
 FactoryBot.define do
   factory :alert do
     association :user
-    type { 1 }
-    alert { 1 }
+    alert_type { TypeCodes::GOOD }
+    alert { AlertCodes::HOME }
     location { 'Sample Location' }
-    resident { false }
     relevant { 0 }
     inappropriate { 0 }
   end
