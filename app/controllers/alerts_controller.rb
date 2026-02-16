@@ -8,10 +8,14 @@ class AlertsController < ApplicationController
   def create
     @alert = Current.user.alerts.new(alert_params)
 
-    if @alert.save
-      redirect_to home_path, notice: 'Alerta criado com sucesso.'
-    else
-      render :new, status: :unprocessable_entity
+    respond_to do |format|
+      if @alert.save
+        format.html { redirect_to home_path, notice: 'Alerta criado com sucesso.' }
+        format.turbo_stream
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace('alert_form', partial: 'alerts/form', locals: { alert: @alert }) }
+      end
     end
   end
 

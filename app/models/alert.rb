@@ -11,7 +11,6 @@ class Alert < ApplicationRecord
   validates :alert, presence: true, inclusion: { in: [HOME, STREET] }
   validates :location, presence: true
   validates :alert_type, presence: true, inclusion: { in: [GOOD, ALERT, DANGER] }
-  validates :resident, presence: true
   validates :user_id, presence: true
 
   def self.alert_type_options
@@ -20,5 +19,13 @@ class Alert < ApplicationRecord
 
   def self.alert_options
     { 'Residencial' => HOME, 'Na Rua' => STREET }
+  end
+
+  def alert_type_name
+    self.class.alert_type_options.key(alert_type)
+  end
+
+  def alert_name
+    self.class.alert_options.key(alert)
   end
 end

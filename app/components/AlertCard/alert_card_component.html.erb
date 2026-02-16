@@ -1,1 +1,35 @@
-<div>Add AlertCard template here</div>
+<div class="bg-white rounded-lg shadow-md p-4 border-l-4 <%= case @type
+                                                                  when 1 then 'border-green-500'
+                                                                  when 2 then 'border-yellow-500'
+                                                                  when 3 then 'border-red-500'
+                                                                  else 'border-gray-500'
+                                                                  end %>">
+  <div class="flex justify-between items-start mb-2">
+    <div>
+      <span class="text-xs font-bold uppercase tracking-wider text-gray-500"><%= @alert == 1 ? "Residencial" : "Na Rua" %></span>
+      <h3 class="text-lg font-semibold text-gray-800"><%= @location %></h3>
+    </div>
+    <span class="px-2 py-1 rounded text-xs font-bold <%= case @type
+                                                        when 1 then 'bg-green-100 text-green-800'
+                                                        when 2 then 'bg-yellow-100 text-yellow-800'
+                                                        when 3 then 'bg-red-100 text-red-800'
+                                                        else 'bg-gray-100 text-gray-800'
+                                                        end %>">
+      <%= case @type
+          when 1 then 'Seguro'
+          when 2 then 'Atenção'
+          when 3 then 'Perigo'
+          else 'Desconhecido'
+          end %>
+    </span>
+  </div>
+
+  <div class="flex items-center gap-4 mt-4 text-sm text-gray-600">
+    <div class="flex items-center gap-1">
+      <span class="font-bold"><%= @relevant %></span> Relevante
+    </div>
+    <div class="flex items-center gap-1">
+      <span class="font-bold"><%= @inappropriate %></span> Inapropriado
+    </div>
+  </div>
+</div>

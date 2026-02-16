@@ -1,0 +1,9 @@
+<%= turbo_stream.prepend "alerts", render(AlertCard::AlertCardComponent.new(
+      type: @alert.alert_type,
+      alert: @alert.alert,
+      location: @alert.location,
+      relevant: @alert.relevant || 0,
+      inappropriate: @alert.inappropriate || 0
+    )) %>
+
+<%= turbo_stream.replace "alert_form", partial: "alerts/form", locals: { alert: Alert.new } %>

@@ -19,10 +19,16 @@ export default class extends Controller {
     document.body.classList.add("overflow-hidden");
   }
 
-  close() {
+  close(event) {
+    if (event && event.type === "turbo:submit-end" && !event.detail.success) {
+      return;
+    }
+
     this.modalTarget.classList.add("hidden");
     const background = document.getElementById("modal-background")
-    background.remove()
+    if (background) {
+      background.remove()
+    }
     document.body.classList.remove("overflow-hidden");
   }
 }

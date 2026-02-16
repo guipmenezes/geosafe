@@ -15,8 +15,16 @@
         <% end %>
       </div>
     </div>
-    <div>
-      <%= render(AlertCard::AlertCardComponent.new(type: "Incidente", alert: "Good", resident: "Yes", location: "QNG 33 Casa 35", relevant: "16", inappropriate: "5")) %>
+    <div id="alerts" class="flex flex-col gap-4 p-4">
+      <% @alerts.each do |alert| %>
+        <%= render(AlertCard::AlertCardComponent.new(
+              type: alert.alert_type,
+              alert: alert.alert,
+              location: alert.location,
+              relevant: alert.relevant || 0,
+              inappropriate: alert.inappropriate || 0
+            )) %>
+      <% end %>
     </div>
   </div>
 </div>
