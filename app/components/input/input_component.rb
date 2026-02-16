@@ -29,11 +29,13 @@ module Input
     end
 
     def html_options
-      focus_classes = 'focus:outline-none hover:border-primary-200 hover:bg-gray-1000 focus:border-primary-200'
+      focus_classes = 'focus:outline-none focus:ring-2 focus:ring-primary200 focus:border-primary400'
+      hover_classes = 'hover:border-primary300'
 
-      classes = "w-full border border-solid #{error_border_class} rounded-full text-gray-900 placeholder-gray-500 transition-all"
+      classes = "w-full border border-solid #{error_border_class} rounded-xl text-gray-900 placeholder-grey400 transition-all py-2.5 px-4 shadow-sm"
 
-      classes += " #{focus_classes}" unless @options[:disabled]
+      classes += " #{focus_classes} #{hover_classes}" unless @options[:disabled]
+      classes += " opacity-50 cursor-not-allowed bg-grey100" if @options[:disabled]
 
       options = {
         placeholder: @options[:placeholder],
@@ -54,7 +56,7 @@ module Input
     end
 
     def error_border_class
-      @errors.any? ? 'border-red-500' : 'border-gray-200'
+      @errors.any? ? 'border-red-500' : 'border-grey300'
     end
   end
 end

@@ -1,24 +1,73 @@
-<div class="<%= @options[:extra_classes] %> flex gap-2 flex-col w-full">
-  <div class="flex flex-col gap-1">
-    <% if @options[:label].present? %>
-      <%= render Label::LabelComponent.new(form: @form, name: @name, text: @options[:label]) %>
+<div class="<%= @options[:extra_classes] %> flex gap-1.5 flex-col w-full" data-controller="select">
+  <% if @options[:label].present? %>
+    <%= render Label::LabelComponent.new(form: @form, name: @name, text: @options[:label]) %>
+  <% end %>
+
+  <div class="relative w-full group">
+    <%# Hidden Native Select for Form Submission %>
+    <% if @form.present? %>
+      <%= @form.hidden_field @name, data: { select_target: "input" }, value: selected_value %>
+    <% else %>
+      <%= hidden_field_tag @name, selected_value, data: { select_target: "input" } %>
     <% end %>
-    <div class="w-full relative">
-      <div class="w-full">
-        <% if @form.present? %>
-          <%= @form.select @name, @collection, select_options, html_options %>
-        <% else %>
-          <%# For select_tag, we need to convert collection to options tags if it's not already %>
-          <%= select_tag @name, options_for_select(@collection, @options[:selected]), html_options.merge(select_options) %>
-        <% end %>
+
+    <%# Custom Trigger Button %>
+    <button
+      type="button"
+      data-action="click->select#toggle"
+      class="w-full flex items-center justify-between border border-solid <%= error_border_class %> rounded-xl text-gray-900 bg-white transition-all py-2.5 px-4 shadow-sm hover:border-primary300 focus:outline-none focus:ring-2 focus:ring-primary200 focus:border-primary400 <%= 'opacity-50 cursor-not-allowed bg-grey100' if @options[:disabled] %>"
+      aria-haspopup="listbox"
+      <%= "disabled" if @options[:disabled] %>
+    >
+      <span class="truncate" data-select-target="label">
+        <%= selected_label %>
+      </span>
+
+      <div class="text-grey500 group-hover:text-primary500 transition-colors">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
       </div>
-      <% if @errors.any? %>
-        <div class="text-red-500 text-sm mt-1 pl-4">
-          <% @errors.each do |error| %>
-            <p><%= error %></p>
-          <% end %>
+    </button>
+
+    <%# Custom Options Menu %>
+    <div
+      data-select-target="menu"
+      class="hidden absolute z-50 mt-2 w-full bg-white border border-grey200 rounded-xl shadow-xl max-h-60 overflow-y-auto py-1 animate-in fade-in zoom-in duration-200"
+      role="listbox"
+    >
+      <% if @options[:prompt].present? %>
+        <div
+          class="px-4 py-2.5 text-sm text-grey500 cursor-pointer hover:bg-grey100 transition-colors"
+          data-action="click->select#select"
+          data-value=""
+          data-label="<%= @options[:prompt] %>"
+          role="option"
+        >
+          <%= @options[:prompt] %>
+        </div>
+      <% end %>
+
+      <% @collection.each do |item| %>
+        <div
+          class="px-4 py-2.5 text-sm text-grey900 cursor-pointer hover:bg-primary50 hover:text-primary700 transition-colors <%= 'bg-primary50 text-primary700 font-semibold' if item[:value].to_s == selected_value.to_s %>"
+          data-action="click->select#select"
+          data-value="<%= item[:value] %>"
+          data-label="<%= item[:label] %>"
+          data-select-target="option"
+          role="option"
+        >
+          <%= item[:label] %>
         </div>
       <% end %>
     </div>
   </div>
+
+  <% if @errors.any? %>
+    <div class="text-red-500 text-xs mt-1 ml-1 font-medium">
+      <% @errors.each do |error| %>
+        <p><%= error %></p>
+      <% end %>
+    </div>
+  <% end %>
 </div>
