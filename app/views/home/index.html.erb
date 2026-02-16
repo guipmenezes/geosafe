@@ -6,9 +6,7 @@
       <div class="flex justify-end p-4">
         <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
           <% component.with_trigger do %>
-            <button class="bg-primary500 hover:bg-primary700 text-white font-bold py-2 px-4 rounded">
-              Criar GeoAlerta
-            </button>
+            <%= render Button::ButtonComponent.new(text: "Criar GeoAlerta") %>
           <% end %>
 
           <%= render 'alerts/form', alert: @alert %>
