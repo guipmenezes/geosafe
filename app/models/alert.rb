@@ -13,6 +13,8 @@ class Alert < ApplicationRecord
   validates :location, presence: true
   validates :alert_type, presence: true, inclusion: { in: [GOOD, ALERT, DANGER] }
   validates :user_id, presence: true
+  validates :title, presence: true
+  validates :description, presence: true
 
   def user_vote(user)
     alert_votes.find_by(user: user)

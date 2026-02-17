@@ -19,9 +19,13 @@ class AlertsController < ApplicationController
     end
   end
 
+  def show
+    @alert = Alert.find(params[:id])
+  end
+
   private
 
   def alert_params
-    params.require(:alert).permit(:alert, :location, :alert_type)
+    params.require(:alert).permit(:alert, :location, :alert_type, :title, :description)
   end
 end

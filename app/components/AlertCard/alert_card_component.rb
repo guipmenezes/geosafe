@@ -18,6 +18,14 @@ module AlertCard
       @alert.location
     end
 
+    def title
+      @alert.title
+    end
+
+    def description
+      @alert.description
+    end
+
     def alert_name
       @alert.alert_name
     end
