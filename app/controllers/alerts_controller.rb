@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AlertsController < ApplicationController
+  before_action :set_alert, only: %i[show edit update]
+
   def new
     @alert = Alert.new
   end
@@ -19,11 +21,31 @@ class AlertsController < ApplicationController
     end
   end
 
-  def show
-    @alert = Alert.find(params[:id])
+  def show; end
+
+  def edit
+    authorize @alert
+  end
+
+  def update
+    authorize @alert
+
+    respond_to do |format|
+      if @alert.update(alert_params)
+        format.html { redirect_to home_path, notice: 'Alerta atualizado com sucesso.' }
+        format.turbo_stream
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@alert, :form), partial: 'alerts/form', locals: { alert: @alert }) }
+      end
+    end
   end
 
   private
+
+  def set_alert
+    @alert = Alert.find(params[:id])
+  end
 
   def alert_params
     params.require(:alert).permit(:alert, :location, :alert_type, :title, :description)

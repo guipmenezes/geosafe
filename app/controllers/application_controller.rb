@@ -25,6 +25,13 @@ class ApplicationController < ActionController::Base
     Current.ip_address = request.ip
   end
 
+  def authorize(record, query = nil)
+    query ||= "#{action_name}?"
+    policy = "#{record.class}Policy".constantize.new(Current.user, record)
+    
+    raise "Not Authorized" unless policy.send(query)
+  end
+
   def default_url_options
     { host: request.host, port: request.port }
   end

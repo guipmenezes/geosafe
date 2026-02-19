@@ -1,5 +1,5 @@
-<%= turbo_frame_tag "modal" do %>
-  <%= form_with(model: alert, url: alerts_path, id: "alert_form", class: "flex flex-col gap-4",
+<%= turbo_frame_tag dom_id(alert, :form) do %>
+  <%= form_with(model: alert, id: "alert_form", class: "flex flex-col gap-4",
                 data: { action: "turbo:submit-end->modal--modal-component#close" }) do |form| %>
     <% if alert.errors.any? %>
       <div id="error_explanation" class="bg-red-50 text-red-500 p-4 rounded-xl mb-4 border border-red-100">
@@ -53,7 +53,7 @@
         ) %>
 
     <div class="flex justify-center items-center mt-6">
-      <%= render Button::ButtonComponent.new(text: "Criar alerta", type: "submit", extra_classes: "w-1/2") %>
+      <%= render Button::ButtonComponent.new(text: alert.new_record? ? "Criar alerta" : "Atualizar alerta", type: "submit", extra_classes: "w-1/2") %>
     </div>
   <% end %>
 <% end %>

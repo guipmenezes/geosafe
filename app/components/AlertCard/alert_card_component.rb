@@ -49,5 +49,9 @@ module AlertCard
     def formatted_created_at
       I18n.l(@alert.created_at, format: :short)
     end
+
+    def can_edit?
+      ::AlertPolicy.new(Current.user, @alert).edit?
+    end
   end
 end
