@@ -7,7 +7,16 @@
   <div class="flex justify-between items-start mb-3">
     <div class="flex-1">
       <span class="text-[10px] font-bold uppercase tracking-widest text-grey500 px-2 py-0.5 bg-grey100 rounded-md"><%= alert_name %></span>
-      <%= link_to alert_path(@alert), data: { turbo_frame: "remote_modal" }, class: "block group" do %>
+      <div class="block group cursor-pointer" 
+           data-action="click->alert-details#open"
+           data-alert-title="<%= title %>"
+           data-alert-description="<%= description %>"
+           data-alert-location="<%= location %>"
+           data-alert-name="<%= alert_name %>"
+           data-alert-type-name="<%= alert_type_name %>"
+           data-alert-type="<%= type %>"
+           data-alert-creator="<%= creator_name %>"
+           data-alert-date="<%= formatted_created_at %>">
         <h3 class="text-base font-semibold text-grey900 mt-2 group-hover:text-primary600 transition-colors"><%= title %></h3>
         <p class="text-xs text-grey600 mt-1 line-clamp-2"><%= description %></p>
         <div class="flex items-center gap-1 mt-2 text-[10px] text-grey500">
@@ -17,7 +26,7 @@
           </svg>
           <%= location %>
         </div>
-      <% end %>
+      </div>
     </div>
     <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider <%= case type
                                                         when 1 then 'bg-green-50 text-green-700'

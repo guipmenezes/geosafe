@@ -41,5 +41,13 @@ module AlertCard
     def inappropriate_count
       @alert.inappropriate || 0
     end
+
+    def creator_name
+      @alert.user.full_name
+    end
+
+    def formatted_created_at
+      I18n.l(@alert.created_at, format: :short)
+    end
   end
 end
