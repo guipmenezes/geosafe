@@ -23,7 +23,11 @@ module Select
     end
 
     def normalize_collection(collection)
-      if collection.is_a?(Hash) || (collection.first.is_a?(Array) rescue false)
+      if collection.is_a?(Hash) || begin
+        collection.first.is_a?(Array)
+      rescue StandardError
+        false
+      end
         collection.map { |label, value| { label: label, value: value } }
       else
         collection.map { |item| { label: item, value: item } }

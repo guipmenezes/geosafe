@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateAlertVotes < ActiveRecord::Migration[7.1]
   def change
     create_table :alert_votes do |t|

@@ -28,8 +28,8 @@ class ApplicationController < ActionController::Base
   def authorize(record, query = nil)
     query ||= "#{action_name}?"
     policy = "#{record.class}Policy".constantize.new(Current.user, record)
-    
-    raise "Not Authorized" unless policy.send(query)
+
+    raise 'Not Authorized' unless policy.send(query)
   end
 
   def default_url_options

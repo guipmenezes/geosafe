@@ -13,9 +13,9 @@ RSpec.describe 'AlertVotes', type: :request do
   describe 'POST /alerts/:alert_id/votes' do
     context 'when user has not voted yet' do
       it 'creates a new vote' do
-        expect {
+        expect do
           post alert_votes_path(alert), params: { vote_type: 'relevant' }
-        }.to change(AlertVote, :count).by(1)
+        end.to change(AlertVote, :count).by(1)
       end
 
       it 'responds with turbo stream' do
@@ -28,9 +28,9 @@ RSpec.describe 'AlertVotes', type: :request do
       before { create(:alert_vote, user: user, alert: alert, vote_type: :relevant) }
 
       it 'removes the existing vote' do
-        expect {
+        expect do
           post alert_votes_path(alert), params: { vote_type: 'relevant' }
-        }.to change(AlertVote, :count).by(-1)
+        end.to change(AlertVote, :count).by(-1)
       end
     end
 

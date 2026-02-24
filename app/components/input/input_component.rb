@@ -35,7 +35,7 @@ module Input
       classes = "w-full border border-solid #{error_border_class} rounded-xl text-gray-900 placeholder-grey400 transition-all py-2.5 px-4 shadow-sm"
 
       classes += " #{focus_classes} #{hover_classes}" unless @options[:disabled]
-      classes += " opacity-50 cursor-not-allowed bg-grey100" if @options[:disabled]
+      classes += ' opacity-50 cursor-not-allowed bg-grey100' if @options[:disabled]
 
       options = {
         placeholder: @options[:placeholder],

@@ -20,7 +20,7 @@ RSpec.describe AlertVote, type: :model do
       user = create(:user)
       alert = create(:alert)
       create(:alert_vote, user: user, alert: alert)
-      
+
       duplicate_vote = build(:alert_vote, user: user, alert: alert)
       expect(duplicate_vote).not_to be_valid
     end
@@ -35,16 +35,16 @@ RSpec.describe AlertVote, type: :model do
     let(:alert) { create(:alert) }
 
     it 'updates alert counters after save' do
-      expect {
+      expect do
         create(:alert_vote, alert: alert, vote_type: :relevant)
-      }.to change { alert.reload.relevant }.by(1)
+      end.to change { alert.reload.relevant }.by(1)
     end
 
     it 'updates alert counters after destroy' do
       vote = create(:alert_vote, alert: alert, vote_type: :inappropriate)
-      expect {
+      expect do
         vote.destroy
-      }.to change { alert.reload.inappropriate }.by(-1)
+      end.to change { alert.reload.inappropriate }.by(-1)
     end
   end
 end
