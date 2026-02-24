@@ -35,15 +35,34 @@ module Select
     end
 
     def selected_label
-      selected_value = @options[:selected] || @form&.object&.send(@name)
-      match = @collection.find { |item| item[:value].to_s == selected_value.to_s }
-      return match[:label] if match
-
-      @options[:prompt] || @options[:label] || 'Selecione...'
+      label_from_collection || default_label
     end
 
     def selected_value
       @options[:selected] || @form&.object&.send(@name)
+    end
+
+    def error_border_class
+      @errors.any? ? 'border-red-500' : 'border-grey300'
+    end
+
+    def select_options
+      opts = {}
+      opts[:include_blank] = @options[:include_blank] if @options[:include_blank]
+      opts[:prompt] = @options[:prompt] if @options[:prompt]
+      opts[:selected] = @options[:selected] if @options[:selected]
+      opts
+    end
+
+    private
+
+    def label_from_collection
+      match = @collection.find { |item| item[:value].to_s == selected_value.to_s }
+      match[:label] if match
+    end
+
+    def default_label
+      @options[:prompt] || @options[:label] || 'Selecione...'
     end
 
     def get_errors(name)
@@ -67,18 +86,6 @@ module Select
         required: @options[:required],
         disabled: @options[:disabled]
       }.merge(@options[:html_attributes])
-    end
-
-    def error_border_class
-      @errors.any? ? 'border-red-500' : 'border-grey300'
-    end
-
-    def select_options
-      opts = {}
-      opts[:include_blank] = @options[:include_blank] if @options[:include_blank]
-      opts[:prompt] = @options[:prompt] if @options[:prompt]
-      opts[:selected] = @options[:selected] if @options[:selected]
-      opts
     end
   end
 end
