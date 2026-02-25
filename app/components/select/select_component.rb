@@ -71,21 +71,25 @@ module Select
     end
 
     def html_options
-      focus_classes = 'focus:outline-none focus:ring-2 focus:ring-primary200 focus:border-primary400'
-      hover_classes = 'hover:border-primary300'
-
-      # appearance-none to allow for custom chevron, rounded-xl for modern look
-      classes = "w-full appearance-none border border-solid #{error_border_class} " \
-                'rounded-xl text-gray-900 bg-white transition-all py-2.5 px-4 pr-10 shadow-sm'
-
-      classes += " #{focus_classes} #{hover_classes}" unless @options[:disabled]
-      classes += ' opacity-50 cursor-not-allowed bg-grey100' if @options[:disabled]
-
       {
-        class: classes,
+        class: select_classes,
         required: @options[:required],
         disabled: @options[:disabled]
       }.merge(@options[:html_attributes])
+    end
+
+    def select_classes
+      # appearance-none to allow for custom chevron, rounded-xl for modern look
+      classes = ["w-full appearance-none border border-solid #{error_border_class} " \
+                 "rounded-xl text-gray-900 bg-white transition-all py-2.5 px-4 pr-10 shadow-sm"]
+
+      classes << if @options[:disabled]
+                   'opacity-50 cursor-not-allowed bg-grey100'
+                 else
+                   'focus:outline-none focus:ring-2 focus:ring-primary200 focus:border-primary400 hover:border-primary300'
+                 end
+
+      classes.join(' ')
     end
   end
 end
