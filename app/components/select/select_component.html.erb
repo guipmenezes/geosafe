@@ -17,8 +17,7 @@
       data-action="click->select#toggle"
       class="w-full flex items-center justify-between border border-solid <%= error_border_class %> rounded-xl text-gray-900 bg-white transition-all py-2.5 px-4 shadow-sm hover:border-primary300 focus:outline-none focus:ring-2 focus:ring-primary200 focus:border-primary400 <%= 'opacity-50 cursor-not-allowed bg-grey100' if @options[:disabled] %>"
       aria-haspopup="listbox"
-      <%= "disabled" if @options[:disabled] %>
-    >
+      <%= "disabled" if @options[:disabled] %>>
       <span class="truncate" data-select-target="label">
         <%= selected_label %>
       </span>
@@ -34,16 +33,14 @@
     <div
       data-select-target="menu"
       class="hidden absolute z-50 mt-2 w-full bg-white border border-grey200 rounded-xl shadow-xl max-h-60 overflow-y-auto py-1 animate-in fade-in zoom-in duration-200"
-      role="listbox"
-    >
+      role="listbox">
       <% if @options[:prompt].present? %>
         <div
           class="px-4 py-2.5 text-sm text-grey500 cursor-pointer hover:bg-grey100 transition-colors"
           data-action="click->select#select"
           data-value=""
           data-label="<%= @options[:prompt] %>"
-          role="option"
-        >
+          role="option">
           <%= @options[:prompt] %>
         </div>
       <% end %>
@@ -55,8 +52,7 @@
           data-value="<%= item[:value] %>"
           data-label="<%= item[:label] %>"
           data-select-target="option"
-          role="option"
-        >
+          role="option">
           <%= item[:label] %>
         </div>
       <% end %>
