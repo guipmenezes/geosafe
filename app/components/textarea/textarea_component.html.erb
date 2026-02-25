@@ -1,0 +1,23 @@
+<div class="<%= @options[:extra_classes] %> flex gap-1.5 flex-col w-full">
+  <% if @options[:label].present? %>
+    <%= render Label::LabelComponent.new(form: @form, name: @name, text: @options[:label]) %>
+  <% end %>
+
+  <div class="relative w-full">
+    <div class="w-full">
+      <% if @form.present? %>
+        <%= @form.text_area @name, html_options %>
+      <% else %>
+        <%= text_area_tag @name, @options[:value], html_options %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @errors.any? %>
+    <div class="text-red-500 text-xs mt-1 ml-1 font-medium">
+      <% @errors.each do |error| %>
+        <p><%= error %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>
