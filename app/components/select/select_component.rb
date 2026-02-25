@@ -81,7 +81,7 @@ module Select
     def select_classes
       # appearance-none to allow for custom chevron, rounded-xl for modern look
       classes = ["w-full appearance-none border border-solid #{error_border_class} " \
-                 "rounded-xl text-gray-900 bg-white transition-all py-2.5 px-4 pr-10 shadow-sm"]
+                 'rounded-xl text-gray-900 bg-white transition-all py-2.5 px-4 pr-10 shadow-sm']
 
       classes << if @options[:disabled]
                    'opacity-50 cursor-not-allowed bg-grey100'
