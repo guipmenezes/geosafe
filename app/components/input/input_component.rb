@@ -29,26 +29,15 @@ module Input
     end
 
     def html_options
-      focus_classes = 'focus:outline-none focus:ring-2 focus:ring-primary200 focus:border-primary400'
-      hover_classes = 'hover:border-primary300'
-
-      classes = "w-full border border-solid #{error_border_class} rounded-xl text-gray-900 placeholder-grey400 transition-all py-2.5 px-4 shadow-sm"
-
-      classes += " #{focus_classes} #{hover_classes}" unless @options[:disabled]
-      classes += ' opacity-50 cursor-not-allowed bg-grey100' if @options[:disabled]
-
-      options = {
+      {
         placeholder: @options[:placeholder],
-        class: classes,
+        class: input_classes,
         required: @options[:required],
         disabled: @options[:disabled],
-        type: (type_password? ? 'password' : 'text').to_s,
-        autocomplete: @options[:autocomplete]
-      }.merge(@options[:html_attributes])
-
-      options[:value] = @options[:value] if @options[:value].present?
-
-      options
+        type: input_type,
+        autocomplete: @options[:autocomplete],
+        value: @options[:value].presence
+      }.compact.merge(@options[:html_attributes])
     end
 
     def type_password?
@@ -57,6 +46,24 @@ module Input
 
     def error_border_class
       @errors.any? ? 'border-red-500' : 'border-grey300'
+    end
+
+    private
+
+    def input_type
+      type_password? ? 'password' : 'text'
+    end
+
+    def input_classes
+      classes = ["w-full border border-solid #{error_border_class} rounded-xl text-gray-900 placeholder-grey400 transition-all py-2.5 px-4 shadow-sm"]
+
+      classes << if @options[:disabled]
+                   'opacity-50 cursor-not-allowed bg-grey100'
+                 else
+                   'focus:outline-none focus:ring-2 focus:ring-primary200 focus:border-primary400 hover:border-primary300'
+                 end
+
+      classes.join(' ')
     end
   end
 end
