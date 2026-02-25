@@ -10,10 +10,13 @@
           <%= link_to "Lupa GeoSafe", root_path, class: "text-gray-600 hover:text-blue-500 #{nav_link_class(root_path)}" %>
           <%= link_to "Loja", root_path, class: "text-gray-600 hover:text-blue-500 #{nav_link_class(root_path)}" %>
         </div>
-        <div class="flex flex-col">
+        <div class="flex items-center gap-4">
           <% if Current.user %>
-            <span class="mr-4 text-gray-600">Olá, <%= Current.user.full_name %></span>
-            <%= button_to "Sair", session_path(Current.session), method: :delete, class: "px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700" %>
+            <span class="text-gray-600 text-sm">Olá, <%= Current.user.full_name %></span>
+            <%= link_to "Change email address", edit_identity_email_path, class: "text-sm text-gray-600 hover:text-blue-500" %>
+            <%= link_to "Change password", edit_password_path, class: "text-sm text-gray-600 hover:text-blue-500" %>
+            <%= link_to "Devices & Sessions", sessions_path, class: "text-sm text-gray-600 hover:text-blue-500" %>
+            <%= button_to "Log out", session_path(Current.session), method: :delete, class: "px-4 py-2 font-bold text-white bg-red-500 rounded-xl hover:bg-red-700 text-sm" %>
           <% end %>
         </div>
       </div>
