@@ -1,10 +1,10 @@
 <%= turbo_frame_tag dom_id(alert, :form) do %>
   <%= form_with(model: alert, id: "alert_form", class: "flex flex-col gap-4",
-                data: { 
+                data: {
                   controller: "geolocation",
-                  action: "turbo:submit-end->modal--modal-component#close" 
+                  action: "turbo:submit-end->modal--modal-component#close"
                 }) do |form| %>
-    
+
     <%= form.hidden_field :latitude, data: { geolocation_target: "latitude" } %>
     <%= form.hidden_field :longitude, data: { geolocation_target: "longitude" } %>
 
@@ -36,7 +36,7 @@
           collection: Alert.alert_options,
           extra_classes: "pb-4",
           html_attributes: {
-            data: { 
+            data: {
               geolocation_target: "type",
               action: "change->geolocation#handleTypeChange"
             }
