@@ -52,7 +52,7 @@ gem 'bootsnap', require: false
 # Simple, Heroku-friendly Rails app configuration using ENV and a single YAML file
 gem 'figaro'
 
-# Provides object geocoding (by street or IP Address), reverse geocoding (coordinates to street address), distance queries for ActiveRecord and Mongoid, result caching, and more.
+# Provides object geocoding (by street or IP Address), reverse geocoding (coordinates to street address), distance queries for ActiveRecord
 gem 'geocoder', '~> 1.3', '>= 1.3.7'
 
 group :development, :test do
