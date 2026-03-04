@@ -66,7 +66,13 @@ RSpec.configure do |config|
     Capybara::Cuprite::Driver.new(app,
                                   window_size: [1200, 800],
                                   timeout: 60,
-                                  browser_options: { 'no-sandbox': nil })
+                                  process_timeout: 60,
+                                  headless: true,
+                                  browser_options: {
+                                    'no-sandbox': nil,
+                                    'disable-gpu': nil,
+                                    'disable-dev-shm-usage': nil
+                                  })
   end
 
   Capybara.javascript_driver = :cuprite
