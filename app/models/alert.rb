@@ -16,6 +16,10 @@ class Alert < ApplicationRecord
   validates :title, presence: true
   validates :description, presence: true
 
+  before_validation :set_coordinates, if: :home_alert?
+  geocoded_by :location
+  after_validation :geocode, if: :street_alert_and_location_changed?
+
   def user_vote(user)
     alert_votes.find_by(user: user)
   end
@@ -34,5 +38,22 @@ class Alert < ApplicationRecord
 
   def alert_name
     self.class.alert_options.key(alert)
+  end
+
+  private
+
+  def home_alert?
+    alert == HOME
+  end
+
+  def street_alert_and_location_changed?
+    alert == STREET && location_changed?
+  end
+
+  def set_coordinates
+    return unless user&.address
+
+    self.latitude = user.address.latitude
+    self.longitude = user.address.longitude
   end
 end

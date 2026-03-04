@@ -1,6 +1,13 @@
 <%= turbo_frame_tag dom_id(alert, :form) do %>
   <%= form_with(model: alert, id: "alert_form", class: "flex flex-col gap-4",
-                data: { action: "turbo:submit-end->modal--modal-component#close" }) do |form| %>
+                data: { 
+                  controller: "geolocation",
+                  action: "turbo:submit-end->modal--modal-component#close" 
+                }) do |form| %>
+    
+    <%= form.hidden_field :latitude, data: { geolocation_target: "latitude" } %>
+    <%= form.hidden_field :longitude, data: { geolocation_target: "longitude" } %>
+
     <% if alert.errors.any? %>
       <div id="error_explanation" class="bg-red-50 text-red-500 p-4 rounded-xl mb-4 border border-red-100">
         <h2 class="font-bold text-sm">
@@ -27,7 +34,13 @@
           name: :alert,
           label: Alert.human_attribute_name(:alert),
           collection: Alert.alert_options,
-          extra_classes: "pb-4"
+          extra_classes: "pb-4",
+          html_attributes: {
+            data: { 
+              geolocation_target: "type",
+              action: "change->geolocation#handleTypeChange"
+            }
+          }
         ) %>
 
     <%= render Input::InputComponent.new(
@@ -49,7 +62,10 @@
           name: :location,
           label: Alert.human_attribute_name(:location),
           value: alert.location,
-          extra_classes: "pb-4"
+          extra_classes: "pb-4",
+          html_attributes: {
+            data: { geolocation_target: "location" }
+          }
         ) %>
 
     <div class="flex justify-center items-center mt-6">
