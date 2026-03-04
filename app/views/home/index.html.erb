@@ -1,21 +1,57 @@
-<p>Signed as <%= Current.user.email %></p>
+<div class="grid grid-cols-2 gap-4 w-full h-screen">
+  <div class="bg-red-500 w-full"></div>
+  <div>
+    <div class="flex flex-row items-center justify-between">
+      <%= render(Dropdown::DropdownComponent.new(title: "Filtro", options: @options)) %>
+      <div class="flex justify-end p-4">
+        <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
+          <% component.with_trigger do %>
+            <%= render Button::ButtonComponent.new(text: "Criar GeoAlerta") %>
+          <% end %>
 
-<h2>Login and verification</h2>
+          <%= render 'alerts/form', alert: @alert %>
+        <% end %>
+      </div>
+    </div>
+    <div id="alerts" data-controller="alert-details" class="flex flex-col gap-4 p-4">
+      <% @alerts.each do |alert| %>
+        <%= render(AlertCard::AlertCardComponent.new(alert: alert)) %>
+      <% end %>
 
-<div>
-  <%= link_to "Change password", edit_password_path %>
+      <%# Detailed Alert Modal (populated by alert-details controller) %>
+      <div data-alert-details-target="modal">
+        <%= render Modal::ModalComponent.new(title: "Detalhes do Alerta") do %>
+          <div class="flex flex-col gap-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <span data-alert-details-target="name" class="text-[10px] font-bold uppercase tracking-widest text-grey500 px-2 py-0.5 bg-grey100 rounded-md"></span>
+                <h1 data-alert-details-target="title" class="text-2xl font-bold text-grey900 mt-2"></h1>
+              </div>
+              <span data-alert-details-target="type" class=""></span>
+            </div>
+
+            <div class="flex items-center gap-2 text-sm text-grey600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span data-alert-details-target="location"></span>
+            </div>
+
+            <div class="bg-grey50 rounded-xl p-4">
+              <h3 class="text-sm font-semibold text-grey700 mb-2">Descrição</h3>
+              <p data-alert-details-target="description" class="text-grey600 text-sm whitespace-pre-wrap"></p>
+            </div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-grey100">
+              <div class="text-xs text-grey500">
+                Criado por <span data-alert-details-target="creator" class="font-semibold"></span>
+                em <span data-alert-details-target="date"></span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
-
-<div>
-  <%= link_to "Change email address", edit_identity_email_path %>
-</div>
-
-<h2>Access history</h2>
-
-<div>
-  <%= link_to "Devices & Sessions", sessions_path %>
-</div>
-
-<br>
-
-<%= button_to "Log out", Current.session, method: :delete %>

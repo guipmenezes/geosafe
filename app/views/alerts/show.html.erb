@@ -1,0 +1,42 @@
+<%= turbo_frame_tag "remote_modal" do %>
+  <%= render Modal::ModalComponent.new(title: "Detalhes do Alerta", open: true) do %>
+    <div class="flex flex-col gap-4">
+      <div class="flex justify-between items-start">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-grey500 px-2 py-0.5 bg-grey100 rounded-md">
+            <%= @alert.alert_name %>
+          </span>
+          <h1 class="text-2xl font-bold text-grey900 mt-2"><%= @alert.title %></h1>
+        </div>
+        <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider <%= case @alert.alert_type
+                                                            when 1 then 'bg-green-50 text-green-700'
+                                                            when 2 then 'bg-yellow-50 text-yellow-700'
+                                                            when 3 then 'bg-red-50 text-red-700'
+                                                            else 'bg-grey100 text-grey700'
+                                                            end %>">
+          <%= @alert.alert_type_name %>
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2 text-sm text-grey600">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <%= @alert.location %>
+      </div>
+
+      <div class="bg-grey50 rounded-xl p-4">
+        <h3 class="text-sm font-semibold text-grey700 mb-2">Descrição</h3>
+        <p class="text-grey600 text-sm whitespace-pre-wrap"><%= @alert.description %></p>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-grey100">
+        <div class="text-xs text-grey500">
+          Criado por <span class="font-semibold"><%= @alert.user.username %></span>
+          em <%= l(@alert.created_at, format: :short) %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,15 @@
+<%= turbo_stream.replace dom_id(@alert) do %>
+  <%= render AlertCard::AlertCardComponent.new(alert: @alert) %>
+<% end %>
+
+<%# Also update the modal details if it happens to be the one open %>
+<div data-controller="alert-details" id="temp-update-details" class="hidden"
+     data-alert-title="<%= @alert.title %>"
+     data-alert-description="<%= @alert.description %>"
+     data-alert-location="<%= @alert.location %>"
+     data-alert-name="<%= @alert.alert_name %>"
+     data-alert-type-name="<%= @alert.alert_type_name %>"
+     data-alert-type="<%= @alert.alert_type %>"
+     data-alert-creator="<%= @alert.user.full_name %>"
+     data-alert-date="<%= l(@alert.created_at, format: :short) %>">
+</div>

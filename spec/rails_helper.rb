@@ -39,6 +39,8 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
@@ -64,7 +66,13 @@ RSpec.configure do |config|
     Capybara::Cuprite::Driver.new(app,
                                   window_size: [1200, 800],
                                   timeout: 60,
-                                  browser_options: { 'no-sandbox': nil })
+                                  process_timeout: 60,
+                                  headless: true,
+                                  browser_options: {
+                                    'no-sandbox': nil,
+                                    'disable-gpu': nil,
+                                    'disable-dev-shm-usage': nil
+                                  })
   end
 
   Capybara.javascript_driver = :cuprite

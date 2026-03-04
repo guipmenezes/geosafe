@@ -154,6 +154,12 @@ pt-BR:
         state: "Estado"
         address: "Endereço"
         number: "Número"
+      alert:
+        alert_type: "Tipo de Alerta"
+        alert: "Ambiente"
+        location: "Localização"
+        title: "Título"
+        description: "Descrição"
     errors:
       template:
         header:

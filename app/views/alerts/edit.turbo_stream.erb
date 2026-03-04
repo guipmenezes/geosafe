@@ -1,0 +1,5 @@
+<%= turbo_stream.replace "remote_modal" do %>
+  <%= render Modal::ModalComponent.new(title: "Editar Alerta", open: true) do %>
+    <%= render "alerts/form", alert: @alert %>
+  <% end %>
+<% end %>

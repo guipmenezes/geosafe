@@ -1,23 +1,23 @@
-<div class="<%= @extra_classes %> flex gap-2 flex-col w-full">
-  <div class="flex flex-col gap-1">
-    <% if @label.present? %>
-      <label class="font-medium text-md"><%= @label %></label>
-    <% end %>
-    <div class="w-full relative">
-      <div class="w-full">
-        <% if @form.present? %>
-          <%= @form.text_field @name, html_options.merge(autocomplete: @options[:autocomplete]) %>
-        <% else %>
-          <%= text_field_tag @name, @value, html_options.merge(autocomplete: @options[:autocomplete]) %>
-        <% end %>
-      </div>
-      <% if @errors.any? %>
-        <div class="text-red-500 text-sm mt-1 pl-4">
-          <% @errors.each do |error| %>
-            <p><%= error %></p>
-          <% end %>
-        </div>
+<div class="<%= @options[:extra_classes] %> flex gap-1.5 flex-col w-full">
+  <% if @options[:label].present? %>
+    <%= render Label::LabelComponent.new(form: @form, name: @name, text: @options[:label]) %>
+  <% end %>
+
+  <div class="relative w-full">
+    <div class="w-full">
+      <% if @form.present? %>
+        <%= @form.text_field @name, html_options.merge(autocomplete: @options[:autocomplete]) %>
+      <% else %>
+        <%= text_field_tag @name, @value, html_options.merge(autocomplete: @options[:autocomplete]) %>
       <% end %>
     </div>
   </div>
+
+  <% if @errors.any? %>
+    <div class="text-red-500 text-xs mt-1 ml-1 font-medium">
+      <% @errors.each do |error| %>
+        <p><%= error %></p>
+      <% end %>
+    </div>
+  <% end %>
 </div>
