@@ -6,7 +6,7 @@ class Address < ApplicationRecord
   validates :cep, :uf, :city, :state, :address, :number, presence: true
 
   geocoded_by :geocoding_address
-  after_validation :geocode, if: :address_changed?
+  after_validation :geocode, if: :geocoding_address_changed?
 
   private
 
@@ -14,7 +14,7 @@ class Address < ApplicationRecord
     [address, city, state, 'Brasil'].compact.join(', ')
   end
 
-  def address_changed?
+  def geocoding_address_changed?
     address_changed? || city_changed? || state_changed?
   end
 end
