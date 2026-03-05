@@ -6,9 +6,9 @@
   <div class="relative w-full group">
     <%# Hidden Native Select for Form Submission %>
     <% if @form.present? %>
-      <%= @form.hidden_field @name, data: { select_target: "input" }, value: selected_value %>
+      <%= @form.hidden_field @name, data: { select_target: "input" }.merge(@options[:html_attributes].fetch(:data, {})), **@options[:html_attributes].except(:data), value: selected_value %>
     <% else %>
-      <%= hidden_field_tag @name, selected_value, data: { select_target: "input" } %>
+      <%= hidden_field_tag @name, selected_value, data: { select_target: "input" }.merge(@options[:html_attributes].fetch(:data, {})), **@options[:html_attributes].except(:data) %>
     <% end %>
 
     <%# Custom Trigger Button %>
