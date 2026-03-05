@@ -1,25 +1,24 @@
-<div class="grid grid-cols-2 gap-4 w-full h-screen">
-  <div data-controller="map" data-map-alerts-value="<%= @alerts_json %>" class="w-full h-full">
+<div class="grid grid-cols-2 gap-6 w-full h-[calc(100vh-160px)] overflow-hidden pb-4">
+  <div data-controller="map" data-map-alerts-value="<%= @alerts_json %>" class="w-full h-full rounded-3xl overflow-hidden shadow-sm border border-gray-100">
     <div data-map-target="container" class="w-full h-full"></div>
   </div>
-  <div>
-    <div class="flex flex-row items-center justify-between">
+  
+  <div class="flex flex-col h-full overflow-hidden">
+    <div class="flex flex-row items-center justify-between mb-4 pr-2">
       <%= render(Dropdown::DropdownComponent.new(title: "Filtro", options: @options)) %>
-      <div class="flex justify-end p-4">
-        <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
-          <% component.with_trigger do %>
-            <%= render Button::ButtonComponent.new(text: "Criar GeoAlerta") %>
-          <% end %>
-
-          <%= render 'alerts/form', alert: @alert %>
+      <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
+        <% component.with_trigger do %>
+          <%= render Button::ButtonComponent.new(text: "Criar GeoAlerta") %>
         <% end %>
-      </div>
+        <%= render 'alerts/form', alert: @alert %>
+      <% end %>
     </div>
-    <div id="alerts" data-controller="alert-details" class="flex flex-col gap-4 p-4">
+
+    <div id="alerts" data-controller="alert-details" class="flex flex-col gap-4 overflow-y-auto pr-2 pb-10 custom-scrollbar">
       <% @alerts.each do |alert| %>
         <%= render(AlertCard::AlertCardComponent.new(alert: alert)) %>
       <% end %>
-
+      
       <%# Detailed Alert Modal (populated by alert-details controller) %>
       <div data-alert-details-target="modal">
         <%= render Modal::ModalComponent.new(title: "Detalhes do Alerta") do %>
