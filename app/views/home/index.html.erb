@@ -2,7 +2,7 @@
   <div data-controller="map" data-map-alerts-value="<%= @alerts_json %>" class="w-full h-full rounded-3xl overflow-hidden shadow-sm border border-gray-100">
     <div data-map-target="container" class="w-full h-full"></div>
   </div>
-  
+
   <div class="flex flex-col h-full overflow-hidden">
     <div class="flex flex-row items-center justify-between mb-4 pr-2">
       <%= render(Dropdown::DropdownComponent.new(title: "Filtro", options: @options)) %>
@@ -18,7 +18,7 @@
       <% @alerts.each do |alert| %>
         <%= render(AlertCard::AlertCardComponent.new(alert: alert)) %>
       <% end %>
-      
+
       <%# Detailed Alert Modal (populated by alert-details controller) %>
       <div data-alert-details-target="modal">
         <%= render Modal::ModalComponent.new(title: "Detalhes do Alerta") do %>
