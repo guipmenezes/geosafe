@@ -1,5 +1,7 @@
 <div class="grid grid-cols-2 gap-4 w-full h-screen">
-  <div class="bg-red-500 w-full"></div>
+  <div data-controller="map" data-map-alerts-value="<%= @alerts_json %>" class="w-full h-full">
+    <div data-map-target="container" class="w-full h-full"></div>
+  </div>
   <div>
     <div class="flex flex-row items-center justify-between">
       <%= render(Dropdown::DropdownComponent.new(title: "Filtro", options: @options)) %>

@@ -4,7 +4,7 @@ Geocoder.configure(
   # Geocoding options
   timeout: 5,                 # geocoding service timeout (secs)
   lookup: :google,            # name of geocoding service (symbol)
-  api_key: ENV.fetch('GOOGLE_MAPS_API_KEY', nil), # API key for geocoding service
+  api_key: Rails.application.credentials.maps_api_key, # API key for geocoding service
   units: :km # :km for kilometers or :mi for miles
 
   # Exceptions that should not be rescued by default

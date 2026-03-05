@@ -6,6 +6,7 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.maps_api_key %>" async defer></script>
     <%= javascript_importmap_tags %>
   </head>
 
