@@ -16,7 +16,10 @@ class AlertsController < ApplicationController
         format.turbo_stream
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('alert_form', partial: 'alerts/form', locals: { alert: @alert }) }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(helpers.dom_id(@alert, :form), partial: 'alerts/form', locals: { alert: @alert }),
+                 status: :unprocessable_entity
+        end
       end
     end
   end
@@ -41,7 +44,10 @@ class AlertsController < ApplicationController
         format.turbo_stream
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@alert, :form), partial: 'alerts/form', locals: { alert: @alert }) }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(helpers.dom_id(@alert, :form), partial: 'alerts/form', locals: { alert: @alert }),
+                 status: :unprocessable_entity
+        end
       end
     end
   end

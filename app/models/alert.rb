@@ -19,6 +19,7 @@ class Alert < ApplicationRecord
   before_validation :set_coordinates, if: :home_alert?
   geocoded_by :location
   after_validation :geocode, if: :street_alert_and_location_changed?
+  after_validation :reverse_geocode_location, if: :should_reverse_geocode?
 
   def user_vote(user)
     alert_votes.find_by(user: user)
@@ -42,12 +43,38 @@ class Alert < ApplicationRecord
 
   private
 
+  def should_reverse_geocode?
+    latitude.present? && longitude.present? && (location.blank? || location.start_with?("Coordenadas:"))
+  end
+
+  def reverse_geocode_location
+    results = Geocoder.search([latitude, longitude], language: 'pt-BR')
+    return unless (result = results.first)
+
+    # Extract components with multiple possible types for Brazil
+    components = result.data["address_components"] || []
+    
+    street = components.find { |c| c["types"].intersect?(%w[route street_address]) }&.dig("long_name")
+    neighborhood = components.find { |c| c["types"].intersect?(%w[sublocality sublocality_level_1 neighborhood]) }&.dig("long_name")
+    city = components.find { |c| c["types"].include?("administrative_area_level_2") || c["types"].include?("locality") }&.dig("long_name")
+
+    if street.present? && neighborhood.present?
+      self.location = "#{street}, #{neighborhood}"
+    elsif street.present? && city.present?
+      self.location = "#{street}, #{city}"
+    elsif result.address.present?
+      self.location = result.address.split(",").first(2).map(&:strip).join(", ")
+    end
+  rescue StandardError => e
+    Rails.logger.error "Reverse geocoding failed: #{e.message}"
+  end
+
   def home_alert?
     alert == HOME
   end
 
   def street_alert_and_location_changed?
-    alert == STREET && location_changed?
+    alert == STREET && location_changed? && (latitude.blank? || longitude.blank?)
   end
 
   def set_coordinates

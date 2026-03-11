@@ -56,6 +56,7 @@
     <orderEntry type="library" scope="PROVIDED" name="concurrent-ruby (v1.3.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="connection_pool (v2.5.4, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="crass (v1.0.6, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="csv (v3.3.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cuprite (v0.17, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="date (v3.5.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="debug (v1.11.0, asdf: 3.2.2) [gem]" level="application" />
@@ -66,8 +67,11 @@
     <orderEntry type="library" scope="PROVIDED" name="erb (v6.0.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="erb_lint (v0.9.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="erubi (v1.13.1, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="factory_bot (v6.5.6, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="factory_bot_rails (v6.5.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ferrum (v0.17.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="figaro (v1.3.0, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="geocoder (v1.8.6, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="globalid (v1.3.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="i18n (v1.14.7, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="importmap-rails (v2.2.2, asdf: 3.2.2) [gem]" level="application" />
@@ -108,6 +112,7 @@
     <orderEntry type="library" scope="PROVIDED" name="rack-test (v2.2.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rackup (v2.2.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails (v7.1.5.2, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rails-controller-testing (v1.0.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails-dom-testing (v2.3.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails-html-sanitizer (v1.6.2, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="railties (v7.1.5.2, asdf: 3.2.2) [gem]" level="application" />

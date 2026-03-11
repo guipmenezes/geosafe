@@ -1,3 +1,17 @@
 <%= turbo_stream.prepend "alerts", render(AlertCard::AlertCardComponent.new(alert: @alert)) %>
 
-<%= turbo_stream.replace "alert_form", partial: "alerts/form", locals: { alert: Alert.new } %>
+<%= turbo_stream.replace "new_alert_form", partial: "alerts/form", locals: { alert: Alert.new } %>
+
+<script>
+  window.dispatchEvent(new CustomEvent("alert:created", {
+    detail: {
+      alert: {
+        id: <%= @alert.id %>,
+        latitude: <%= @alert.latitude %>,
+        longitude: <%= @alert.longitude %>,
+        title: "<%= j @alert.title %>",
+        alert_type: <%= @alert.alert_type %>
+      }
+    }
+  }));
+</script>
