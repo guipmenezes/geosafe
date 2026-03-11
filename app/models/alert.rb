@@ -44,7 +44,7 @@ class Alert < ApplicationRecord
   private
 
   def should_reverse_geocode?
-    latitude.present? && longitude.present? && (location.blank? || location.start_with?("Coordenadas:"))
+    latitude.present? && longitude.present? && (location.blank? || location.start_with?('Coordenadas:'))
   end
 
   def reverse_geocode_location
@@ -52,18 +52,18 @@ class Alert < ApplicationRecord
     return unless (result = results.first)
 
     # Extract components with multiple possible types for Brazil
-    components = result.data["address_components"] || []
-    
-    street = components.find { |c| c["types"].intersect?(%w[route street_address]) }&.dig("long_name")
-    neighborhood = components.find { |c| c["types"].intersect?(%w[sublocality sublocality_level_1 neighborhood]) }&.dig("long_name")
-    city = components.find { |c| c["types"].include?("administrative_area_level_2") || c["types"].include?("locality") }&.dig("long_name")
+    components = result.data['address_components'] || []
+
+    street = components.find { |c| c['types'].intersect?(%w[route street_address]) }&.dig('long_name')
+    neighborhood = components.find { |c| c['types'].intersect?(%w[sublocality sublocality_level_1 neighborhood]) }&.dig('long_name')
+    city = components.find { |c| c['types'].include?('administrative_area_level_2') || c['types'].include?('locality') }&.dig('long_name')
 
     if street.present? && neighborhood.present?
       self.location = "#{street}, #{neighborhood}"
     elsif street.present? && city.present?
       self.location = "#{street}, #{city}"
     elsif result.address.present?
-      self.location = result.address.split(",").first(2).map(&:strip).join(", ")
+      self.location = result.address.split(',').first(2).map(&:strip).join(', ')
     end
   rescue StandardError => e
     Rails.logger.error "Reverse geocoding failed: #{e.message}"
