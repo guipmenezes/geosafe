@@ -15,35 +15,35 @@ class AddressesController < ApplicationController
   end
 
   def reverse_geocode
-    results = Geocoder.search([params[:lat], params[:lng]], language: 'pt-BR')
-    if results.any?
-      result = results.first
+    result = Geocoder.search([params[:lat], params[:lng]], language: 'pt-BR').first
 
-      # Extract components with multiple possible types for Brazil
-      components = result.data['address_components'] || []
-
-      street = components.find { |c| c['types'].intersect?(%w[route street_address]) }&.dig('long_name')
-      neighborhood = components.find { |c| c['types'].intersect?(%w[sublocality sublocality_level_1 neighborhood]) }&.dig('long_name')
-      city = components.find { |c| c['types'].include?('administrative_area_level_2') || c['types'].include?('locality') }&.dig('long_name')
-
-      formatted_address = if street.present? && neighborhood.present?
-                            "#{street}, #{neighborhood}"
-                          elsif street.present? && city.present?
-                            "#{street}, #{city}"
-                          elsif result.address.present?
-                            # Fallback to the first two parts of the formatted address (usually Street, Number or Street, Bairro)
-                            result.address.split(',').first(2).map(&:strip).join(', ')
-                          else
-                            'Localização identificada'
-                          end
-
-      render json: { address: formatted_address }
+    if result
+      render json: { address: format_geocoded_address(result) }
     else
       render json: { address: 'Localização desconhecida' }, status: :not_found
     end
   end
 
   private
+
+  def format_geocoded_address(result)
+    components = result.data['address_components'] || []
+    street = find_component(components, %w[route street_address])
+    neighborhood = find_component(components, %w[sublocality sublocality_level_1 neighborhood])
+    city = find_component(components, %w[administrative_area_level_2 locality])
+
+    if street && neighborhood
+      "#{street}, #{neighborhood}"
+    elsif street && city
+      "#{street}, #{city}"
+    else
+      result.address.to_s.split(',').first(2).map(&:strip).join(', ')
+    end
+  end
+
+  def find_component(components, types)
+    components.find { |c| c['types'].intersect?(types) }&.dig('long_name')
+  end
 
   def address_params
     params.require(:address).permit(:cep, :uf, :address, :number, :complement, :city, :state)

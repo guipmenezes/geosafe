@@ -48,25 +48,31 @@ class Alert < ApplicationRecord
   end
 
   def reverse_geocode_location
-    results = Geocoder.search([latitude, longitude], language: 'pt-BR')
-    return unless (result = results.first)
+    result = Geocoder.search([latitude, longitude], language: 'pt-BR').first
+    return unless result
 
-    # Extract components with multiple possible types for Brazil
     components = result.data['address_components'] || []
+    street = find_address_component(components, %w[route street_address])
+    neighborhood = find_address_component(components, %w[sublocality sublocality_level_1 neighborhood])
+    city = find_address_component(components, %w[administrative_area_level_2 locality])
 
-    street = components.find { |c| c['types'].intersect?(%w[route street_address]) }&.dig('long_name')
-    neighborhood = components.find { |c| c['types'].intersect?(%w[sublocality sublocality_level_1 neighborhood]) }&.dig('long_name')
-    city = components.find { |c| c['types'].include?('administrative_area_level_2') || c['types'].include?('locality') }&.dig('long_name')
-
-    if street.present? && neighborhood.present?
-      self.location = "#{street}, #{neighborhood}"
-    elsif street.present? && city.present?
-      self.location = "#{street}, #{city}"
-    elsif result.address.present?
-      self.location = result.address.split(',').first(2).map(&:strip).join(', ')
-    end
+    self.location = format_location(street, neighborhood, city, result.address)
   rescue StandardError => e
     Rails.logger.error "Reverse geocoding failed: #{e.message}"
+  end
+
+  def find_address_component(components, types)
+    components.find { |c| c['types'].intersect?(types) }&.dig('long_name')
+  end
+
+  def format_location(street, neighborhood, city, full_address)
+    if street && neighborhood
+      "#{street}, #{neighborhood}"
+    elsif street && city
+      "#{street}, #{city}"
+    else
+      full_address.to_s.split(',').first(2).map(&:strip).join(', ')
+    end
   end
 
   def home_alert?
