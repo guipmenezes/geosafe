@@ -2,7 +2,7 @@
   <%= form_with(model: alert, id: "alert_form", class: "flex flex-col gap-4",
                 data: {
                   controller: "geolocation",
-                  action: "turbo:submit-end->modal--modal-component#close"
+                  action: "turbo:submit-end->modal--modal-component#close map:location-picked@window->geolocation#handleLocationPicked"
                 }) do |form| %>
 
     <%= form.hidden_field :latitude, data: { geolocation_target: "latitude" } %>
@@ -26,7 +26,8 @@
           name: :alert_type,
           label: Alert.human_attribute_name(:alert_type),
           collection: Alert.alert_type_options,
-          extra_classes: "pb-4"
+          extra_classes: "pb-4",
+          prompt: "Selecione o nível de segurança..."
         ) %>
 
     <%= render Select::SelectComponent.new(
@@ -42,6 +43,13 @@
             }
           }
         ) %>
+
+    <div class="bg-blue-50 p-3 rounded-lg text-blue-700 text-[10px] mb-2 border border-blue-100">
+      <p class="font-semibold mb-1">Dica:</p>
+      <p>1. Selecione se o alerta é residencial ou na rua.</p>
+      <p>2. Clique no mapa para marcar o local exato (para alertas na rua).</p>
+      <p>3. Não esqueça de definir o nível de segurança (Seguro, Atenção ou Perigo).</p>
+    </div>
 
     <%= render Input::InputComponent.new(
           form: form,

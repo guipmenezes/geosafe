@@ -15,6 +15,7 @@ export default class extends Controller {
 
   handleTypeChange(event) {
     const value = event.target.value
+    this.manuallyPicked = false
     if (value === "2") { // STREET
       this.getLocation()
     } else {
@@ -22,20 +23,65 @@ export default class extends Controller {
     }
   }
 
+  handleLocationPicked(event) {
+    this.manuallyPicked = true
+    const { lat, lng } = event.detail
+    
+    if (this.hasLatitudeTarget) this.latitudeTarget.value = lat
+    if (this.hasLongitudeTarget) this.longitudeTarget.value = lng
+    
+    this.fetchAddress(lat, lng)
+
+    if (this.hasTypeTarget) {
+      this.typeTarget.value = "2" // STREET
+      
+      // Update the select UI label if it's a select component
+      const selectContainer = this.typeTarget.closest('[data-controller="select"]')
+      if (selectContainer) {
+        const label = selectContainer.querySelector('[data-select-target="label"]')
+        if (label) {
+          label.innerText = "Na Rua"
+        }
+      }
+    }
+  }
+
+  fetchAddress(lat, lng) {
+    if (this.hasLocationTarget) {
+      this.locationTarget.value = "Buscando endereço..."
+    }
+
+    fetch(`/addresses/reverse_geocode?lat=${lat}&lng=${lng}`)
+      .then(response => response.json())
+      .then(data => {
+        if (this.hasLocationTarget) {
+          this.locationTarget.value = data.address || `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+        }
+      })
+      .catch(() => {
+        if (this.hasLocationTarget) {
+          this.locationTarget.value = `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+        }
+      })
+  }
+
   getLocation() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          this.latitudeTarget.value = position.coords.latitude
-          this.longitudeTarget.value = position.coords.longitude
+          if (this.manuallyPicked) return
+
+          const lat = position.coords.latitude
+          const lng = position.coords.longitude
+
+          this.latitudeTarget.value = lat
+          this.longitudeTarget.value = lng
           
-          if (this.hasLocationTarget && !this.locationTarget.value) {
-            this.locationTarget.value = "Minha localização atual"
-          }
+          this.fetchAddress(lat, lng)
         },
         (error) => {
           console.error("Error getting location:", error)
-          alert("Não foi possível obter a sua localização. Por favor, verifique as permissões do seu navegador.")
+          // Don't alert here to avoid annoying the user if they want to pick on map instead
         },
         {
           enableHighAccuracy: true,
@@ -43,8 +89,6 @@ export default class extends Controller {
           maximumAge: 0
         }
       )
-    } else {
-      alert("Geolocalização não é suportada pelo seu navegador.")
     }
   }
 

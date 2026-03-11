@@ -19,6 +19,7 @@ class Alert < ApplicationRecord
   before_validation :set_coordinates, if: :home_alert?
   geocoded_by :location
   after_validation :geocode, if: :street_alert_and_location_changed?
+  after_validation :reverse_geocode_location, if: :should_reverse_geocode?
 
   def user_vote(user)
     alert_votes.find_by(user: user)
@@ -42,12 +43,44 @@ class Alert < ApplicationRecord
 
   private
 
+  def should_reverse_geocode?
+    latitude.present? && longitude.present? && (location.blank? || location.start_with?('Coordenadas:'))
+  end
+
+  def reverse_geocode_location
+    result = Geocoder.search([latitude, longitude], language: 'pt-BR').first
+    return unless result
+
+    components = result.data['address_components'] || []
+    street = find_address_component(components, %w[route street_address])
+    neighborhood = find_address_component(components, %w[sublocality sublocality_level_1 neighborhood])
+    city = find_address_component(components, %w[administrative_area_level_2 locality])
+
+    self.location = format_location(street, neighborhood, city, result.address)
+  rescue StandardError => e
+    Rails.logger.error "Reverse geocoding failed: #{e.message}"
+  end
+
+  def find_address_component(components, types)
+    components.find { |c| c['types'].intersect?(types) }&.dig('long_name')
+  end
+
+  def format_location(street, neighborhood, city, full_address)
+    if street && neighborhood
+      "#{street}, #{neighborhood}"
+    elsif street && city
+      "#{street}, #{city}"
+    else
+      full_address.to_s.split(',').first(2).map(&:strip).join(', ')
+    end
+  end
+
   def home_alert?
     alert == HOME
   end
 
   def street_alert_and_location_changed?
-    alert == STREET && location_changed?
+    alert == STREET && location_changed? && (latitude.blank? || longitude.blank?)
   end
 
   def set_coordinates
