@@ -9,8 +9,8 @@ class Address < ApplicationRecord
   after_validation :geocode, if: :geocoding_address_changed?
 
   def full_address
-    city_state = [city, uf].compact.reject(&:blank?).join(" - ")
-    [address, number, city_state].compact.reject(&:blank?).join(", ")
+    city_state = [city, uf].compact.reject(&:blank?).join(' - ')
+    [address, number, city_state].compact.reject(&:blank?).join(', ')
   end
 
   private

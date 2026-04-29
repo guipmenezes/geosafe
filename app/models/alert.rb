@@ -59,31 +59,38 @@ class Alert < ApplicationRecord
     result = Geocoder.search([latitude, longitude], language: 'pt-BR').first
     return unless result
 
-    components = result.data['address_components'] || []
-    street = find_address_component(components, %w[route street_address])
-    neighborhood = find_address_component(components, %w[sublocality sublocality_level_1 neighborhood])
-    city = find_address_component(components, %w[administrative_area_level_2 locality])
-    state = find_address_component(components, %w[administrative_area_level_1], "short_name")
-
-    self.location = format_location(street, neighborhood, city, state, result.address)
+    data = extract_address_components(result.data['address_components'] || [])
+    self.location = format_location(data, result.address)
   rescue StandardError => e
     Rails.logger.error "Reverse geocoding failed: #{e.message}"
   end
 
-  def find_address_component(components, types, field = "long_name")
+  def extract_address_components(components)
+    {
+      street: find_address_component(components, %w[route street_address]),
+      neighborhood: find_address_component(components, %w[sublocality sublocality_level_1 neighborhood]),
+      city: find_address_component(components, %w[administrative_area_level_2 locality]),
+      state: find_address_component(components, %w[administrative_area_level_1], 'short_name')
+    }
+  end
+
+  def find_address_component(components, types, field = 'long_name')
     components.find { |c| c['types'].intersect?(types) }&.dig(field)
   end
 
-  def format_location(street, neighborhood, city, state, full_address)
-    if street && neighborhood && city && state
-      "#{street}, #{neighborhood}, #{city} - #{state}"
-    elsif street && neighborhood
-      "#{street}, #{neighborhood}"
-    elsif street && city
-      "#{street}, #{city}"
-    else
-      full_address.to_s.split(',').first(2).map(&:strip).join(', ')
-    end
+  def format_location(data, fallback)
+    return format_full_address(data) if data.values.all?(&:present?)
+    return format_partial_address(data) if data[:street] && (data[:neighborhood] || data[:city])
+
+    fallback.to_s.split(',').first(2).map(&:strip).join(', ')
+  end
+
+  def format_full_address(data)
+    "#{data[:street]}, #{data[:neighborhood]}, #{data[:city]} - #{data[:state]}"
+  end
+
+  def format_partial_address(data)
+    [data[:street], data[:neighborhood] || data[:city]].join(', ')
   end
 
   def street_alert_and_location_changed?
