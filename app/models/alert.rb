@@ -10,7 +10,7 @@ class Alert < ApplicationRecord
   has_many :alert_votes, dependent: :destroy
 
   validates :alert, presence: true, inclusion: { in: [HOME, STREET] }
-  validates :location, presence: true
+  validates :location, presence: true, if: :street_alert?
   validates :alert_type, presence: true, inclusion: { in: [GOOD, ALERT, DANGER] }
   validates :user_id, presence: true
   validates :title, presence: true
@@ -19,6 +19,7 @@ class Alert < ApplicationRecord
   before_validation :set_coordinates, if: :home_alert?
   geocoded_by :location
   after_validation :geocode, if: :street_alert_and_location_changed?
+  after_validation :reverse_geocode_location, if: :should_reverse_geocode?
 
   def user_vote(user)
     alert_votes.find_by(user: user)
@@ -40,20 +41,69 @@ class Alert < ApplicationRecord
     self.class.alert_options.key(alert)
   end
 
-  private
-
   def home_alert?
     alert == HOME
   end
 
+  def street_alert?
+    alert == STREET
+  end
+
+  private
+
+  def should_reverse_geocode?
+    street_alert? && latitude.present? && longitude.present? && (location.blank? || location.start_with?('Coordenadas:'))
+  end
+
+  def reverse_geocode_location
+    result = Geocoder.search([latitude, longitude], language: 'pt-BR').first
+    return unless result
+
+    data = extract_address_components(result.data['address_components'] || [])
+    self.location = format_location(data, result.address)
+  rescue StandardError => e
+    Rails.logger.error "Reverse geocoding failed: #{e.message}"
+  end
+
+  def extract_address_components(components)
+    {
+      street: find_address_component(components, %w[route street_address]),
+      neighborhood: find_address_component(components, %w[sublocality sublocality_level_1 neighborhood]),
+      city: find_address_component(components, %w[administrative_area_level_2 locality]),
+      state: find_address_component(components, %w[administrative_area_level_1], 'short_name')
+    }
+  end
+
+  def find_address_component(components, types, field = 'long_name')
+    components.find { |c| c['types'].intersect?(types) }&.dig(field)
+  end
+
+  def format_location(data, fallback)
+    return format_full_address(data) if data.values.all?(&:present?)
+    return format_partial_address(data) if data[:street] && (data[:neighborhood] || data[:city])
+
+    # Strip Plus Codes (e.g., 6WHX+JQ) if they appear at the start
+    clean_fallback = fallback.to_s.gsub(/^[A-Z0-9]{4}\+[A-Z0-9]{2,}\s?/, '')
+    clean_fallback.split(',').first(2).map(&:strip).join(', ')
+  end
+
+  def format_full_address(data)
+    "#{data[:street]}, #{data[:neighborhood]}, #{data[:city]} - #{data[:state]}"
+  end
+
+  def format_partial_address(data)
+    [data[:street], data[:neighborhood] || data[:city]].join(', ')
+  end
+
   def street_alert_and_location_changed?
-    alert == STREET && location_changed?
+    street_alert? && location_changed? && (latitude.blank? || longitude.blank?)
   end
 
   def set_coordinates
     return unless user&.address
 
-    self.latitude = user.address.latitude
-    self.longitude = user.address.longitude
+    self.latitude ||= user.address.latitude
+    self.longitude ||= user.address.longitude
+    self.location ||= user.address.full_address
   end
 end

@@ -1,8 +1,14 @@
 <%= turbo_frame_tag dom_id(alert, :form) do %>
-  <%= form_with(model: alert, id: "alert_form", class: "flex flex-col gap-4",
+  <% user_address = Current.user.address %>
+  <%= form_with(model: alert, id: "new_alert_form", class: "flex flex-col gap-4",
                 data: {
                   controller: "geolocation",
-                  action: "turbo:submit-end->modal--modal-component#close"
+                  geolocation_user_address_value: {
+                    lat: user_address&.latitude,
+                    lng: user_address&.longitude,
+                    address: user_address&.full_address
+                  }.to_json,
+                  action: "turbo:submit-end->modal--modal-component#close map:location-picked@window->geolocation#handleLocationPicked"
                 }) do |form| %>
 
     <%= form.hidden_field :latitude, data: { geolocation_target: "latitude" } %>
@@ -26,7 +32,8 @@
           name: :alert_type,
           label: Alert.human_attribute_name(:alert_type),
           collection: Alert.alert_type_options,
-          extra_classes: "pb-4"
+          extra_classes: "pb-4",
+          prompt: "Selecione o nível de segurança..."
         ) %>
 
     <%= render Select::SelectComponent.new(
@@ -43,6 +50,13 @@
           }
         ) %>
 
+    <div data-geolocation-target="hint" class="<%= 'hidden' unless alert.street_alert? %> bg-blue-50 p-3 rounded-lg text-blue-700 text-[10px] mb-2 border border-blue-100">
+      <p class="font-semibold mb-1">Dica:</p>
+      <p>1. Selecione se o alerta é residencial ou na rua.</p>
+      <p>2. Clique no mapa para marcar o local exato (para alertas na rua).</p>
+      <p>3. Não esqueça de definir o nível de segurança (Seguro, Atenção ou Perigo).</p>
+    </div>
+
     <%= render Input::InputComponent.new(
           form: form,
           name: :title,
@@ -57,16 +71,18 @@
           extra_classes: "pb-4"
         ) %>
 
-    <%= render Input::InputComponent.new(
-          form: form,
-          name: :location,
-          label: Alert.human_attribute_name(:location),
-          value: alert.location,
-          extra_classes: "pb-4",
-          html_attributes: {
-            data: { geolocation_target: "location" }
-          }
-        ) %>
+    <div data-geolocation-target="locationContainer" class="<%= 'hidden' unless alert.street_alert? %>">
+      <%= render Input::InputComponent.new(
+            form: form,
+            name: :location,
+            label: Alert.human_attribute_name(:location),
+            value: alert.location,
+            extra_classes: "pb-4",
+            html_attributes: {
+              data: { geolocation_target: "location" }
+            }
+          ) %>
+    </div>
 
     <div class="flex justify-center items-center mt-6">
       <%= render Button::ButtonComponent.new(text: alert.new_record? ? "Criar alerta" : "Atualizar alerta", type: "submit", extra_classes: "w-1/2") %>

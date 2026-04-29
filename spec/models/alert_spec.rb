@@ -32,5 +32,61 @@ RSpec.describe Alert, type: :model do
       alert.valid?
       expect(alert.errors[:description]).to include('não pode ficar em branco')
     end
+
+    it 'is valid without location if it is a HOME alert' do
+      alert = Alert.new(
+        title: 'Home Alert',
+        description: 'Testing',
+        alert_type: TypeCodes::GOOD,
+        alert: AlertCodes::HOME,
+        user: user
+      )
+      expect(alert).to be_valid
+    end
+
+    it 'is invalid without location if it is a STREET alert' do
+      alert = Alert.new(
+        title: 'Street Alert',
+        description: 'Testing',
+        alert_type: TypeCodes::GOOD,
+        alert: AlertCodes::STREET,
+        user: user,
+        location: nil
+      )
+      alert.valid?
+      expect(alert.errors[:location]).to include('não pode ficar em branco')
+    end
+  end
+
+  describe 'coordinates' do
+    let(:address) do
+      Address.create!(
+        user: user,
+        cep: '12345-678',
+        uf: 'SP',
+        city: 'São Paulo',
+        state: 'São Paulo',
+        address: 'Rua Teste',
+        number: '123',
+        latitude: -23.5505,
+        longitude: -46.6333
+      )
+    end
+
+    it 'sets coordinates and location from user address for HOME alerts' do
+      address # trigger creation
+      alert = Alert.new(
+        title: 'Home Alert',
+        description: 'Testing home alert',
+        alert_type: TypeCodes::GOOD,
+        alert: AlertCodes::HOME,
+        user: user
+      )
+
+      alert.valid?
+      expect(alert.latitude).to eq(address.latitude)
+      expect(alert.longitude).to eq(address.longitude)
+      expect(alert.location).to eq(address.full_address)
+    end
   end
 end
