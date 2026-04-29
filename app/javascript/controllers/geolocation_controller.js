@@ -1,25 +1,61 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["latitude", "longitude", "location", "type"]
+  static targets = ["latitude", "longitude", "location", "type", "hint", "locationContainer"]
+  static values = { userAddress: Object }
 
   connect() {
     this.checkCurrentType()
   }
 
   checkCurrentType() {
-    if (this.hasTypeTarget && this.typeTarget.value === "2") {
-      this.getLocation()
+    if (this.hasTypeTarget) {
+      if (this.typeTarget.value === "2") {
+        this.getLocation()
+      } else if (this.typeTarget.value === "1") {
+        this.useUserAddress()
+      }
     }
   }
 
   handleTypeChange(event) {
     const value = event.target.value
     this.manuallyPicked = false
+
     if (value === "2") { // STREET
       this.getLocation()
+      this.toggleVisibility(true)
+    } else if (value === "1") { // HOME
+      this.useUserAddress()
+      this.toggleVisibility(false)
     } else {
       this.clearLocation()
+      this.toggleVisibility(false)
+    }
+  }
+
+  toggleVisibility(isStreet) {
+    if (this.hasHintTarget) {
+      this.hintTarget.classList.toggle("hidden", !isStreet)
+    }
+    if (this.hasLocationContainerTarget) {
+      this.locationContainerTarget.classList.toggle("hidden", !isStreet)
+    }
+  }
+
+  useUserAddress() {
+    if (this.hasUserAddressValue && this.userAddressValue.lat) {
+      const { lat, lng, address } = this.userAddressValue
+
+      if (this.hasLatitudeTarget) this.latitudeTarget.value = lat
+      if (this.hasLongitudeTarget) this.longitudeTarget.value = lng
+      if (this.hasLocationTarget) {
+        this.locationTarget.value = address || ""
+      }
+
+      window.dispatchEvent(new CustomEvent("map:move-marker", {
+        detail: { lat, lng }
+      }))
     }
   }
 

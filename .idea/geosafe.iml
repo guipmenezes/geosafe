@@ -52,12 +52,12 @@
     <orderEntry type="library" scope="PROVIDED" name="bootsnap (v1.18.6, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.3.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v2.7.1, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="capybara (v3.40.0, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="capybara (v3.40.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="concurrent-ruby (v1.3.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="connection_pool (v2.5.4, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="crass (v1.0.6, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="csv (v3.3.5, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="cuprite (v0.17, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="cuprite (v0.17, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="date (v3.5.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="debug (v1.11.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="diff-lcs (v1.6.2, asdf: 3.2.2) [gem]" level="application" />
@@ -65,10 +65,10 @@
     <orderEntry type="library" scope="PROVIDED" name="dry-initializer (v3.2.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dry-initializer-rails (v3.1.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="erb (v6.0.0, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="erb_lint (v0.9.0, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="erb_lint (v0.9.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="erubi (v1.13.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="factory_bot (v6.5.6, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="factory_bot_rails (v6.5.1, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="factory_bot_rails (v6.5.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ferrum (v0.17.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="figaro (v1.3.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="geocoder (v1.8.6, asdf: 3.2.2) [gem]" level="application" />
@@ -112,7 +112,7 @@
     <orderEntry type="library" scope="PROVIDED" name="rack-test (v2.2.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rackup (v2.2.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails (v7.1.5.2, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rails-controller-testing (v1.0.5, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="rails-controller-testing (v1.0.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails-dom-testing (v2.3.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails-html-sanitizer (v1.6.2, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="railties (v7.1.5.2, asdf: 3.2.2) [gem]" level="application" />
@@ -123,15 +123,15 @@
     <orderEntry type="library" scope="PROVIDED" name="redis-client (v0.26.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="regexp_parser (v2.11.3, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="reline (v0.6.3, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rspec (v3.13.1, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="rspec (v3.13.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-core (v3.13.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-expectations (v3.13.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-mocks (v3.13.5, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rspec-rails (v7.1.1, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="rspec-rails (v7.1.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-support (v3.13.6, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rubocop (v1.81.1, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="rubocop (v1.81.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rubocop-ast (v1.47.1, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rubocop-rails (v2.33.4, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="rubocop-rails (v2.33.4, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby-next-core (v1.1.2, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby-progressbar (v1.13.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="securerandom (v0.4.1, asdf: 3.2.2) [gem]" level="application" />
@@ -150,7 +150,7 @@
     <orderEntry type="library" scope="PROVIDED" name="unicode-display_width (v3.2.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="unicode-emoji (v4.1.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="view_component (v3.23.2, asdf: 3.2.2) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="view_component-contrib (v0.2.5, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="TEST" name="view_component-contrib (v0.2.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="web-console (v4.2.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="webrick (v1.9.1, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="websocket-driver (v0.8.0, asdf: 3.2.2) [gem]" level="application" />

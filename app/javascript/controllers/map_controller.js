@@ -11,11 +11,18 @@ export default class extends Controller {
     this.alertCreatedHandler = (event) => {
       this.addAlertMarker(event.detail.alert)
     }
+    this.moveMarkerHandler = (event) => {
+      const { lat, lng } = event.detail
+      this.placePickMarker(new google.maps.LatLng(lat, lng))
+      this.map.panTo({ lat, lng })
+    }
     window.addEventListener("alert:created", this.alertCreatedHandler)
+    window.addEventListener("map:move-marker", this.moveMarkerHandler)
   }
 
   disconnect() {
     window.removeEventListener("alert:created", this.alertCreatedHandler)
+    window.removeEventListener("map:move-marker", this.moveMarkerHandler)
   }
 
   initMap() {

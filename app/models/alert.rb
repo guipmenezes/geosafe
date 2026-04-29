@@ -10,7 +10,7 @@ class Alert < ApplicationRecord
   has_many :alert_votes, dependent: :destroy
 
   validates :alert, presence: true, inclusion: { in: [HOME, STREET] }
-  validates :location, presence: true
+  validates :location, presence: true, if: :street_alert?
   validates :alert_type, presence: true, inclusion: { in: [GOOD, ALERT, DANGER] }
   validates :user_id, presence: true
   validates :title, presence: true
@@ -41,6 +41,14 @@ class Alert < ApplicationRecord
     self.class.alert_options.key(alert)
   end
 
+  def home_alert?
+    alert == HOME
+  end
+
+  def street_alert?
+    alert == STREET
+  end
+
   private
 
   def should_reverse_geocode?
@@ -55,18 +63,21 @@ class Alert < ApplicationRecord
     street = find_address_component(components, %w[route street_address])
     neighborhood = find_address_component(components, %w[sublocality sublocality_level_1 neighborhood])
     city = find_address_component(components, %w[administrative_area_level_2 locality])
+    state = find_address_component(components, %w[administrative_area_level_1], "short_name")
 
-    self.location = format_location(street, neighborhood, city, result.address)
+    self.location = format_location(street, neighborhood, city, state, result.address)
   rescue StandardError => e
     Rails.logger.error "Reverse geocoding failed: #{e.message}"
   end
 
-  def find_address_component(components, types)
-    components.find { |c| c['types'].intersect?(types) }&.dig('long_name')
+  def find_address_component(components, types, field = "long_name")
+    components.find { |c| c['types'].intersect?(types) }&.dig(field)
   end
 
-  def format_location(street, neighborhood, city, full_address)
-    if street && neighborhood
+  def format_location(street, neighborhood, city, state, full_address)
+    if street && neighborhood && city && state
+      "#{street}, #{neighborhood}, #{city} - #{state}"
+    elsif street && neighborhood
       "#{street}, #{neighborhood}"
     elsif street && city
       "#{street}, #{city}"
@@ -75,18 +86,15 @@ class Alert < ApplicationRecord
     end
   end
 
-  def home_alert?
-    alert == HOME
-  end
-
   def street_alert_and_location_changed?
-    alert == STREET && location_changed? && (latitude.blank? || longitude.blank?)
+    street_alert? && location_changed? && (latitude.blank? || longitude.blank?)
   end
 
   def set_coordinates
     return unless user&.address
 
-    self.latitude = user.address.latitude
-    self.longitude = user.address.longitude
+    self.latitude ||= user.address.latitude
+    self.longitude ||= user.address.longitude
+    self.location ||= user.address.full_address
   end
 end
