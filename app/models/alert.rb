@@ -52,7 +52,7 @@ class Alert < ApplicationRecord
   private
 
   def should_reverse_geocode?
-    latitude.present? && longitude.present? && (location.blank? || location.start_with?('Coordenadas:'))
+    street_alert? && latitude.present? && longitude.present? && (location.blank? || location.start_with?('Coordenadas:'))
   end
 
   def reverse_geocode_location
@@ -82,7 +82,9 @@ class Alert < ApplicationRecord
     return format_full_address(data) if data.values.all?(&:present?)
     return format_partial_address(data) if data[:street] && (data[:neighborhood] || data[:city])
 
-    fallback.to_s.split(',').first(2).map(&:strip).join(', ')
+    # Strip Plus Codes (e.g., 6WHX+JQ) if they appear at the start
+    clean_fallback = fallback.to_s.gsub(/^[A-Z0-9]{4}\+[A-Z0-9]{2,}\s?/, '')
+    clean_fallback.split(',').first(2).map(&:strip).join(', ')
   end
 
   def format_full_address(data)
