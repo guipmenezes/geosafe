@@ -47,8 +47,8 @@ export default class extends Controller {
     })
   }
 
-  addAlertMarker(alert) {
-    if (!alert.latitude || !alert.longitude) return
+  createMarker(alert, options = {}) {
+    if (!alert.latitude || !alert.longitude) return null
 
     const position = { lat: parseFloat(alert.latitude), lng: parseFloat(alert.longitude) }
     const marker = new google.maps.Marker({
@@ -56,18 +56,29 @@ export default class extends Controller {
       map: this.map,
       title: alert.title,
       icon: this.getMarkerIcon(alert.alert_type),
-      animation: google.maps.Animation.DROP
+      ...options
     })
 
     marker.addListener("click", () => {
       const alertElement = document.getElementById(`alert_${alert.id}`)
       if (alertElement) {
-        alertElement.click()
+        alertElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        const clickable = alertElement.querySelector('[data-action*="alert-details#open"]')
+        if (clickable) {
+          clickable.click()
+        }
       }
     })
 
-    this.markers.push(marker)
-    this.map.panTo(position)
+    return marker
+  }
+
+  addAlertMarker(alert) {
+    const marker = this.createMarker(alert, { animation: google.maps.Animation.DROP })
+    if (marker) {
+      this.markers.push(marker)
+      this.map.panTo(marker.getPosition())
+    }
     
     // Clear the pick marker if it exists
     if (this.pickMarker) {
@@ -157,25 +168,7 @@ export default class extends Controller {
   }
 
   addMarkers() {
-    this.markers = this.alertsValue.map(alert => {
-      if (!alert.latitude || !alert.longitude) return null
-
-      const marker = new google.maps.Marker({
-        position: { lat: parseFloat(alert.latitude), lng: parseFloat(alert.longitude) },
-        map: this.map,
-        title: alert.title,
-        icon: this.getMarkerIcon(alert.alert_type)
-      })
-
-      marker.addListener("click", () => {
-        const alertElement = document.getElementById(`alert_${alert.id}`)
-        if (alertElement) {
-          alertElement.click()
-        }
-      })
-
-      return marker
-    }).filter(m => m !== null)
+    this.markers = this.alertsValue.map(alert => this.createMarker(alert)).filter(m => m !== null)
   }
 
   fitBounds() {

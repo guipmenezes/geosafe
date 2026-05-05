@@ -89,4 +89,56 @@ RSpec.describe Alert, type: :model do
       expect(alert.location).to eq(address.full_address)
     end
   end
+
+  describe 'reverse geocoding' do
+    it 'strips plus codes and simplifies location' do
+      alert = Alert.new(
+        title: 'Street Alert',
+        description: 'Testing',
+        alert_type: TypeCodes::GOOD,
+        alert: AlertCodes::STREET,
+        user: user,
+        latitude: -15.8333,
+        longitude: -48.0667,
+        location: 'Coordenadas: -15.8333, -48.0667'
+      )
+
+      # Mock Geocoder.search
+      result = double('Geocoder::Result',
+                      address: '6WHX+JQ Taguatinga, Brasília - DF',
+                      data: {
+                        'address_components' => [
+                          { 'long_name' => 'Taguatinga', 'types' => ['sublocality'] },
+                          { 'long_name' => 'Brasília', 'types' => ['locality'] },
+                          { 'short_name' => 'DF', 'types' => ['administrative_area_level_1'] }
+                        ]
+                      })
+      allow(Geocoder).to receive(:search).and_return([result])
+
+      alert.valid? # Should trigger reverse_geocode_location via after_validation
+      expect(alert.location).to eq('Taguatinga, Brasília')
+    end
+
+    it 'falls back to formatted address without plus code if components are missing' do
+      alert = Alert.new(
+        title: 'Street Alert',
+        description: 'Testing',
+        alert_type: TypeCodes::GOOD,
+        alert: AlertCodes::STREET,
+        user: user,
+        latitude: -15.8333,
+        longitude: -48.0667,
+        location: ''
+      )
+
+      # Mock Geocoder.search with NO components
+      result = double('Geocoder::Result',
+                      address: '6WHX+JQ Taguatinga, Brasília - DF',
+                      data: { 'address_components' => [] })
+      allow(Geocoder).to receive(:search).and_return([result])
+
+      alert.valid?
+      expect(alert.location).to eq('Taguatinga, Brasília')
+    end
+  end
 end

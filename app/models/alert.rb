@@ -79,20 +79,19 @@ class Alert < ApplicationRecord
   end
 
   def format_location(data, fallback)
-    return format_full_address(data) if data.values.all?(&:present?)
-    return format_partial_address(data) if data[:street] && (data[:neighborhood] || data[:city])
+    # Priority 1: Locality information (Neighborhood, City)
+    locality_parts = [data[:neighborhood], data[:city]].compact.uniq
+    return locality_parts.join(', ') if locality_parts.any?
 
-    # Strip Plus Codes (e.g., 6WHX+JQ) if they appear at the start
-    clean_fallback = fallback.to_s.gsub(/^[A-Z0-9]{4}\+[A-Z0-9]{2,}\s?/, '')
-    clean_fallback.split(',').first(2).map(&:strip).join(', ')
-  end
+    # Priority 2: Fallback to the formatted address, but cleaned up
+    # Strip Plus Codes (e.g., 6WHX+JQ or 8CFV6WHX+JQ) if they appear at the start
+    clean_fallback = fallback.to_s.gsub(/^[A-Z0-9]{4,8}\+[A-Z0-9]{2,}\s?/, '')
 
-  def format_full_address(data)
-    "#{data[:street]}, #{data[:neighborhood]}, #{data[:city]} - #{data[:state]}"
-  end
+    # Take components, remove state/UF suffix (e.g., " - DF")
+    parts = clean_fallback.split(',').map(&:strip).map { |p| p.gsub(/\s-\s[A-Z]{2}$/, '') }
 
-  def format_partial_address(data)
-    [data[:street], data[:neighborhood] || data[:city]].join(', ')
+    # Return first two distinct components (usually Neighborhood and City)
+    parts.uniq.first(2).join(', ')
   end
 
   def street_alert_and_location_changed?
