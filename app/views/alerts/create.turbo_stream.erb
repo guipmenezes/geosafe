@@ -2,16 +2,20 @@
 
 <%= turbo_stream.replace "new_alert_form", partial: "alerts/form", locals: { alert: Alert.new } %>
 
-<script>
-  window.dispatchEvent(new CustomEvent("alert:created", {
-    detail: {
-      alert: {
-        id: <%= @alert.id %>,
-        latitude: <%= @alert.latitude %>,
-        longitude: <%= @alert.longitude %>,
-        title: "<%= j @alert.title %>",
-        alert_type: <%= @alert.alert_type %>
-      }
+<script data-turbo-cache="false">
+  (function() {
+    const alertData = <%= {
+      id: @alert.id,
+      latitude: @alert.latitude,
+      longitude: @alert.longitude,
+      title: @alert.title,
+      alert_type: @alert.alert_type
+    }.to_json.html_safe %>;
+    
+    if (alertData.latitude && alertData.longitude) {
+      window.dispatchEvent(new CustomEvent("alert:created", {
+        detail: { alert: alertData }
+      }));
     }
-  }));
+  })();
 </script>

@@ -15,6 +15,7 @@ class Alert < ApplicationRecord
   validates :user_id, presence: true
   validates :title, presence: true
   validates :description, presence: true
+  validate :user_has_address, if: :home_alert?
 
   before_validation :set_coordinates, if: :home_alert?
   geocoded_by :location
@@ -50,6 +51,19 @@ class Alert < ApplicationRecord
   end
 
   private
+
+  def user_has_address
+    if user&.address.nil?
+      errors.add(:base, 'Você precisa ter um endereço cadastrado para criar um alerta residencial.')
+    else
+      # Try to geocode if coordinates are missing
+      user.address.geocode_address if user.address.latitude.blank? || user.address.longitude.blank?
+
+      if user.address.latitude.blank? || user.address.longitude.blank?
+        errors.add(:base, 'Seu endereço cadastrado não pôde ser localizado no mapa. Por favor, verifique se o CEP e o número estão corretos.')
+      end
+    end
+  end
 
   def should_reverse_geocode?
     street_alert? && latitude.present? && longitude.present? && (location.blank? || location.start_with?('Coordenadas:'))
@@ -101,8 +115,8 @@ class Alert < ApplicationRecord
   def set_coordinates
     return unless user&.address
 
-    self.latitude ||= user.address.latitude
-    self.longitude ||= user.address.longitude
-    self.location ||= user.address.full_address
+    self.latitude = user.address.latitude
+    self.longitude = user.address.longitude
+    self.location = user.address.anonymized_address
   end
 end

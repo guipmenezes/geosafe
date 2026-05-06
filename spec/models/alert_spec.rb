@@ -15,7 +15,7 @@ RSpec.describe Alert, type: :model do
         description: 'Description',
         location: 'Location',
         alert_type: TypeCodes::GOOD,
-        alert: AlertCodes::HOME,
+        alert: AlertCodes::STREET,
         user: user
       )
       expect(alert).to be_valid
@@ -33,7 +33,16 @@ RSpec.describe Alert, type: :model do
       expect(alert.errors[:description]).to include('não pode ficar em branco')
     end
 
-    it 'is valid without location if it is a HOME alert' do
+    it 'is valid without location if it is a HOME alert and user has address' do
+      Address.create!(
+        user: user,
+        cep: '12345-678',
+        uf: 'SP',
+        city: 'São Paulo',
+        state: 'São Paulo',
+        address: 'Rua Teste',
+        number: '123'
+      )
       alert = Alert.new(
         title: 'Home Alert',
         description: 'Testing',
@@ -42,6 +51,44 @@ RSpec.describe Alert, type: :model do
         user: user
       )
       expect(alert).to be_valid
+    end
+
+    it 'is invalid if it is a HOME alert and user has no address' do
+      alert = Alert.new(
+        title: 'Home Alert',
+        description: 'Testing',
+        alert_type: TypeCodes::GOOD,
+        alert: AlertCodes::HOME,
+        user: user
+      )
+      expect(alert).not_to be_valid
+      expect(alert.errors.full_messages).to include('Você precisa ter um endereço cadastrado para criar um alerta residencial.')
+    end
+
+    it 'is invalid if it is a HOME alert and user address has no coordinates' do
+      addr = Address.create!(
+        user: user,
+        cep: '00000-000',
+        uf: 'XX',
+        city: 'Nonexistent',
+        state: 'Nonexistent',
+        address: 'Nonexistent Street',
+        number: '0'
+      )
+      # Mock Geocoder to return nothing for this address
+      allow(Geocoder).to receive(:search).with(/Nonexistent Street/).and_return([])
+      addr.update_columns(latitude: nil, longitude: nil)
+
+      alert = Alert.new(
+        title: 'Home Alert',
+        description: 'Testing',
+        alert_type: TypeCodes::GOOD,
+        alert: AlertCodes::HOME,
+        user: user
+      )
+      alert.valid?
+      expect(alert).not_to be_valid
+      expect(alert.errors.full_messages).to include('Seu endereço cadastrado não pôde ser localizado no mapa. Por favor, verifique se o CEP e o número estão corretos.')
     end
 
     it 'is invalid without location if it is a STREET alert' do
@@ -86,7 +133,26 @@ RSpec.describe Alert, type: :model do
       alert.valid?
       expect(alert.latitude).to eq(address.latitude)
       expect(alert.longitude).to eq(address.longitude)
-      expect(alert.location).to eq(address.full_address)
+      expect(alert.location).to eq(address.anonymized_address)
+    end
+
+    it 'overrides provided coordinates with user address for HOME alerts' do
+      address # trigger creation
+      alert = Alert.new(
+        title: 'Home Alert',
+        description: 'Testing home alert',
+        alert_type: TypeCodes::GOOD,
+        alert: AlertCodes::HOME,
+        user: user,
+        latitude: 10.0,
+        longitude: 20.0,
+        location: 'Other Location'
+      )
+
+      alert.valid?
+      expect(alert.latitude).to eq(address.latitude)
+      expect(alert.longitude).to eq(address.longitude)
+      expect(alert.location).to eq(address.anonymized_address)
     end
   end
 

@@ -7,8 +7,11 @@ export default class extends Controller {
   }
 
   connect() {
+    this.allAlerts = [...this.alertsValue]
     this.initMap()
+    
     this.alertCreatedHandler = (event) => {
+      console.log("Alert received in map controller:", event.detail.alert)
       this.addAlertMarker(event.detail.alert)
     }
     this.moveMarkerHandler = (event) => {
@@ -16,6 +19,7 @@ export default class extends Controller {
       this.placePickMarker(new google.maps.LatLng(lat, lng))
       this.map.panTo({ lat, lng })
     }
+    
     window.addEventListener("alert:created", this.alertCreatedHandler)
     window.addEventListener("map:move-marker", this.moveMarkerHandler)
   }
@@ -39,51 +43,163 @@ export default class extends Controller {
       mapId: 'GEOSAFE_MAP_ID'
     })
 
-    this.addMarkers()
+    this.markers = []
+    this.refreshMarkers()
     this.getUserLocation()
+    this.processQueuedAlerts()
     
     this.map.addListener("click", (event) => {
       this.handleMapClick(event.latLng)
     })
   }
 
-  createMarker(alert, options = {}) {
-    if (!alert.latitude || !alert.longitude) return null
+  processQueuedAlerts() {
+    if (this.queuedAlerts && this.queuedAlerts.length > 0) {
+      console.log(`Processing ${this.queuedAlerts.length} queued alerts`)
+      this.queuedAlerts.forEach(alert => this.addAlertMarker(alert))
+      this.queuedAlerts = []
+    }
+  }
 
-    const position = { lat: parseFloat(alert.latitude), lng: parseFloat(alert.longitude) }
+  refreshMarkers() {
+    this.clearMarkers()
+    
+    const groupedAlerts = this.groupAlertsByPosition(this.allAlerts)
+    
+    Object.keys(groupedAlerts).forEach(key => {
+      const group = groupedAlerts[key]
+      // Sort group by ID descending to have newest first
+      group.sort((a, b) => b.id - a.id)
+      const marker = this.createGroupMarker(group)
+      if (marker) this.markers.push(marker)
+    })
+  }
+
+  groupAlertsByPosition(alerts) {
+    const groups = {}
+    alerts.forEach(alert => {
+      if (!alert.latitude || !alert.longitude) return
+      const key = `${parseFloat(alert.latitude).toFixed(6)},${parseFloat(alert.longitude).toFixed(6)}`
+      if (!groups[key]) groups[key] = []
+      groups[key].push(alert)
+    })
+    return groups
+  }
+
+  createGroupMarker(alerts, options = {}) {
+    const newestAlert = alerts[0]
+    const position = { lat: parseFloat(newestAlert.latitude), lng: parseFloat(newestAlert.longitude) }
+    const count = alerts.length
+    
     const marker = new google.maps.Marker({
       position: position,
       map: this.map,
-      title: alert.title,
-      icon: this.getMarkerIcon(alert.alert_type),
+      title: count > 1 ? `${count} alertas neste local` : newestAlert.title,
+      icon: this.getGroupMarkerIcon(alerts),
+      label: count > 1 ? {
+        text: count.toString(),
+        color: "#ffffff",
+        fontWeight: "bold"
+      } : null,
       ...options
     })
 
     marker.addListener("click", () => {
-      const alertElement = document.getElementById(`alert_${alert.id}`)
-      if (alertElement) {
-        alertElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        const clickable = alertElement.querySelector('[data-action*="alert-details#open"]')
-        if (clickable) {
-          clickable.click()
-        }
-      }
+      this.handleGroupClick(alerts, position)
     })
 
     return marker
   }
 
+  getGroupMarkerIcon(alerts) {
+    if (alerts.length === 1) {
+      return this.getMarkerIcon(alerts[0].alert_type)
+    }
+
+    const maxType = Math.max(...alerts.map(a => a.alert_type))
+    const colors = {
+      1: "#10b981", // GOOD
+      2: "#f59e0b", // ALERT
+      3: "#ef4444"  // DANGER
+    }
+    const color = colors[maxType] || "#6b7280"
+
+    return {
+      path: google.maps.SymbolPath.CIRCLE,
+      fillColor: color,
+      fillOpacity: 0.9,
+      strokeWeight: 2,
+      strokeColor: "#ffffff",
+      scale: 15
+    }
+  }
+
+  getMarkerIcon(type) {
+    const colors = {
+      1: "#10b981", // GOOD
+      2: "#f59e0b", // ALERT
+      3: "#ef4444"  // DANGER
+    }
+    const color = colors[type] || "#6b7280"
+    
+    return {
+      path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+      fillColor: color,
+      fillOpacity: 0.9,
+      strokeWeight: 2,
+      strokeColor: "#ffffff",
+      scale: 10
+    }
+  }
+
+  handleGroupClick(alerts, position) {
+    // Scroll to and open the newest alert in the group
+    this.scrollToAlert(alerts[0].id)
+    
+    if (this.map.getZoom() < 18) {
+      this.map.setZoom(this.map.getZoom() + 1)
+      this.map.panTo(position)
+    }
+  }
+
+  scrollToAlert(alertId) {
+    const alertElement = document.getElementById(`alert_${alertId}`)
+    if (alertElement) {
+      alertElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      const clickable = alertElement.querySelector('[data-action*="alert-details#open"]')
+      if (clickable) {
+        clickable.click()
+      }
+    }
+  }
+
   addAlertMarker(alert) {
-    const marker = this.createMarker(alert, { animation: google.maps.Animation.DROP })
-    if (marker) {
-      this.markers.push(marker)
-      this.map.panTo(marker.getPosition())
+    if (!this.map || !this.markers) {
+      if (!this.queuedAlerts) this.queuedAlerts = []
+      this.queuedAlerts.push(alert)
+      return
+    }
+
+    // Check if alert already exists to avoid duplicates
+    if (!this.allAlerts.find(a => a.id === alert.id)) {
+      this.allAlerts.push(alert)
     }
     
-    // Clear the pick marker if it exists
+    this.refreshMarkers()
+    
+    const position = { lat: parseFloat(alert.latitude), lng: parseFloat(alert.longitude) }
+    this.map.panTo(position)
+    
     if (this.pickMarker) {
       this.pickMarker.setMap(null)
       this.pickMarker = null
+    }
+  }
+
+  clearMarkers() {
+    if (this.markers) {
+      this.markers.forEach(m => m.setMap(null))
+      this.markers = []
     }
   }
 
@@ -100,15 +216,13 @@ export default class extends Controller {
         },
         () => {
           console.warn("Geolocation permission denied or error.")
-          if (this.alertsValue.length > 0) {
+          if (this.allAlerts.length > 0) {
             this.fitBounds()
           }
         }
       )
-    } else {
-      if (this.alertsValue.length > 0) {
-        this.fitBounds()
-      }
+    } else if (this.allAlerts.length > 0) {
+      this.fitBounds()
     }
   }
 
@@ -135,10 +249,7 @@ export default class extends Controller {
   handleMapClick(latLng) {
     const lat = latLng.lat()
     const lng = latLng.lng()
-
     this.placePickMarker(latLng)
-
-    // Dispatch event to update the form
     this.dispatch("location-picked", { detail: { lat, lng } })
   }
 
@@ -160,39 +271,17 @@ export default class extends Controller {
           strokeColor: "#ffffff",
         }
       })
-
       this.pickMarker.addListener("dragend", (event) => {
         this.handleMapClick(event.latLng)
       })
     }
   }
 
-  addMarkers() {
-    this.markers = this.alertsValue.map(alert => this.createMarker(alert)).filter(m => m !== null)
-  }
-
   fitBounds() {
     const bounds = new google.maps.LatLngBounds()
     this.markers.forEach(marker => bounds.extend(marker.getPosition()))
-    this.map.fitBounds(bounds)
-  }
-
-  getMarkerIcon(type) {
-    const colors = {
-      1: "#10b981", // GOOD (green)
-      2: "#f59e0b", // ALERT (yellow)
-      3: "#ef4444"  // DANGER (red)
-    }
-    
-    const color = colors[type] || "#6b7280"
-    
-    return {
-      path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-      fillColor: color,
-      fillOpacity: 0.9,
-      strokeWeight: 2,
-      strokeColor: "#ffffff",
-      scale: 10
+    if (!bounds.isEmpty()) {
+      this.map.fitBounds(bounds)
     }
   }
 }
