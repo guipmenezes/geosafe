@@ -3,7 +3,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["container"]
   static values = {
-    alerts: Array
+    alerts: Array,
+    currentUserId: String
   }
 
   connect() {
@@ -189,14 +190,19 @@ export default class extends Controller {
     }
 
     // Check if alert already exists to avoid duplicates
-    if (!this.allAlerts.find(a => a.id === alert.id)) {
-      this.allAlerts.push(alert)
+    if (this.allAlerts.find(a => a.id === alert.id)) {
+      return
     }
     
+    this.allAlerts.push(alert)
     this.refreshMarkers()
     
     const position = { lat: parseFloat(alert.latitude), lng: parseFloat(alert.longitude) }
-    this.map.panTo(position)
+    
+    // Only pan if it's the current user's alert
+    if (this.hasCurrentUserIdValue && alert.user_id == this.currentUserIdValue) {
+      this.map.panTo(position)
+    }
     
     if (this.pickMarker) {
       this.pickMarker.setMap(null)

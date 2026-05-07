@@ -9,6 +9,8 @@ class Alert < ApplicationRecord
   belongs_to :user
   has_many :alert_votes, dependent: :destroy
 
+  after_create_commit -> { broadcast_prepend_to 'alerts', target: 'alerts', partial: 'home/alert_card', locals: { alert: self } }
+
   validates :alert, presence: true, inclusion: { in: [HOME, STREET] }
   validates :location, presence: true, if: :street_alert?
   validates :alert_type, presence: true, inclusion: { in: [GOOD, ALERT, DANGER] }
@@ -61,6 +63,7 @@ class Alert < ApplicationRecord
       alert_name: alert_name,
       alert_type_name: alert_type_name,
       alert_type: alert_type,
+      user_id: user_id,
       creator_name: user.full_name,
       date: I18n.l(created_at, format: :short)
     }

@@ -53,5 +53,9 @@ module AlertCard
     def can_edit?
       ::AlertPolicy.new(Current.user, @alert).edit?
     end
+
+    def marker_data
+      @alert.as_json_for_map.to_json
+    end
   end
 end
