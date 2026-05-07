@@ -12,11 +12,9 @@ class AlertsController < ApplicationController
 
     respond_to do |format|
       if @alert.save
-        format.html { redirect_to home_path, notice: 'Alerta criado com sucesso.' }
-        format.turbo_stream
+        handle_save_success(format)
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('alert_form', partial: 'alerts/form', locals: { alert: @alert }) }
+        handle_save_failure(format)
       end
     end
   end
@@ -41,12 +39,28 @@ class AlertsController < ApplicationController
         format.turbo_stream
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@alert, :form), partial: 'alerts/form', locals: { alert: @alert }) }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(helpers.dom_id(@alert, :form), partial: 'alerts/form', locals: { alert: @alert }),
+                 status: :unprocessable_entity
+        end
       end
     end
   end
 
   private
+
+  def handle_save_success(format)
+    format.html { redirect_to home_path, notice: 'Alerta criado com sucesso.' }
+    format.turbo_stream
+  end
+
+  def handle_save_failure(format)
+    format.html { render :new, status: :unprocessable_entity }
+    format.turbo_stream do
+      render turbo_stream: turbo_stream.replace(helpers.dom_id(@alert, :form), partial: 'alerts/form', locals: { alert: @alert }),
+             status: :unprocessable_entity
+    end
+  end
 
   def set_alert
     @alert = Alert.find(params[:id])

@@ -22,7 +22,9 @@ Rails.application.routes.draw do
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  resources :addresses, only: %i[new create]
+  resources :addresses, only: %i[new create] do
+    get :reverse_geocode, on: :collection
+  end
 
   resources :plans, only: [:index]
 end

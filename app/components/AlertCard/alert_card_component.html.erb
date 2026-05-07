@@ -1,4 +1,7 @@
-<div id="<%= dom_id(@alert) %>" class="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 border-l-4 <%= case type
+<div id="<%= dom_id(@alert) %>"
+     data-controller="alert-marker"
+     data-alert-marker-alert-value="<%= marker_data %>"
+     class="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 border-l-4 <%= case type
                                                                   when 1 then 'border-green-500'
                                                                   when 2 then 'border-yellow-500'
                                                                   when 3 then 'border-red-500'
