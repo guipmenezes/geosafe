@@ -13,10 +13,10 @@ class AlertPolicy
   end
 
   def update?
-    @alert.user_id == @user.id
+    @user && @alert.user_id == @user.id
   end
 
   def destroy?
-    @alert.user_id == @user.id
+    @user && @alert.user_id == @user.id
   end
 end

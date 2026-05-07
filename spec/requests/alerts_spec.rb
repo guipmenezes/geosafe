@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Alerts', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :with_address) }
 
   before do
     sign_in user

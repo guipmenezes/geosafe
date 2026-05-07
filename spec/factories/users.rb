@@ -9,5 +9,11 @@ FactoryBot.define do
     password_confirmation { 'Secret1*3*5*' }
     verified { true }
     geopoints { 100 }
+
+    trait :with_address do
+      after(:create) do |user|
+        create(:address, user: user)
+      end
+    end
   end
 end
