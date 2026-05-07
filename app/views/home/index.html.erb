@@ -1,8 +1,8 @@
 <%= turbo_stream_from "alerts" %>
 
 <div class="grid grid-cols-2 gap-6 w-full h-[calc(100vh-160px)] overflow-hidden pb-4">
-  <div data-controller="map" 
-       data-map-alerts-value="<%= @alerts_json %>" 
+  <div data-controller="map"
+       data-map-alerts-value="<%= @alerts_json %>"
        data-map-current-user-id-value="<%= Current.user&.id %>"
        class="w-full h-full rounded-3xl overflow-hidden shadow-sm border border-gray-100">
     <div data-map-target="container" class="w-full h-full"></div>

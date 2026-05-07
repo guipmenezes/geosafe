@@ -5,6 +5,7 @@ class Alert < ApplicationRecord
 
   include TypeCodes
   include AlertCodes
+  include AlertGeocoding
 
   belongs_to :user
   has_many :alert_votes, dependent: :destroy
@@ -72,59 +73,20 @@ class Alert < ApplicationRecord
   private
 
   def user_has_address
-    if user&.address.nil?
-      errors.add(:base, 'Você precisa ter um endereço cadastrado para criar um alerta residencial.')
-    else
-      # Try to geocode if coordinates are missing
-      user.address.geocode_address if user.address.latitude.blank? || user.address.longitude.blank?
+    return errors.add(:base, 'Você precisa ter um endereço cadastrado para criar um alerta residencial.') if user&.address.nil?
 
-      if user.address.latitude.blank? || user.address.longitude.blank?
-        errors.add(:base, 'Seu endereço cadastrado não pôde ser localizado no mapa. Por favor, verifique se o CEP e o número estão corretos.')
-      end
-    end
+    ensure_user_address_geocoded
+    return if user.address.latitude.present? && user.address.longitude.present?
+
+    errors.add(:base, 'Seu endereço cadastrado não pôde ser localizado no mapa. Por favor, verifique se o CEP e o número estão corretos.')
+  end
+
+  def ensure_user_address_geocoded
+    user.address.geocode_address if user.address.latitude.blank? || user.address.longitude.blank?
   end
 
   def should_reverse_geocode?
     street_alert? && latitude.present? && longitude.present? && (location.blank? || location.start_with?('Coordenadas:'))
-  end
-
-  def reverse_geocode_location
-    result = Geocoder.search([latitude, longitude], language: 'pt-BR').first
-    return unless result
-
-    data = extract_address_components(result.data['address_components'] || [])
-    self.location = format_location(data, result.address)
-  rescue StandardError => e
-    Rails.logger.error "Reverse geocoding failed: #{e.message}"
-  end
-
-  def extract_address_components(components)
-    {
-      street: find_address_component(components, %w[route street_address]),
-      neighborhood: find_address_component(components, %w[sublocality sublocality_level_1 neighborhood]),
-      city: find_address_component(components, %w[administrative_area_level_2 locality]),
-      state: find_address_component(components, %w[administrative_area_level_1], 'short_name')
-    }
-  end
-
-  def find_address_component(components, types, field = 'long_name')
-    components.find { |c| c['types'].intersect?(types) }&.dig(field)
-  end
-
-  def format_location(data, fallback)
-    # Priority 1: Locality information (Neighborhood, City)
-    locality_parts = [data[:neighborhood], data[:city]].compact.uniq
-    return locality_parts.join(', ') if locality_parts.any?
-
-    # Priority 2: Fallback to the formatted address, but cleaned up
-    # Strip Plus Codes (e.g., 6WHX+JQ or 8CFV6WHX+JQ) if they appear at the start
-    clean_fallback = fallback.to_s.gsub(/^[A-Z0-9]{4,8}\+[A-Z0-9]{2,}\s?/, '')
-
-    # Take components, remove state/UF suffix (e.g., " - DF")
-    parts = clean_fallback.split(',').map(&:strip).map { |p| p.gsub(/\s-\s[A-Z]{2}$/, '') }
-
-    # Return first two distinct components (usually Neighborhood and City)
-    parts.uniq.first(2).join(', ')
   end
 
   def street_alert_and_location_changed?
