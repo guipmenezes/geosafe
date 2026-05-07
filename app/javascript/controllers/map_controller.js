@@ -41,7 +41,10 @@ export default class extends Controller {
     this.map = new google.maps.Map(this.containerTarget, {
       center: defaultCenter,
       zoom: 15,
-      mapId: 'GEOSAFE_MAP_ID'
+      mapId: 'GEOSAFE_MAP_ID',
+      mapTypeControl: false,
+      fullscreenControl: false,
+      streetViewControl: false
     })
 
     this.markers = []
