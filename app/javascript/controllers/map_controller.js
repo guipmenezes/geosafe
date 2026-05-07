@@ -153,8 +153,16 @@ export default class extends Controller {
   }
 
   handleGroupClick(alerts, position) {
-    // Scroll to and open the newest alert in the group
-    this.scrollToAlert(alerts[0].id)
+    if (alerts.length > 1) {
+      const alertsContainer = document.getElementById("alerts")
+      const detailsController = this.application.getControllerForElementAndIdentifier(alertsContainer, "alert-details")
+      if (detailsController) {
+        detailsController.openGroup(alerts)
+      }
+    } else {
+      // Scroll to and open the single alert
+      this.scrollToAlert(alerts[0].id)
+    }
     
     if (this.map.getZoom() < 18) {
       this.map.setZoom(this.map.getZoom() + 1)

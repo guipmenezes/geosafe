@@ -50,6 +50,22 @@ class Alert < ApplicationRecord
     alert == STREET
   end
 
+  def as_json_for_map
+    {
+      id: id,
+      latitude: latitude,
+      longitude: longitude,
+      title: title,
+      description: description,
+      location: location,
+      alert_name: alert_name,
+      alert_type_name: alert_type_name,
+      alert_type: alert_type,
+      creator_name: user.full_name,
+      date: I18n.l(created_at, format: :short)
+    }
+  end
+
   private
 
   def user_has_address

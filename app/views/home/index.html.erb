@@ -21,8 +21,15 @@
 
       <%# Detailed Alert Modal (populated by alert-details controller) %>
       <div data-alert-details-target="modal">
-        <%= render Modal::ModalComponent.new(title: "Detalhes do Alerta") do %>
-          <div class="flex flex-col gap-4">
+        <%= render Modal::ModalComponent.new(title: "Detalhes") do %>
+          <%# Single Alert View %>
+          <div data-alert-details-target="singleView" class="flex flex-col gap-4">
+            <button data-action="click->alert-details#backToList" data-alert-details-target="backButton" class="hidden flex items-center gap-2 text-sm text-primary600 hover:text-primary700 font-semibold mb-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+              Voltar para a lista
+            </button>
             <div class="flex justify-between items-start">
               <div>
                 <span data-alert-details-target="name" class="text-[10px] font-bold uppercase tracking-widest text-grey500 px-2 py-0.5 bg-grey100 rounded-md"></span>
@@ -51,6 +58,32 @@
               </div>
             </div>
           </div>
+
+          <%# Multiple Alerts View %>
+          <div data-alert-details-target="listView" class="hidden flex flex-col gap-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+            <%# List items will be injected here %>
+          </div>
+
+          <template data-alert-details-target="itemTemplate">
+            <div class="p-4 border border-grey100 rounded-xl hover:bg-grey50 transition-colors cursor-pointer group">
+              <div class="flex justify-between items-start mb-2">
+                <span class="js-name text-[10px] font-bold uppercase tracking-widest text-grey500 px-2 py-0.5 bg-grey100 rounded-md"></span>
+                <span class="js-type-badge px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider"></span>
+              </div>
+              <h3 class="js-title text-base font-semibold text-grey900 group-hover:text-primary600 transition-colors"></h3>
+              <p class="js-description text-xs text-grey600 mt-1 line-clamp-2"></p>
+              <div class="flex items-center justify-between mt-3 pt-3 border-t border-grey50 text-[10px] text-grey500">
+                <div class="flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <span class="js-location"></span>
+                </div>
+                <span class="js-date"></span>
+              </div>
+            </div>
+          </template>
         <% end %>
       </div>
     </div>
