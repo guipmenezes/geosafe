@@ -20,10 +20,10 @@ class Address < ApplicationRecord
 
   def geocode_address
     results = Geocoder.search(geocoding_address)
-    if results.any?
-      self.latitude = results.first.latitude
-      self.longitude = results.first.longitude
-    end
+    return unless results.any?
+
+    self.latitude = results.first.latitude
+    self.longitude = results.first.longitude
   end
 
   private
