@@ -34,9 +34,14 @@ RSpec.describe Alert, type: :model do
     end
 
     it 'is valid without location if it is a HOME alert and user has address' do
+      # Mock Geocoder to ensure it returns coordinates even in environments without external network
+      result = instance_double(Geocoder::Result::Base, latitude: -23.5505, longitude: -46.6333)
+      allow(result).to receive(:coordinates).and_return([-23.5505, -46.6333])
+      allow(Geocoder).to receive(:search).and_return([result])
+
       Address.create!(
         user: user,
-        cep: '12345-678',
+        cep: '01310-100',
         uf: 'SP',
         city: 'São Paulo',
         state: 'São Paulo',
