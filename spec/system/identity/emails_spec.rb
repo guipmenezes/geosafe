@@ -11,7 +11,8 @@ RSpec.describe 'Identity::Emails', type: :system do
   end
 
   it 'updates the email' do
-    click_on 'Change email address'
+    click_on "Olá, #{user.full_name.split.first}"
+    click_on 'Alterar E-mail'
 
     fill_in 'New email', with: 'new_email@hey.com'
     fill_in 'Password challenge', with: 'Secret1*3*5*'
@@ -23,7 +24,8 @@ RSpec.describe 'Identity::Emails', type: :system do
   it 'sends a verification email' do
     user.update! verified: false
 
-    click_on 'Change email address'
+    click_on "Olá, #{user.full_name.split.first}"
+    click_on 'Alterar E-mail'
     click_on 'Re-send verification email'
 
     expect(page).to have_text('We sent a verification email to your email address')

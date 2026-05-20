@@ -11,7 +11,8 @@ RSpec.describe 'Passwords', type: :system do
   end
 
   it 'updates the password' do
-    click_on 'Change password'
+    click_on "Olá, #{user.full_name.split.first}"
+    click_on 'Alterar Senha'
 
     fill_in 'Password challenge', with: 'Secret1*3*5*'
     fill_in 'New password', with: 'Secret6*4*2*'
