@@ -1,43 +1,123 @@
-<p style="color: red"><%= alert %></p>
+<div class="max-w-2xl mx-auto py-12 px-4">
+  <div class="bg-white rounded-[2rem] shadow-sm border border-grey100 overflow-hidden">
+    <div class="p-8 sm:p-12">
+      <div class="flex flex-col gap-6">
+        <div>
+          <h1 class="text-2xl font-bold text-grey900">Alterar Senha</h1>
+          <p class="text-grey600 mt-2">Mantenha sua conta segura atualizando sua senha regularmente.</p>
+        </div>
 
-<h1>Change your password</h1>
-
-<%= form_with(url: password_path, method: :patch) do |form| %>
-  <% if @user.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
-
-      <ul>
-        <% @user.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% if alert %>
+          <div class="bg-red-50 border border-red-100 rounded-2xl p-4 text-red-700 text-sm">
+            <%= alert %>
+          </div>
         <% end %>
-      </ul>
+
+        <%= form_with(url: password_path, method: :patch, class: "space-y-8", data: { controller: "password-validation" }) do |form| %>
+          <% if @user.errors.any? %>
+            <div class="bg-red-50 border border-red-100 rounded-2xl p-4 text-red-700 text-sm">
+              <ul class="list-disc list-inside">
+                <% @user.errors.each do |error| %>
+                  <li><%= error.full_message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="space-y-6">
+            <div class="flex flex-col gap-2">
+              <%= render(Input::InputComponent.new(
+                name: :password_challenge,
+                form: form,
+                required: true,
+                autofocus: true,
+                autocomplete: "current-password",
+                password: true,
+                label: "Senha Atual:",
+                placeholder: "••••••••••••"
+              )) %>
+              <p class="text-[11px] text-grey500 pl-1">Confirme sua senha atual para autorizar a mudança.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-grey50">
+              <div class="space-y-6">
+                <div class="flex flex-col gap-2">
+                  <%= render(Input::InputComponent.new(
+                    name: :password,
+                    form: form,
+                    required: true,
+                    autocomplete: "new-password",
+                    password: true,
+                    label: "Nova Senha:",
+                    placeholder: "••••••••••••",
+                    html_attributes: {
+                      data: {
+                        password_validation_target: "password",
+                        action: "input->password-validation#validate"
+                      }
+                    }
+                  )) %>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <%= render(Input::InputComponent.new(
+                    name: :password_confirmation,
+                    form: form,
+                    required: true,
+                    autocomplete: "new-password",
+                    password: true,
+                    label: "Confirmar Nova Senha:",
+                    placeholder: "••••••••••••",
+                    html_attributes: {
+                      data: {
+                        password_validation_target: "confirmation",
+                        action: "input->password-validation#validate"
+                      }
+                    }
+                  )) %>
+                </div>
+              </div>
+
+              <div class="bg-grey50/50 rounded-2xl p-6 border border-grey100">
+                <h3 class="text-sm font-bold text-grey900 mb-4">Requisitos da Senha:</h3>
+                <ul class="space-y-3">
+                  <li class="flex items-center gap-3 text-xs font-medium transition-colors duration-300" data-password-validation-target="length">
+                    <span class="rule-icon"></span>
+                    <span class="rule-text">Mínimo de 12 caracteres</span>
+                  </li>
+                  <li class="flex items-center gap-3 text-xs font-medium transition-colors duration-300" data-password-validation-target="uppercase">
+                    <span class="rule-icon"></span>
+                    <span class="rule-text">Uma letra maiúscula</span>
+                  </li>
+                  <li class="flex items-center gap-3 text-xs font-medium transition-colors duration-300" data-password-validation-target="lowercase">
+                    <span class="rule-icon"></span>
+                    <span class="rule-text">Uma letra minúscula</span>
+                  </li>
+                  <li class="flex items-center gap-3 text-xs font-medium transition-colors duration-300" data-password-validation-target="number">
+                    <span class="rule-icon"></span>
+                    <span class="rule-text">Um número</span>
+                  </li>
+                  <li class="flex items-center gap-3 text-xs font-medium transition-colors duration-300" data-password-validation-target="special">
+                    <span class="rule-icon"></span>
+                    <span class="rule-text">Um caractere especial</span>
+                  </li>
+                  <li class="flex items-center gap-3 text-xs font-medium transition-colors duration-300 border-t border-grey100 pt-3 mt-3" data-password-validation-target="match">
+                    <span class="rule-icon"></span>
+                    <span class="rule-text">As senhas coincidem</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-6 border-t border-grey100">
+            <%= link_to root_path, class: "text-sm font-bold text-grey500 hover:text-grey700 transition-colors" do %>
+              Cancelar
+            <% end %>
+            <%= render(Button::ButtonComponent.new(text: "Salvar Alterações", type: "submit", size: "lg")) %>
+          </div>
+        <% end %>
+      </div>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :password_challenge, style: "display: block" %>
-    <%= form.password_field :password_challenge, required: true, autofocus: true, autocomplete: "current-password" %>
   </div>
-
-  <div>
-    <%= form.label :password, "New password", style: "display: block" %>
-    <%= form.password_field :password, required: true, autocomplete: "new-password" %>
-    <div>12 characters minimum.</div>
-  </div>
-
-  <div>
-    <%= form.label :password_confirmation, "Confirm new password", style: "display: block" %>
-    <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
-  </div>
-
-  <div>
-    <%= form.submit "Save changes" %>
-  </div>
-<% end %>
-
-<br>
-
-<div>
-  <%= link_to "Back", root_path %>
 </div>
