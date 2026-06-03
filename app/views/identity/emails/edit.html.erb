@@ -18,7 +18,7 @@
               <div>
                 <h3 class="font-bold text-primary900">Verifique seu e-mail</h3>
                 <p class="text-primary700 text-sm mt-1">
-                  Enviamos um e-mail de verificação para <strong><%= Current.user.email %></strong>. 
+                  Enviamos um e-mail de verificação para <strong><%= Current.user.email %></strong>.
                   Verifique sua caixa de entrada e siga as instruções.
                 </p>
                 <%= button_to identity_email_verification_path, class: "mt-4 text-sm font-bold text-primary600 hover:text-primary800 underline transition-colors" do %>
@@ -43,11 +43,11 @@
           <div class="space-y-6">
             <div class="flex flex-col gap-2">
               <%= render(Input::InputComponent.new(
-                name: :email, 
-                form: form, 
-                required: true, 
-                autofocus: true, 
-                label: "Novo E-mail:", 
+                name: :email,
+                form: form,
+                required: true,
+                autofocus: true,
+                label: "Novo E-mail:",
                 placeholder: "exemplo@geosafe.com"
               )) %>
               <p class="text-[11px] text-grey500 pl-1">Utilize um e-mail que você tenha acesso frequente.</p>
@@ -55,12 +55,12 @@
 
             <div class="flex flex-col gap-2">
               <%= render(Input::InputComponent.new(
-                name: :password_challenge, 
-                form: form, 
-                required: true, 
-                autocomplete: "current-password", 
-                password: true, 
-                label: "Sua Senha Atual:", 
+                name: :password_challenge,
+                form: form,
+                required: true,
+                autocomplete: "current-password",
+                password: true,
+                label: "Sua Senha Atual:",
                 placeholder: "••••••••••••"
               )) %>
               <p class="text-[11px] text-grey500 pl-1">Por segurança, confirme sua senha para realizar esta alteração.</p>
