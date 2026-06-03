@@ -21,8 +21,15 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    is_current_session = @session == Current.session
     @session.destroy
-    redirect_to(sign_in_path, notice: 'A sua sessão expirou, logout feito.')
+
+    if is_current_session
+      cookies.delete(:session_token)
+      redirect_to(sign_in_path, notice: 'Você saiu da sua conta com sucesso.')
+    else
+      redirect_to(sessions_path, notice: 'A sessão foi encerrada com sucesso.')
+    end
   end
 
   private

@@ -26,7 +26,7 @@ RSpec.describe 'Identity::PasswordResets', type: :request do
         post identity_password_reset_path, params: { email: 'nonexistent@example.com' }
       end.to_not have_enqueued_mail(UserMailer, :password_reset)
       expect(response).to redirect_to(new_identity_password_reset_path)
-      expect(flash[:alert]).to eq("You can't reset your password until you verify your email")
+      expect(flash[:alert]).to eq('Você não pode redefinir sua senha até verificar seu e-mail.')
     end
 
     it 'does not send a password reset email to an unverified email' do
@@ -35,7 +35,7 @@ RSpec.describe 'Identity::PasswordResets', type: :request do
         post identity_password_reset_path, params: { email: user.email }
       end.to_not have_enqueued_mail(UserMailer, :password_reset)
       expect(response).to redirect_to(new_identity_password_reset_path)
-      expect(flash[:alert]).to eq("You can't reset your password until you verify your email")
+      expect(flash[:alert]).to eq('Você não pode redefinir sua senha até verificar seu e-mail.')
     end
   end
 
@@ -59,7 +59,7 @@ RSpec.describe 'Identity::PasswordResets', type: :request do
       travel 30.minutes
       patch identity_password_reset_path, params: { sid: sid, password: 'NewPassword123', password_confirmation: 'NewPassword123' }
       expect(response).to redirect_to(new_identity_password_reset_path)
-      expect(flash[:alert]).to eq('That password reset link is invalid')
+      expect(flash[:alert]).to eq('Esse link de redefinição de senha é inválido.')
     end
   end
 end

@@ -96,6 +96,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.18.6)
       msgpack (~> 1.2)
+    browser (6.2.0)
     builder (3.3.0)
     capybara (3.40.0)
       addressable
@@ -398,6 +399,7 @@ DEPENDENCIES
   authentication-zero (~> 3.0)
   bcrypt (~> 3.1.7)
   bootsnap
+  browser (~> 6.2)
   capybara
   cuprite
   debug

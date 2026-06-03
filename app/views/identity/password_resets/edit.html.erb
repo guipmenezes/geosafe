@@ -1,32 +1,56 @@
-<h1>Reset your password</h1>
+<div class="max-w-2xl mx-auto py-12 px-4">
+  <div class="bg-white rounded-[2rem] shadow-sm border border-grey100 overflow-hidden">
+    <div class="p-8 sm:p-12">
+      <div class="flex flex-col gap-6">
+        <div>
+          <h1 class="text-2xl font-bold text-grey900">Redefinir sua senha</h1>
+          <p class="text-grey600 mt-2">Escolha uma nova senha forte para proteger sua conta.</p>
+        </div>
 
-<%= form_with(url: identity_password_reset_path, method: :patch) do |form| %>
-  <% if @user.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+        <%= form_with(url: identity_password_reset_path, method: :patch, class: "space-y-8") do |form| %>
+          <% if @user.errors.any? %>
+            <div class="bg-red-50 border border-red-100 rounded-2xl p-4 text-red-700 text-sm">
+              <ul class="list-disc list-inside">
+                <% @user.errors.each do |error| %>
+                  <li><%= error.full_message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
 
-      <ul>
-        <% @user.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+          <%= form.hidden_field :sid, value: params[:sid] %>
+
+          <div class="space-y-6">
+            <div class="flex flex-col gap-2">
+              <%= render(Input::InputComponent.new(
+                name: :password,
+                form: form,
+                password: true,
+                required: true,
+                autofocus: true,
+                label: "Nova Senha:",
+                placeholder: "••••••••••••"
+              )) %>
+              <p class="text-[11px] text-grey500 pl-1">Mínimo de 12 caracteres.</p>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <%= render(Input::InputComponent.new(
+                name: :password_confirmation,
+                form: form,
+                password: true,
+                required: true,
+                label: "Confirmar Nova Senha:",
+                placeholder: "••••••••••••"
+              )) %>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end pt-6 border-t border-grey100">
+            <%= render(Button::ButtonComponent.new(text: "Salvar Nova Senha", type: "submit", size: "lg")) %>
+          </div>
         <% end %>
-      </ul>
+      </div>
     </div>
-  <% end %>
-
-  <%= form.hidden_field :sid, value: params[:sid] %>
-
-  <div>
-    <%= form.label :password, "New password", style: "display: block" %>
-    <%= form.password_field :password, required: true, autofocus: true, autocomplete: "new-password" %>
-    <div>12 characters minimum.</div>
   </div>
-
-  <div>
-    <%= form.label :password_confirmation, "Confirm new password", style: "display: block" %>
-    <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
-  </div>
-
-  <div>
-    <%= form.submit "Save changes" %>
-  </div>
-<% end %>
+</div>

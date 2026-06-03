@@ -13,7 +13,12 @@ export default class extends Controller {
   }
 
   toggle() {
-    this.menuTarget.classList.toggle("hidden")
+    const isHidden = this.menuTarget.classList.toggle("hidden")
+    if (isHidden) {
+      this.element.style.zIndex = ""
+    } else {
+      this.element.style.zIndex = "9999"
+    }
   }
 
   close(event) {
@@ -22,5 +27,6 @@ export default class extends Controller {
     }
 
     this.menuTarget.classList.add("hidden")
+    this.element.style.zIndex = ""
   }
 }

@@ -2,7 +2,9 @@
 
 module Dropdown
   class DropdownComponent < ViewComponent::Base
-    def initialize(title:, options:)
+    renders_one :trigger
+
+    def initialize(title: nil, options: nil)
       super()
       @title = title
       @options = options
