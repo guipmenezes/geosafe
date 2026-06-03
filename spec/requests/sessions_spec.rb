@@ -34,10 +34,31 @@ RSpec.describe 'Sessions', type: :request do
   end
 
   describe 'DELETE /sessions/:id' do
-    it 'signs the user out' do
+    it 'signs the user out when deleting current session' do
       sign_in(user)
       delete session_path(user.sessions.last)
       expect(response).to redirect_to(sign_in_path)
+      expect(flash[:notice]).to eq('Você saiu da sua conta com sucesso.')
+    end
+
+    it 'revokes another session without signing out' do
+      sign_in(user)
+      other_session = user.sessions.create!(user_agent: 'Other', ip_address: '1.2.3.4')
+      
+      delete session_path(other_session)
+      
+      expect(response).to redirect_to(sessions_path)
+      expect(flash[:notice]).to eq('A sessão foi encerrada com sucesso.')
+      expect(Session.exists?(other_session.id)).to be_falsey
+    end
+  end
+
+  describe 'GET /sessions' do
+    it 'returns http success' do
+      sign_in(user)
+      get sessions_path
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Dispositivos e Sessões')
     end
   end
 end

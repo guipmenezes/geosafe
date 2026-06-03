@@ -1,34 +1,73 @@
-<p style="color: green"><%= notice %></p>
+<div class="max-w-3xl mx-auto py-12 px-4">
+  <div class="bg-white rounded-[2rem] shadow-sm border border-grey100 overflow-hidden">
+    <div class="p-8 sm:p-12">
+      <div class="flex flex-col gap-8">
+        <div>
+          <h1 class="text-2xl font-bold text-grey900">Dispositivos e Sessões</h1>
+          <p class="text-grey600 mt-2">Gerencie os dispositivos onde sua conta GeoSafe está conectada.</p>
+        </div>
 
-<h1>Devices & Sessions</h1>
+        <% if notice %>
+          <div class="bg-green-50 border border-green-100 rounded-2xl p-4 text-green-700 text-sm">
+            <%= notice %>
+          </div>
+        <% end %>
 
-<div id="sessions">
-  <% @sessions.each do |session| %>
-    <div id="<%= dom_id session %>">
-      <p>
-        <strong>User Agent:</strong>
-        <%= session.user_agent %>
-      </p>
+        <div class="space-y-4">
+          <% @sessions.each do |session| %>
+            <div class="flex items-center justify-between p-6 bg-white border border-grey100 rounded-2xl transition-all hover:border-primary200 hover:shadow-md group">
+              <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-2xl bg-grey50 flex items-center justify-center text-grey400 group-hover:bg-primary50 group-hover:text-primary600 transition-colors">
+                  <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= session_device_icon(session.user_agent) %>" />
+                  </svg>
+                </div>
 
-      <p>
-        <strong>Ip Address:</strong>
-        <%= session.ip_address %>
-      </p>
+                <div class="flex flex-col gap-1">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-grey900">
+                      <%= session_browser_name(session.user_agent) %>
+                    </span>
+                    <% if session == Current.session %>
+                      <span class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full uppercase tracking-wider">
+                        Sessão Atual
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="flex items-center gap-4 text-sm text-grey500 font-medium">
+                    <span class="flex items-center gap-1.5">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.492V4.508a2 2 0 011.553-1.944L9 1l6 3 5.447-2.724A2 2 0 0121 3.224v10.984a2 2 0 01-1.553 1.944L15 19l-6 1z" />
+                      </svg>
+                      <%= session.ip_address %>
+                    </span>
+                    <span class="flex items-center gap-1.5 border-l border-grey100 pl-4">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      conectado há <%= time_ago_in_words(session.created_at) %>
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-      <p>
-        <strong>Created at:</strong>
-        <%= session.created_at %>
-      </p>
+              <div class="flex items-center">
+                <%= button_to session, method: :delete, class: "p-2.5 text-grey400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all", data: { turbo_confirm: "Tem certeza que deseja encerrar esta sessão?" } do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
 
+        <div class="flex items-center justify-between pt-6 border-t border-grey100">
+          <%= link_to root_path, class: "text-sm font-bold text-grey500 hover:text-grey700 transition-colors" do %>
+            Voltar para o Início
+          <% end %>
+        </div>
+      </div>
     </div>
-    <p>
-      <%= button_to "Log out", session, method: :delete %>
-    </p>
-  <% end %>
-</div>
-
-<br>
-
-<div>
-  <%= link_to "Back", root_path %>
+  </div>
 </div>
