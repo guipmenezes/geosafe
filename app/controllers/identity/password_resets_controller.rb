@@ -15,7 +15,7 @@ module Identity
         send_password_reset_email
         redirect_to sign_in_path, notice: 'Verifique seu e-mail para instruções de redefinição.'
       else
-        redirect_to new_identity_password_reset_path, alert: "Você não pode redefinir sua senha até verificar seu e-mail."
+        redirect_to new_identity_password_reset_path, alert: 'Você não pode redefinir sua senha até verificar seu e-mail.'
       end
     end
 
