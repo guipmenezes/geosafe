@@ -44,9 +44,9 @@ RSpec.describe 'Sessions', type: :request do
     it 'revokes another session without signing out' do
       sign_in(user)
       other_session = user.sessions.create!(user_agent: 'Other', ip_address: '1.2.3.4')
-      
+
       delete session_path(other_session)
-      
+
       expect(response).to redirect_to(sessions_path)
       expect(flash[:notice]).to eq('A sessão foi encerrada com sucesso.')
       expect(Session.exists?(other_session.id)).to be_falsey
