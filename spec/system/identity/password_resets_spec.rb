@@ -10,20 +10,20 @@ RSpec.describe 'Identity::PasswordResets', type: :system do
     visit sign_in_path
     click_on 'Esqueceu a sua senha?'
 
-    fill_in 'Email', with: user.email
-    click_on 'Send password reset email'
+    fill_in 'E-mail:', with: user.email
+    click_on 'Enviar E-mail'
 
-    expect(page).to have_text('Check your email for reset instructions')
+    expect(page).to have_text('Verifique seu e-mail para instruções de redefinição.')
   end
 
   it 'updates the password' do
     sid = user.generate_token_for(:password_reset)
     visit edit_identity_password_reset_path(sid: sid)
 
-    fill_in 'New password', with: 'Secret6*4*2*'
-    fill_in 'Confirm new password', with: 'Secret6*4*2*'
-    click_on 'Save changes'
+    fill_in 'Nova Senha:', with: 'Secret6*4*2*'
+    fill_in 'Confirmar Nova Senha:', with: 'Secret6*4*2*'
+    click_on 'Salvar Nova Senha'
 
-    expect(page).to have_text('Your password was reset successfully. Please sign in')
+    expect(page).to have_text('Sua senha foi redefinida com sucesso. Por favor, faça login.')
   end
 end

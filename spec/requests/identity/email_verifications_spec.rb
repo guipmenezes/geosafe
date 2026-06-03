@@ -34,7 +34,7 @@ RSpec.describe 'Identity::EmailVerifications', type: :request do
       get identity_email_verification_path(sid: sid, email: user.email)
       expect(user.reload.verified?).to be(false)
       expect(response).to redirect_to(edit_identity_email_path)
-      expect(flash[:alert]).to eq('That email verification link is invalid')
+      expect(flash[:alert]).to eq('Esse link de verificação de e-mail é inválido.')
     end
   end
 end

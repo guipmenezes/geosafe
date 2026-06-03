@@ -1,14 +1,41 @@
-<p style="color: red"><%= alert %></p>
+<div class="max-w-2xl mx-auto py-12 px-4">
+  <div class="bg-white rounded-[2rem] shadow-sm border border-grey100 overflow-hidden">
+    <div class="p-8 sm:p-12">
+      <div class="flex flex-col gap-6">
+        <div>
+          <h1 class="text-2xl font-bold text-grey900">Esqueceu sua senha?</h1>
+          <p class="text-grey600 mt-2">Informe seu e-mail para receber as instruções de recuperação.</p>
+        </div>
 
-<h1>Forgot your password?</h1>
+        <% if alert %>
+          <div class="bg-red-50 border border-red-100 rounded-2xl p-4 text-red-700 text-sm">
+            <%= alert %>
+          </div>
+        <% end %>
 
-<%= form_with(url: identity_password_reset_path) do |form| %>
-  <div>
-    <%= form.label :email, style: "display: block" %>
-    <%= form.email_field :email, required: true, autofocus: true %>
+        <%= form_with(url: identity_password_reset_path, class: "space-y-8") do |form| %>
+          <div class="space-y-6">
+            <div class="flex flex-col gap-2">
+              <%= render(Input::InputComponent.new(
+                name: :email, 
+                form: form, 
+                type: :email,
+                required: true, 
+                autofocus: true, 
+                label: "E-mail:", 
+                placeholder: "exemplo@geosafe.com"
+              )) %>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-6 border-t border-grey100">
+            <%= link_to sign_in_path, class: "text-sm font-bold text-grey500 hover:text-grey700 transition-colors" do %>
+              Voltar para Login
+            <% end %>
+            <%= render(Button::ButtonComponent.new(text: "Enviar E-mail", type: "submit", size: "lg")) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
-
-  <div>
-    <%= form.submit "Send password reset email" %>
-  </div>
-<% end %>
+</div>

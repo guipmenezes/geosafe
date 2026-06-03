@@ -13,15 +13,15 @@ module Identity
     def create
       if (@user = User.find_by(email: params[:email], verified: true))
         send_password_reset_email
-        redirect_to sign_in_path, notice: 'Check your email for reset instructions'
+        redirect_to sign_in_path, notice: 'Verifique seu e-mail para instruções de redefinição.'
       else
-        redirect_to new_identity_password_reset_path, alert: "You can't reset your password until you verify your email"
+        redirect_to new_identity_password_reset_path, alert: "Você não pode redefinir sua senha até verificar seu e-mail."
       end
     end
 
     def update
       if @user.update(user_params)
-        redirect_to sign_in_path, notice: 'Your password was reset successfully. Please sign in'
+        redirect_to sign_in_path, notice: 'Sua senha foi redefinida com sucesso. Por favor, faça login.'
       else
         render :edit, status: :unprocessable_content
       end
@@ -32,7 +32,7 @@ module Identity
     def set_user
       @user = User.find_by_token_for!(:password_reset, params[:sid])
     rescue StandardError
-      redirect_to new_identity_password_reset_path, alert: 'That password reset link is invalid'
+      redirect_to new_identity_password_reset_path, alert: 'Esse link de redefinição de senha é inválido.'
     end
 
     def user_params
