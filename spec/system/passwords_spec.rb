@@ -14,11 +14,11 @@ RSpec.describe 'Passwords', type: :system do
     click_on "Olá, #{user.full_name.split.first}"
     click_on 'Alterar Senha'
 
-    fill_in 'Password challenge', with: 'Secret1*3*5*'
-    fill_in 'New password', with: 'Secret6*4*2*'
-    fill_in 'Confirm new password', with: 'Secret6*4*2*'
-    click_on 'Save changes'
+    fill_in 'Senha Atual:', with: 'Secret1*3*5*'
+    fill_in 'Nova Senha:', with: 'Secret6*4*2*'
+    fill_in 'Confirmar Nova Senha:', with: 'Secret6*4*2*'
+    click_on 'Salvar Alterações'
 
-    expect(page).to have_text('Your password has been changed')
+    expect(page).to have_text('Sua senha foi alterada com sucesso.')
   end
 end
