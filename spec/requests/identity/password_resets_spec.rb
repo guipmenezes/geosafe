@@ -26,7 +26,7 @@ RSpec.describe 'Identity::PasswordResets', type: :request do
         post identity_password_reset_path, params: { email: 'nonexistent@example.com' }
       end.to_not have_enqueued_mail(UserMailer, :password_reset)
       expect(response).to redirect_to(new_identity_password_reset_path)
-      expect(flash[:alert]).to eq("Você não pode redefinir sua senha até verificar seu e-mail.")
+      expect(flash[:alert]).to eq('Você não pode redefinir sua senha até verificar seu e-mail.')
     end
 
     it 'does not send a password reset email to an unverified email' do
@@ -35,7 +35,7 @@ RSpec.describe 'Identity::PasswordResets', type: :request do
         post identity_password_reset_path, params: { email: user.email }
       end.to_not have_enqueued_mail(UserMailer, :password_reset)
       expect(response).to redirect_to(new_identity_password_reset_path)
-      expect(flash[:alert]).to eq("Você não pode redefinir sua senha até verificar seu e-mail.")
+      expect(flash[:alert]).to eq('Você não pode redefinir sua senha até verificar seu e-mail.')
     end
   end
 
