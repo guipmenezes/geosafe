@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 class AddressesController < ApplicationController
-  def new; end
+  before_action :set_address, only: %i[edit update]
+
+  def new
+    @address = Address.new
+  end
 
   def create
     @address = Address.new(address_params)
@@ -11,6 +15,16 @@ class AddressesController < ApplicationController
       redirect_to plans_path, notice: 'Endereço cadastrado com sucesso'
     else
       render :new, status: :unprocessable_content
+    end
+  end
+
+  def edit; end
+
+  def update
+    if @address.update(address_params)
+      redirect_to root_path, notice: 'Endereço atualizado com sucesso.'
+    else
+      render :edit, status: :unprocessable_content
     end
   end
 
@@ -25,6 +39,10 @@ class AddressesController < ApplicationController
   end
 
   private
+
+  def set_address
+    @address = Current.user.address
+  end
 
   def format_geocoded_address(result)
     components = result.data['address_components'] || []
