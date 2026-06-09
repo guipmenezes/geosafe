@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["container"]
+  static targets = ["container", "searchInput", "safetyScore", "scoreValue", "scoreBar", "scoreDescription"]
   static values = {
     alerts: Array,
     currentUserId: String
@@ -17,8 +17,10 @@ export default class extends Controller {
     }
     this.moveMarkerHandler = (event) => {
       const { lat, lng } = event.detail
-      this.placePickMarker(new google.maps.LatLng(lat, lng))
-      this.map.panTo({ lat, lng })
+      const latLng = new google.maps.LatLng(lat, lng)
+      this.placePickMarker(latLng)
+      this.map.panTo(latLng)
+      this.updateSafetyScore(latLng)
     }
     
     window.addEventListener("alert:created", this.alertCreatedHandler)
@@ -31,7 +33,7 @@ export default class extends Controller {
   }
 
   initMap() {
-    if (typeof google === 'undefined') {
+    if (typeof google === 'undefined' || typeof google.maps.places === 'undefined') {
       setTimeout(() => this.initMap(), 100)
       return
     }
@@ -48,6 +50,7 @@ export default class extends Controller {
     })
 
     this.markers = []
+    this.initAutocomplete()
     this.refreshMarkers()
     this.getUserLocation()
     this.processQueuedAlerts()
@@ -57,11 +60,100 @@ export default class extends Controller {
     })
   }
 
-  processQueuedAlerts() {
-    if (this.queuedAlerts && this.queuedAlerts.length > 0) {
-      console.log(`Processing ${this.queuedAlerts.length} queued alerts`)
-      this.queuedAlerts.forEach(alert => this.addAlertMarker(alert))
-      this.queuedAlerts = []
+  initAutocomplete() {
+    const options = {
+      fields: ["geometry", "name", "formatted_address"],
+      strictBounds: false,
+      types: ["geocode", "establishment"]
+    }
+
+    this.autocomplete = new google.maps.places.Autocomplete(this.searchInputTarget, options)
+    this.autocomplete.bindTo("bounds", this.map)
+
+    this.autocomplete.addListener("place_changed", () => {
+      const place = this.autocomplete.getPlace()
+
+      if (!place.geometry || !place.geometry.location) {
+        return
+      }
+
+      this.map.setCenter(place.geometry.location)
+      this.map.setZoom(17)
+      this.updateSafetyScore(place.geometry.location)
+    })
+  }
+
+  updateSafetyScore(location) {
+    const radius = 500 // 500 meters
+    const now = Math.floor(Date.now() / 1000)
+    const recentTime = 24 * 60 * 60 // 24 hours
+    
+    const nearbyAlerts = this.allAlerts.filter(alert => {
+      const alertPos = new google.maps.LatLng(alert.latitude, alert.longitude)
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(location, alertPos)
+      const isRecent = (now - alert.timestamp) < recentTime
+      return distance <= radius && isRecent
+    })
+
+    this.drawRadiusCircle(location, radius)
+    this.renderSafetyScore(nearbyAlerts)
+  }
+
+  drawRadiusCircle(center, radius) {
+    if (this.currentRadiusCircle) {
+      this.currentRadiusCircle.setMap(null)
+    }
+
+    this.currentRadiusCircle = new google.maps.Circle({
+      strokeColor: "#6366f1",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#6366f1",
+      fillOpacity: 0.1,
+      map: this.map,
+      center: center,
+      radius: radius,
+      clickable: false
+    })
+  }
+
+  renderSafetyScore(alerts) {
+    this.safetyScoreTarget.classList.remove("hidden")
+    
+    let score = 100
+    let dangerCount = 0
+    let warningCount = 0
+    
+    alerts.forEach(alert => {
+      if (alert.alert_type === 3) { // DANGER
+        score -= 30
+        dangerCount++
+      } else if (alert.alert_type === 2) { // ALERT
+        score -= 15
+        warningCount++
+      }
+    })
+
+    score = Math.max(0, score)
+    
+    // Update UI
+    this.scoreBarTarget.style.width = `${score}%`
+    
+    if (score > 80) {
+      this.scoreValueTarget.innerText = "Seguro"
+      this.scoreValueTarget.className = "text-sm font-bold text-green-600"
+      this.scoreBarTarget.className = "h-full bg-green-500 transition-all duration-1000"
+      this.scoreDescriptionTarget.innerText = "Região tranquila nas últimas 24h."
+    } else if (score > 40) {
+      this.scoreValueTarget.innerText = "Atenção"
+      this.scoreValueTarget.className = "text-sm font-bold text-yellow-600"
+      this.scoreBarTarget.className = "h-full bg-yellow-500 transition-all duration-1000"
+      this.scoreDescriptionTarget.innerText = `${alerts.length} alertas detectados recentemente.`
+    } else {
+      this.scoreValueTarget.innerText = "Risco Alto"
+      this.scoreValueTarget.className = "text-sm font-bold text-red-600"
+      this.scoreBarTarget.className = "h-full bg-red-500 transition-all duration-1000"
+      this.scoreDescriptionTarget.innerText = "Múltiplos alertas de perigo na região."
     }
   }
 
@@ -72,22 +164,10 @@ export default class extends Controller {
     
     Object.keys(groupedAlerts).forEach(key => {
       const group = groupedAlerts[key]
-      // Sort group by ID descending to have newest first
       group.sort((a, b) => b.id - a.id)
       const marker = this.createGroupMarker(group)
       if (marker) this.markers.push(marker)
     })
-  }
-
-  groupAlertsByPosition(alerts) {
-    const groups = {}
-    alerts.forEach(alert => {
-      if (!alert.latitude || !alert.longitude) return
-      const key = `${parseFloat(alert.latitude).toFixed(6)},${parseFloat(alert.longitude).toFixed(6)}`
-      if (!groups[key]) groups[key] = []
-      groups[key].push(alert)
-    })
-    return groups
   }
 
   createGroupMarker(alerts, options = {}) {
@@ -95,11 +175,17 @@ export default class extends Controller {
     const position = { lat: parseFloat(newestAlert.latitude), lng: parseFloat(newestAlert.longitude) }
     const count = alerts.length
     
+    // Temporal Relevance: Calculate opacity based on age
+    const now = Math.floor(Date.now() / 1000)
+    const ageInHours = (now - newestAlert.timestamp) / 3600
+    const opacity = Math.max(0.3, 1 - (ageInHours / 72)) // Fades completely over 72 hours
+    
     const marker = new google.maps.Marker({
       position: position,
       map: this.map,
       title: count > 1 ? `${count} alertas neste local` : newestAlert.title,
-      icon: this.getGroupMarkerIcon(alerts),
+      icon: this.getGroupMarkerIcon(alerts, opacity),
+      opacity: opacity,
       label: count > 1 ? {
         text: count.toString(),
         color: "#ffffff",
@@ -115,9 +201,9 @@ export default class extends Controller {
     return marker
   }
 
-  getGroupMarkerIcon(alerts) {
+  getGroupMarkerIcon(alerts, opacity = 1) {
     if (alerts.length === 1) {
-      return this.getMarkerIcon(alerts[0].alert_type)
+      return this.getMarkerIcon(alerts[0].alert_type, opacity)
     }
 
     const maxType = Math.max(...alerts.map(a => a.alert_type))
@@ -131,14 +217,15 @@ export default class extends Controller {
     return {
       path: google.maps.SymbolPath.CIRCLE,
       fillColor: color,
-      fillOpacity: 0.9,
+      fillOpacity: 0.9 * opacity,
       strokeWeight: 2,
       strokeColor: "#ffffff",
+      strokeOpacity: opacity,
       scale: 15
     }
   }
 
-  getMarkerIcon(type) {
+  getMarkerIcon(type, opacity = 1) {
     const colors = {
       1: "#10b981", // GOOD
       2: "#f59e0b", // ALERT
@@ -149,9 +236,10 @@ export default class extends Controller {
     return {
       path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
       fillColor: color,
-      fillOpacity: 0.9,
+      fillOpacity: 0.9 * opacity,
       strokeWeight: 2,
       strokeColor: "#ffffff",
+      strokeOpacity: opacity,
       scale: 10
     }
   }
