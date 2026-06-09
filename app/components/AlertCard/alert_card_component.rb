@@ -46,6 +46,14 @@ module AlertCard
       @alert.user.full_name
     end
 
+    def creator_level
+      @alert.user.level
+    end
+
+    def creator_badge_color
+      @alert.user.badge_color
+    end
+
     def formatted_created_at
       I18n.l(@alert.created_at, format: :short)
     end

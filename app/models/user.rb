@@ -31,6 +31,22 @@ class User < ApplicationRecord
   normalizes :username, with: -> { _1.strip.downcase }
   normalizes :full_name, with: lambda(&:strip)
 
+  def level
+    return "Iniciante" if geopoints.to_i < 100
+    return "Explorador" if geopoints.to_i < 500
+    return "Protetor" if geopoints.to_i < 1000
+    "Embaixador"
+  end
+
+  def badge_color
+    case level
+    when "Iniciante" then "bg-gray-100 text-gray-800"
+    when "Explorador" then "bg-blue-100 text-blue-800"
+    when "Protetor" then "bg-green-100 text-green-800"
+    when "Embaixador" then "bg-purple-100 text-purple-800"
+    end
+  end
+
   before_validation if: :email_changed?, on: :update do
     self.verified = false
   end

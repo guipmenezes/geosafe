@@ -10,7 +10,9 @@ class AlertVote < ApplicationRecord
   validates :vote_type, presence: true
 
   after_save :update_alert_counters
+  after_save :update_user_points, if: :relevant?
   after_destroy :update_alert_counters
+  after_destroy :decrement_user_points, if: :relevant?
 
   private
 
@@ -19,5 +21,14 @@ class AlertVote < ApplicationRecord
       relevant: alert.alert_votes.relevant.count,
       inappropriate: alert.alert_votes.inappropriate.count
     )
+  end
+
+  def update_user_points
+    # The creator of the alert gains points when someone marks it as relevant
+    alert.user.increment!(:geopoints, 10)
+  end
+
+  def decrement_user_points
+    alert.user.decrement!(:geopoints, 10)
   end
 end
