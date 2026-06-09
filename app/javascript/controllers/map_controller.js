@@ -84,19 +84,29 @@ export default class extends Controller {
   }
 
   updateSafetyScore(location) {
-    const radius = 500 // 500 meters
+    const radius = 10000 // 10km filter radius for search
+    const scoreRadius = 500 // 500m for score calculation
     const now = Math.floor(Date.now() / 1000)
-    const recentTime = 24 * 60 * 60 // 24 hours
+    const recentTime = 30 * 24 * 60 * 60 // 30 days for safety score relevance
     
-    const nearbyAlerts = this.allAlerts.filter(alert => {
+    // Filter alerts by proximity to show only those in the 10km radius
+    this.filteredAlerts = this.allAlerts.filter(alert => {
       const alertPos = new google.maps.LatLng(alert.latitude, alert.longitude)
       const distance = google.maps.geometry.spherical.computeDistanceBetween(location, alertPos)
-      const isRecent = (now - alert.timestamp) < recentTime
-      return distance <= radius && isRecent
+      return distance <= radius
     })
 
-    this.drawRadiusCircle(location, radius)
-    this.renderSafetyScore(nearbyAlerts)
+    // Calculate score based on a smaller radius (500m)
+    const scoreAlerts = this.filteredAlerts.filter(alert => {
+      const alertPos = new google.maps.LatLng(alert.latitude, alert.longitude)
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(location, alertPos)
+      const isRecent = (now - alert.timestamp) < (24 * 60 * 60) // Score still looks at 24h
+      return distance <= scoreRadius && isRecent
+    })
+
+    this.refreshMarkers(this.filteredAlerts)
+    this.drawRadiusCircle(location, scoreRadius)
+    this.renderSafetyScore(scoreAlerts)
   }
 
   drawRadiusCircle(center, radius) {
@@ -121,16 +131,12 @@ export default class extends Controller {
     this.safetyScoreTarget.classList.remove("hidden")
     
     let score = 100
-    let dangerCount = 0
-    let warningCount = 0
     
     alerts.forEach(alert => {
       if (alert.alert_type === 3) { // DANGER
         score -= 30
-        dangerCount++
       } else if (alert.alert_type === 2) { // ALERT
         score -= 15
-        warningCount++
       }
     })
 
@@ -157,10 +163,11 @@ export default class extends Controller {
     }
   }
 
-  refreshMarkers() {
+  refreshMarkers(alertsToDisplay = null) {
     this.clearMarkers()
     
-    const groupedAlerts = this.groupAlertsByPosition(this.allAlerts)
+    const alerts = alertsToDisplay || this.allAlerts
+    const groupedAlerts = this.groupAlertsByPosition(alerts)
     
     Object.keys(groupedAlerts).forEach(key => {
       const group = groupedAlerts[key]
@@ -175,10 +182,11 @@ export default class extends Controller {
     const position = { lat: parseFloat(newestAlert.latitude), lng: parseFloat(newestAlert.longitude) }
     const count = alerts.length
     
-    // Temporal Relevance: Calculate opacity based on age
+    // Temporal Relevance: Calculate opacity based on age (now 30 days / 720 hours)
     const now = Math.floor(Date.now() / 1000)
     const ageInHours = (now - newestAlert.timestamp) / 3600
-    const opacity = Math.max(0.3, 1 - (ageInHours / 72)) // Fades completely over 72 hours
+    const maxAgeHours = 720 // 30 days
+    const opacity = Math.max(0.4, 1 - (ageInHours / maxAgeHours))
     
     const marker = new google.maps.Marker({
       position: position,
