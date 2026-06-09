@@ -15,7 +15,7 @@ Acreditamos que a melhor fonte de informação sobre um bairro é quem vive e tr
 ### 🔍 Lupa GeoSafe (Busca Integrada)
 O "cérebro" do nosso mapa. Ao buscar um endereço, o app não apenas localiza o ponto, mas ativa camadas de inteligência:
 - **Filtro de Proximidade:** Exibe automaticamente apenas alertas em um raio de **10km** do local buscado, limpando o ruído visual.
-- **Clima de Segurança (Safety Score):** Calcula um score de risco em tempo real baseado nos alertas dos últimos **500 metros**.
+- **Clima de Segurança (Safety Score):** Calcula um score de risco em tempo real baseado nos alertas dos últimos **1km**.
 - **Análise 24h:** O score prioriza eventos ocorridos nas últimas 24 horas para garantir que o "clima" reflita o momento atual.
 
 ### ⏳ Relevância Temporal

@@ -77,6 +77,7 @@ export default class extends Controller {
         return
       }
 
+      this.currentSearchLocation = place.geometry.location
       this.map.setCenter(place.geometry.location)
       this.map.setZoom(17)
       this.updateSafetyScore(place.geometry.location)
@@ -84,10 +85,14 @@ export default class extends Controller {
   }
 
   updateSafetyScore(location) {
+    if (typeof google.maps.geometry === 'undefined') {
+      console.error("Google Maps Geometry library not loaded.")
+      return
+    }
+
     const radius = 10000 // 10km filter radius for search
-    const scoreRadius = 500 // 500m for score calculation
+    const scoreRadius = 1000 // 1km for score calculation (Updated from 500m)
     const now = Math.floor(Date.now() / 1000)
-    const recentTime = 30 * 24 * 60 * 60 // 30 days for safety score relevance
     
     // Filter alerts by proximity to show only those in the 10km radius
     this.filteredAlerts = this.allAlerts.filter(alert => {
@@ -96,7 +101,7 @@ export default class extends Controller {
       return distance <= radius
     })
 
-    // Calculate score based on a smaller radius (500m)
+    // Calculate score based on 1km radius
     const scoreAlerts = this.filteredAlerts.filter(alert => {
       const alertPos = new google.maps.LatLng(alert.latitude, alert.longitude)
       const distance = google.maps.geometry.spherical.computeDistanceBetween(location, alertPos)
@@ -104,6 +109,8 @@ export default class extends Controller {
       return distance <= scoreRadius && isRecent
     })
 
+    console.log(`Filtering: ${this.filteredAlerts.length} alerts in 10km. Score: ${scoreAlerts.length} alerts in 1km.`)
+    
     this.refreshMarkers(this.filteredAlerts)
     this.drawRadiusCircle(location, scoreRadius)
     this.renderSafetyScore(scoreAlerts)
@@ -166,7 +173,18 @@ export default class extends Controller {
   refreshMarkers(alertsToDisplay = null) {
     this.clearMarkers()
     
-    const alerts = alertsToDisplay || this.allAlerts
+    // Default to all alerts if no specific list is provided
+    let alerts = alertsToDisplay || this.allAlerts
+    
+    const now = Math.floor(Date.now() / 1000)
+    const maxAgeSeconds = 30 * 24 * 60 * 60 // 30 days
+
+    // Temporal filter: Only show alerts created within the last 30 days
+    alerts = alerts.filter(alert => {
+      const ageInSeconds = now - alert.timestamp
+      return ageInSeconds <= maxAgeSeconds
+    })
+
     const groupedAlerts = this.groupAlertsByPosition(alerts)
     
     Object.keys(groupedAlerts).forEach(key => {
@@ -294,7 +312,13 @@ export default class extends Controller {
     }
     
     this.allAlerts.push(alert)
-    this.refreshMarkers()
+    
+    // Re-apply current filtering state
+    if (this.currentSearchLocation) {
+      this.updateSafetyScore(this.currentSearchLocation)
+    } else {
+      this.refreshMarkers()
+    }
     
     const position = { lat: parseFloat(alert.latitude), lng: parseFloat(alert.longitude) }
     
