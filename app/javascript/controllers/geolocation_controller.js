@@ -70,6 +70,7 @@ export default class extends Controller {
 
     if (this.hasTypeTarget) {
       this.typeTarget.value = "2" // STREET
+      this.toggleVisibility(true)
       
       // Update the select UI label if it's a select component
       const selectContainer = this.typeTarget.closest('[data-controller="select"]')

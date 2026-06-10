@@ -97,6 +97,7 @@ class Alert < ApplicationRecord
   def set_coordinates
     return unless user&.address
 
+    ensure_user_address_geocoded
     self.latitude = user.address.latitude
     self.longitude = user.address.longitude
     self.location = user.address.anonymized_address

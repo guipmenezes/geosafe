@@ -421,4 +421,23 @@ export default class extends Controller {
       this.map.fitBounds(bounds)
     }
   }
+
+  groupAlertsByPosition(alerts) {
+    const groups = {}
+    alerts.forEach(alert => {
+      const key = `${parseFloat(alert.latitude).toFixed(5)},${parseFloat(alert.longitude).toFixed(5)}`
+      if (!groups[key]) {
+        groups[key] = []
+      }
+      groups[key].push(alert)
+    })
+    return groups
+  }
+
+  processQueuedAlerts() {
+    if (this.queuedAlerts && this.queuedAlerts.length > 0) {
+      this.queuedAlerts.forEach(alert => this.addAlertMarker(alert))
+      this.queuedAlerts = []
+    }
+  }
 }
