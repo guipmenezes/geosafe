@@ -16,7 +16,7 @@ export default class extends Controller {
     // Mobile only initialization
     if (window.innerWidth >= 1024) return
     
-    this.sheetTarget.style.transform = `translateY(calc(100% - 60px))`
+    this.sheetTarget.style.transform = `translateY(calc(100% - 80px))`
   }
 
   toggle() {
@@ -35,7 +35,7 @@ export default class extends Controller {
 
   collapse() {
     this.state = "collapsed"
-    this.sheetTarget.style.transform = `translateY(calc(100% - 60px))`
+    this.sheetTarget.style.transform = `translateY(calc(100% - 80px))`
     this.sheetTarget.classList.add("duration-300")
   }
 
@@ -52,7 +52,7 @@ export default class extends Controller {
     const deltaY = e.touches[0].clientY - this.startY
     if (this.state === "collapsed" && deltaY > 0) return
     
-    const newY = this.state === "expanded" ? Math.max(0, deltaY) : Math.min(window.innerHeight - 60, window.innerHeight - 60 + deltaY)
+    const newY = this.state === "expanded" ? Math.max(0, deltaY) : Math.min(window.innerHeight - 80, window.innerHeight - 80 + deltaY)
     
     this.sheetTarget.style.transform = `translateY(${newY}px)`
   }
