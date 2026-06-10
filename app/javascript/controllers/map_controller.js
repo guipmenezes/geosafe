@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["container", "searchInput", "safetyScore", "scoreValue", "scoreBar", "scoreDescription"]
+  static targets = ["container", "searchInput", "safetyScore", "scoreValue", "scoreBar", "scoreDescription", "alertList"]
   static values = {
     alerts: Array,
     currentUserId: String
@@ -14,6 +14,7 @@ export default class extends Controller {
     this.alertCreatedHandler = (event) => {
       console.log("Alert received in map controller:", event.detail.alert)
       this.addAlertMarker(event.detail.alert)
+      this.appendAlertToList(event.detail.alert)
     }
     this.moveMarkerHandler = (event) => {
       const { lat, lng } = event.detail
@@ -25,11 +26,52 @@ export default class extends Controller {
     
     window.addEventListener("alert:created", this.alertCreatedHandler)
     window.addEventListener("map:move-marker", this.moveMarkerHandler)
+
+    // Add mouse listeners for sidebar cards to highlight markers
+    this.initSidebarListeners()
   }
 
   disconnect() {
     window.removeEventListener("alert:created", this.alertCreatedHandler)
     window.removeEventListener("map:move-marker", this.moveMarkerHandler)
+  }
+
+  initSidebarListeners() {
+    if (this.hasAlertListTarget) {
+      this.alertListTarget.addEventListener("mouseenter", (e) => {
+        const card = e.target.closest("[data-alert-id]")
+        if (card) this.highlightMarker(card.dataset.alertId, true)
+      }, true)
+
+      this.alertListTarget.addEventListener("mouseleave", (e) => {
+        const card = e.target.closest("[data-alert-id]")
+        if (card) this.highlightMarker(card.dataset.alertId, false)
+      }, true)
+    }
+  }
+
+  highlightMarker(alertId, active) {
+    const marker = this.markers.find(m => {
+      return m.alertIds && m.alertIds.map(id => id.toString()).includes(alertId.toString())
+    })
+
+    if (marker) {
+      if (active) {
+        marker.setAnimation(google.maps.Animation.BOUNCE)
+      } else {
+        marker.setAnimation(null)
+      }
+    }
+  }
+
+  appendAlertToList(alert) {
+    // This is handled by Turbo Stream in HTML, but we might need to 
+    // re-filter if a search is active.
+    setTimeout(() => {
+      if (this.currentSearchLocation) {
+        this.updateSafetyScore(this.currentSearchLocation)
+      }
+    }, 500)
   }
 
   initMap() {
@@ -114,6 +156,48 @@ export default class extends Controller {
     this.refreshMarkers(this.filteredAlerts)
     this.drawRadiusCircle(location, scoreRadius)
     this.renderSafetyScore(scoreAlerts)
+    this.updateSidebarList(location, radius)
+  }
+
+  updateSidebarList(location, radius) {
+    if (!this.hasAlertListTarget) {
+      console.warn("No alertList target found")
+      return
+    }
+
+    const cards = Array.from(this.alertListTarget.querySelectorAll("[data-alert-id]"))
+    const visibleCards = []
+
+    console.log(`Updating sidebar with ${cards.length} cards, radius: ${radius}m`)
+
+    cards.forEach(card => {
+      const cardLat = parseFloat(card.dataset.latitude)
+      const cardLng = parseFloat(card.dataset.longitude)
+      
+      if (isNaN(cardLat) || isNaN(cardLng)) {
+        console.warn(`Card ${card.dataset.alertId} has invalid coordinates:`, cardLat, cardLng)
+        return
+      }
+
+      const cardPos = new google.maps.LatLng(cardLat, cardLng)
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(location, cardPos)
+
+      if (distance <= radius) {
+        card.classList.remove("hidden")
+        card.dataset.distance = distance
+        visibleCards.push(card)
+      } else {
+        card.classList.add("hidden")
+      }
+    })
+
+    console.log(`Visible cards after filter: ${visibleCards.length}`)
+
+    // Sort visible cards by distance
+    visibleCards.sort((a, b) => parseFloat(a.dataset.distance) - parseFloat(b.dataset.distance))
+    
+    // Re-order in the DOM
+    visibleCards.forEach(card => this.alertListTarget.appendChild(card))
   }
 
   drawRadiusCircle(center, radius) {
@@ -219,6 +303,8 @@ export default class extends Controller {
       } : null,
       ...options
     })
+
+    marker.alertIds = alerts.map(a => a.id)
 
     marker.addListener("click", () => {
       this.handleGroupClick(alerts, position)
