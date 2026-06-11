@@ -16,10 +16,9 @@ module SystemHelpers
   private
 
   def ensure_desktop_viewport
-    if page.driver.respond_to?(:resize)
-      page.driver.resize(1200, 800)
-    elsif page.driver.browser.respond_to?(:resize)
-      page.driver.browser.resize(window_size: [1200, 800])
-    end
+    Capybara.current_session.current_window.resize_to(1200, 800)
+  rescue StandardError
+    # Fallback for drivers that don't support resize_to
+    page.driver.resize(1200, 800) if page.driver.respond_to?(:resize)
   end
 end
