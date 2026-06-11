@@ -59,7 +59,7 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:each, type: :system) do
-    driven_by(:cuprite, screen_size: [1200, 800])
+    driven_by(:cuprite, options: { window_size: [1200, 800] })
   end
 
   Capybara.register_driver(:cuprite) do |app|
@@ -78,8 +78,6 @@ RSpec.configure do |config|
   Capybara.javascript_driver = :cuprite
   Capybara.default_driver = :rack_test
 
-  Capybara.server_port = 3000
-  Capybara.app_host = 'http://localhost:3000'
   Capybara.default_max_wait_time = 10 # Increase from default 2 seconds
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
