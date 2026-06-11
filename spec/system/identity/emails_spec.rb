@@ -24,8 +24,7 @@ RSpec.describe 'Identity::Emails', type: :system do
   it 'sends a verification email' do
     user.update! verified: false
 
-    click_on "Olá, #{user.full_name.split.first}"
-    click_on 'Alterar E-mail'
+    navigate_to_settings 'Alterar E-mail'
     click_on 'Reenviar e-mail de verificação'
 
     expect(page).to have_text('Enviamos um e-mail de verificação para o seu endereço de e-mail.')

@@ -66,7 +66,7 @@
                 <svg class="w-4 h-4 text-grey400 group-hover:text-primary500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Dispositivos e Sessões
+                Sessões
               <% end %>
               <div class="border-t border-grey100 mt-1 pt-1">
                 <%= button_to session_path(Current.session), method: :delete, class: "flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-semibold group" do %>
@@ -100,10 +100,11 @@
             </div>
 
             <div class="grid grid-cols-2 gap-2">
-              <%= link_to edit_identity_email_path, class: "flex items-center gap-2 p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>E-mail<% end %>
-              <%= link_to edit_password_path, class: "flex items-center gap-2 p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Senha<% end %>
-              <%= link_to edit_address_path, class: "flex items-center gap-2 p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Endereço<% end %>
-              <%= button_to session_path(Current.session), method: :delete, class: "flex items-center gap-2 p-2 text-xs font-bold text-red-600 bg-red-50 rounded-lg w-full text-left" do %>Sair<% end %>
+              <%= link_to edit_identity_email_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Alterar E-mail<% end %>
+              <%= link_to edit_password_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Alterar Senha<% end %>
+              <%= link_to edit_address_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Meu Endereço<% end %>
+              <%= link_to sessions_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Sessões<% end %>
+              <%= button_to session_path(Current.session), method: :delete, class: "flex items-center justify-center p-2 text-xs font-bold text-red-600 bg-red-50 rounded-lg w-full text-left col-span-2" do %>Sair<% end %>
             </div>
           </div>
         </div>
