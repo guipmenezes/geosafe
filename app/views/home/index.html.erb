@@ -40,8 +40,8 @@
 
     <div data-map-target="container" class="w-full h-full"></div>
 
-    <%# Create Alert Button (Floating) %>
-    <div class="absolute bottom-20 lg:bottom-8 right-3 lg:right-6 z-20">
+    <%# Create Alert Button (Mobile Floating) %>
+    <div class="lg:hidden absolute bottom-20 right-3 z-20">
       <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
         <% component.with_trigger do %>
           <button class="w-12 h-12 sm:w-14 sm:h-14 bg-primary600 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-primary700 transition-transform active:scale-95">
@@ -69,16 +69,16 @@
     <div class="flex flex-col h-full overflow-hidden px-4 lg:px-0">
       <div class="flex flex-row items-center justify-between mb-4 lg:pr-2">
         <h2 class="text-xl font-bold text-gray-900 lg:hidden">Alertas Próximos</h2>
-        <div class="flex items-center gap-2">
-          <%= render(Dropdown::DropdownComponent.new(title: "Filtro", options: @options)) %>
-          <div class="hidden lg:block">
-            <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
-              <% component.with_trigger do %>
-                <%= render Button::ButtonComponent.new(text: "Criar GeoAlerta") %>
-              <% end %>
-              <%= render 'alerts/form', alert: @alert %>
+
+        <%= render(Dropdown::DropdownComponent.new(title: "Filtro", options: @options)) %>
+
+        <div class="hidden lg:block">
+          <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
+            <% component.with_trigger do %>
+              <%= render Button::ButtonComponent.new(text: "Criar GeoAlerta") %>
             <% end %>
-          </div>
+            <%= render 'alerts/form', alert: @alert %>
+          <% end %>
         </div>
       </div>
 
