@@ -59,7 +59,7 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:each, type: :system) do
-    driven_by :cuprite, screen_size: [1200, 800], options: { 
+    driven_by :cuprite, screen_size: [1200, 800], options: {
       process_timeout: 120,
       timeout: 60
     }
