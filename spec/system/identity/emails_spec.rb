@@ -11,8 +11,7 @@ RSpec.describe 'Identity::Emails', type: :system do
   end
 
   it 'updates the email' do
-    click_on "Olá, #{user.full_name.split.first}"
-    click_on 'Alterar E-mail'
+    navigate_to_settings 'Alterar E-mail'
 
     fill_in 'Novo E-mail:', with: 'new_email@hey.com'
     fill_in 'Sua Senha Atual:', with: 'Secret1*3*5*'
