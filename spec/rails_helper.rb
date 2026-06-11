@@ -53,7 +53,7 @@ RSpec.configure do |config|
 
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
-  config.include ActionView::Helpers::AssetUrlHelper
+  config.include ActionView::Helpers::AssetUrlHelper, type: :component
   config.include ControllerMacros, type: :request
   config.include SystemHelpers, type: :system
   config.include ActiveSupport::Testing::TimeHelpers
