@@ -1,16 +1,29 @@
-<div class="pb-8">
-  <nav class="fixed w-[80%] top-[2%] left-[10%] right-[10%] z-[100] bg-gray-100 shadow-md border-s rounded-2xl">
-    <div class="container mx-auto px-6 py-4">
+<div class="h-16 lg:h-20">
+  <nav class="fixed top-0 left-0 right-0 z-[100] bg-white lg:bg-gray-100 shadow-sm lg:border-s lg:rounded-2xl lg:top-[1.5%] lg:left-[5%] lg:right-[5%] lg:w-[90%]" data-controller="header">
+    <div class="container mx-auto px-4 lg:px-6 py-3 lg:py-4">
       <div class="flex items-center justify-between">
-        <div>
+        <div class="flex-shrink-0">
           <%= render(Logo::LogoComponent.new) %>
         </div>
-        <div class="flex gap-8">
-          <%= link_to "Home", home_path, class: "text-gray-600 hover:text-blue-500 #{nav_link_class(home_path)}" %>
-          <%= link_to "Lupa GeoSafe", root_path, class: "text-gray-600 hover:text-blue-500 #{nav_link_class(root_path)}" %>
-          <%= link_to "Loja", root_path, class: "text-gray-600 hover:text-blue-500 #{nav_link_class(root_path)}" %>
+
+        <%# Mobile Menu Button %>
+        <div class="lg:hidden">
+          <button type="button" data-action="click->header#toggle" class="p-2 text-gray-600 hover:text-primary600 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </button>
         </div>
-        <div class="flex items-center gap-4">
+
+        <%# Desktop Links %>
+        <div class="hidden lg:flex gap-8">
+          <%= link_to "Home", home_path, class: "text-gray-600 hover:text-blue-500 font-medium #{nav_link_class(home_path)}" %>
+          <%= link_to "Lupa GeoSafe", root_path, class: "text-gray-600 hover:text-blue-500 font-medium #{nav_link_class(root_path)}" %>
+          <%= link_to "Loja", root_path, class: "text-gray-600 hover:text-blue-500 font-medium #{nav_link_class(root_path)}" %>
+        </div>
+
+        <%# User Profile / Auth %>
+        <div class="hidden lg:flex items-center gap-4">
           <% if Current.user %>
             <%= render(Dropdown::DropdownComponent.new) do |component| %>
               <% component.with_trigger do %>
@@ -53,7 +66,7 @@
                 <svg class="w-4 h-4 text-grey400 group-hover:text-primary500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Dispositivos e Sessões
+                Sessões
               <% end %>
               <div class="border-t border-grey100 mt-1 pt-1">
                 <%= button_to session_path(Current.session), method: :delete, class: "flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-semibold group" do %>
@@ -65,6 +78,35 @@
               </div>
             <% end %>
           <% end %>
+        </div>
+      </div>
+
+      <%# Mobile Menu Panel %>
+      <div class="hidden lg:hidden pt-4 pb-2 border-t border-gray-100 mt-2" data-header-target="menu">
+        <div class="flex flex-col gap-4 px-2">
+          <%= link_to "Home", home_path, class: "text-base font-semibold text-gray-700 hover:text-primary600" %>
+          <%= link_to "Lupa GeoSafe", root_path, class: "text-base font-semibold text-gray-700 hover:text-primary600" %>
+          <%= link_to "Loja", root_path, class: "text-base font-semibold text-gray-700 hover:text-primary600" %>
+
+          <div class="pt-4 border-t border-gray-100">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-full bg-primary500 flex items-center justify-center text-white font-bold text-lg">
+                <%= Current.user.full_name.first.upcase %>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-gray-900"><%= Current.user.full_name %></span>
+                <span class="text-xs text-gray-500"><%= Current.user.email %></span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <%= link_to edit_identity_email_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Alterar E-mail<% end %>
+              <%= link_to edit_password_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Alterar Senha<% end %>
+              <%= link_to edit_address_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Meu Endereço<% end %>
+              <%= link_to sessions_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Sessões<% end %>
+              <%= button_to session_path(Current.session), method: :delete, class: "flex items-center justify-center p-2 text-xs font-bold text-red-600 bg-red-50 rounded-lg w-full text-left col-span-2" do %>Sair<% end %>
+            </div>
+          </div>
         </div>
       </div>
     </div>

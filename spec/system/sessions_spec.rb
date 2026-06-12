@@ -13,15 +13,13 @@ RSpec.describe 'Sessions', type: :system do
   it 'signs in and out' do
     sign_in_as(user)
 
-    click_on "Olá, #{user.full_name.split.first}"
-    click_on 'Sair'
+    navigate_to_settings 'Sair'
     expect(page).to have_text('Você saiu da sua conta com sucesso.')
   end
 
   it 'views sessions' do
     sign_in_as(user)
-    click_on "Olá, #{user.full_name.split.first}"
-    click_on 'Dispositivos e Sessões'
+    navigate_to_settings 'Sessões'
     expect(page).to have_selector('h1', text: 'Dispositivos e Sessões')
   end
 end

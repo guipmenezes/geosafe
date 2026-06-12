@@ -66,7 +66,8 @@ class Alert < ApplicationRecord
       alert_type: alert_type,
       user_id: user_id,
       creator_name: user.full_name,
-      date: I18n.l(created_at, format: :short)
+      date: I18n.l(created_at, format: :short),
+      timestamp: created_at.to_i
     }
   end
 
@@ -96,6 +97,7 @@ class Alert < ApplicationRecord
   def set_coordinates
     return unless user&.address
 
+    ensure_user_address_geocoded
     self.latitude = user.address.latitude
     self.longitude = user.address.longitude
     self.location = user.address.anonymized_address

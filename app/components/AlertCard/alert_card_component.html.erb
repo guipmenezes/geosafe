@@ -1,6 +1,7 @@
 <div id="<%= dom_id(@alert) %>"
-     data-controller="alert-marker"
-     data-alert-marker-alert-value="<%= marker_data %>"
+     data-alert-id="<%= @alert.id %>"
+     data-latitude="<%= @alert.latitude %>"
+     data-longitude="<%= @alert.longitude %>"
      class="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 border-l-4 <%= case type
                                                                   when 1 then 'border-green-500'
                                                                   when 2 then 'border-yellow-500'
@@ -29,6 +30,14 @@
            data-alert-date="<%= formatted_created_at %>">
         <h3 class="text-base font-semibold text-grey900 mt-2 group-hover:text-primary600 transition-colors"><%= title %></h3>
         <p class="text-xs text-grey600 mt-1 line-clamp-2"><%= description %></p>
+
+        <div class="flex items-center gap-2 mt-3">
+          <p class="font-bold text-[12px]">Criador nível: </p>
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider <%= creator_badge_color %>">
+            <%= creator_level %>
+          </span>
+        </div>
+
         <div class="flex items-center gap-1 mt-2 text-[10px] text-grey500">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>

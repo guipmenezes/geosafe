@@ -6,13 +6,13 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.maps_api_key %>" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.maps_api_key %>&libraries=places,geometry" async defer></script>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
     <%= render "layouts/navbar" %>
-    <main class="container mx-auto px-6 pt-24">
+    <main class="w-full lg:w-[90%] mx-auto px-4 lg:px-0 mt-4 lg:mt-6">
       <%= render "layouts/flash" %>
       <%= yield %>
     </main>

@@ -1,37 +1,102 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["container"]
+  static targets = ["container", "searchInput", "safetyScore", "scoreValue", "scoreBar", "scoreDescription", "alertList"]
   static values = {
     alerts: Array,
     currentUserId: String
   }
 
   connect() {
-    this.allAlerts = [...this.alertsValue]
+    this.allAlerts = (this.alertsValue || []).filter(alert => {
+      return alert && 
+             alert.latitude !== null && 
+             alert.latitude !== undefined && 
+             alert.longitude !== null && 
+             alert.longitude !== undefined && 
+             !isNaN(parseFloat(alert.latitude)) && 
+             !isNaN(parseFloat(alert.longitude))
+    })
     this.initMap()
     
+    // Resize observer to handle container size changes and stop "shaking"
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.map) {
+        google.maps.event.trigger(this.map, "resize")
+      }
+    })
+    this.resizeObserver.observe(this.containerTarget)
+
     this.alertCreatedHandler = (event) => {
       console.log("Alert received in map controller:", event.detail.alert)
       this.addAlertMarker(event.detail.alert)
+      this.appendAlertToList(event.detail.alert)
     }
     this.moveMarkerHandler = (event) => {
       const { lat, lng } = event.detail
-      this.placePickMarker(new google.maps.LatLng(lat, lng))
-      this.map.panTo({ lat, lng })
+      const latLng = new google.maps.LatLng(lat, lng)
+      this.placePickMarker(latLng)
+      this.map.panTo(latLng)
+      this.updateSafetyScore(latLng)
     }
     
     window.addEventListener("alert:created", this.alertCreatedHandler)
     window.addEventListener("map:move-marker", this.moveMarkerHandler)
+
+    // Add mouse listeners for sidebar cards to highlight markers
+    this.initSidebarListeners()
   }
 
   disconnect() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+    }
     window.removeEventListener("alert:created", this.alertCreatedHandler)
     window.removeEventListener("map:move-marker", this.moveMarkerHandler)
   }
 
+  initSidebarListeners() {
+    if (this.hasAlertListTarget) {
+      this.alertListTarget.addEventListener("mouseenter", (e) => {
+        const card = e.target.closest("[data-alert-id]")
+        if (card) this.highlightMarker(card.dataset.alertId, true)
+      }, true)
+
+      this.alertListTarget.addEventListener("mouseleave", (e) => {
+        const card = e.target.closest("[data-alert-id]")
+        if (card) this.highlightMarker(card.dataset.alertId, false)
+      }, true)
+    }
+  }
+
+  highlightMarker(alertId, active) {
+    const marker = this.markers.find(m => {
+      return m.alertIds && m.alertIds.map(id => id.toString()).includes(alertId.toString())
+    })
+
+    if (marker) {
+      if (active) {
+        marker.setAnimation(google.maps.Animation.BOUNCE)
+      } else {
+        marker.setAnimation(null)
+      }
+    }
+  }
+
+  appendAlertToList(alert) {
+    // This is handled by Turbo Stream in HTML, but we might need to 
+    // re-filter if a search is active.
+    setTimeout(() => {
+      if (this.currentSearchLocation) {
+        this.updateSafetyScore(this.currentSearchLocation)
+      }
+    }, 500)
+  }
+
   initMap() {
-    if (typeof google === 'undefined') {
+    if (typeof google === 'undefined' || 
+        typeof google.maps.places === 'undefined' || 
+        typeof google.maps.geometry === 'undefined') {
       setTimeout(() => this.initMap(), 100)
       return
     }
@@ -41,13 +106,14 @@ export default class extends Controller {
     this.map = new google.maps.Map(this.containerTarget, {
       center: defaultCenter,
       zoom: 15,
-      mapId: 'GEOSAFE_MAP_ID',
-      mapTypeControl: false,
+      mapTypeControl: true,
       fullscreenControl: false,
-      streetViewControl: false
+      streetViewControl: false,
+      zoomControl: true
     })
 
     this.markers = []
+    this.initAutocomplete()
     this.refreshMarkers()
     this.getUserLocation()
     this.processQueuedAlerts()
@@ -57,37 +123,181 @@ export default class extends Controller {
     })
   }
 
-  processQueuedAlerts() {
-    if (this.queuedAlerts && this.queuedAlerts.length > 0) {
-      console.log(`Processing ${this.queuedAlerts.length} queued alerts`)
-      this.queuedAlerts.forEach(alert => this.addAlertMarker(alert))
-      this.queuedAlerts = []
+  initAutocomplete() {
+    const options = {
+      fields: ["geometry", "name", "formatted_address"],
+      strictBounds: false,
+      types: ["geocode", "establishment"]
+    }
+
+    this.autocomplete = new google.maps.places.Autocomplete(this.searchInputTarget, options)
+    this.autocomplete.bindTo("bounds", this.map)
+
+    this.autocomplete.addListener("place_changed", () => {
+      const place = this.autocomplete.getPlace()
+
+      if (!place.geometry || !place.geometry.location) {
+        return
+      }
+
+      this.currentSearchLocation = place.geometry.location
+      this.map.setCenter(place.geometry.location)
+      this.map.setZoom(17)
+      this.updateSafetyScore(place.geometry.location)
+    })
+  }
+
+  updateSafetyScore(location) {
+    if (typeof google.maps.geometry === 'undefined') {
+      console.error("Google Maps Geometry library not loaded.")
+      return
+    }
+
+    const radius = 10000 // 10km filter radius for search
+    const scoreRadius = 1000 // 1km for score calculation (Updated from 500m)
+    const now = Math.floor(Date.now() / 1000)
+    
+    // Filter alerts by proximity to show only those in the 10km radius
+    this.filteredAlerts = this.allAlerts.filter(alert => {
+      const alertPos = new google.maps.LatLng(alert.latitude, alert.longitude)
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(location, alertPos)
+      return distance <= radius
+    })
+
+    // Calculate score based on 1km radius
+    const scoreAlerts = this.filteredAlerts.filter(alert => {
+      const alertPos = new google.maps.LatLng(alert.latitude, alert.longitude)
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(location, alertPos)
+      const isRecent = (now - alert.timestamp) < (24 * 60 * 60) // Score still looks at 24h
+      return distance <= scoreRadius && isRecent
+    })
+
+    console.log(`Filtering: ${this.filteredAlerts.length} alerts in 10km. Score: ${scoreAlerts.length} alerts in 1km.`)
+    
+    this.refreshMarkers(this.filteredAlerts)
+    this.drawRadiusCircle(location, scoreRadius)
+    this.renderSafetyScore(scoreAlerts)
+    this.updateSidebarList(location, radius)
+  }
+
+  updateSidebarList(location, radius) {
+    if (!this.hasAlertListTarget) {
+      console.warn("No alertList target found")
+      return
+    }
+
+    const cards = Array.from(this.alertListTarget.querySelectorAll("[data-alert-id]"))
+    const visibleCards = []
+
+    console.log(`Updating sidebar with ${cards.length} cards, radius: ${radius}m`)
+
+    cards.forEach(card => {
+      const cardLat = parseFloat(card.dataset.latitude)
+      const cardLng = parseFloat(card.dataset.longitude)
+      
+      if (isNaN(cardLat) || isNaN(cardLng)) {
+        console.warn(`Card ${card.dataset.alertId} has invalid coordinates:`, cardLat, cardLng)
+        return
+      }
+
+      const cardPos = new google.maps.LatLng(cardLat, cardLng)
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(location, cardPos)
+
+      if (distance <= radius) {
+        card.classList.remove("hidden")
+        card.dataset.distance = distance
+        visibleCards.push(card)
+      } else {
+        card.classList.add("hidden")
+      }
+    })
+
+    console.log(`Visible cards after filter: ${visibleCards.length}`)
+
+    // Sort visible cards by distance
+    visibleCards.sort((a, b) => parseFloat(a.dataset.distance) - parseFloat(b.dataset.distance))
+    
+    // Re-order in the DOM
+    visibleCards.forEach(card => this.alertListTarget.appendChild(card))
+  }
+
+  drawRadiusCircle(center, radius) {
+    if (this.currentRadiusCircle) {
+      this.currentRadiusCircle.setMap(null)
+    }
+
+    this.currentRadiusCircle = new google.maps.Circle({
+      strokeColor: "#6366f1",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#6366f1",
+      fillOpacity: 0.1,
+      map: this.map,
+      center: center,
+      radius: radius,
+      clickable: false
+    })
+  }
+
+  renderSafetyScore(alerts) {
+    this.safetyScoreTarget.classList.remove("hidden")
+    
+    let score = 100
+    
+    alerts.forEach(alert => {
+      if (alert.alert_type === 3) { // DANGER
+        score -= 30
+      } else if (alert.alert_type === 2) { // ALERT
+        score -= 15
+      }
+    })
+
+    score = Math.max(0, score)
+    
+    // Update UI
+    this.scoreBarTarget.style.width = `${score}%`
+    
+    if (score > 80) {
+      this.scoreValueTarget.innerText = "Seguro"
+      this.scoreValueTarget.className = "text-sm font-bold text-green-600"
+      this.scoreBarTarget.className = "h-full bg-green-500 transition-all duration-1000"
+      this.scoreDescriptionTarget.innerText = "Região tranquila nas últimas 24h."
+    } else if (score > 40) {
+      this.scoreValueTarget.innerText = "Atenção"
+      this.scoreValueTarget.className = "text-sm font-bold text-yellow-600"
+      this.scoreBarTarget.className = "h-full bg-yellow-500 transition-all duration-1000"
+      this.scoreDescriptionTarget.innerText = `${alerts.length} alertas detectados recentemente.`
+    } else {
+      this.scoreValueTarget.innerText = "Risco Alto"
+      this.scoreValueTarget.className = "text-sm font-bold text-red-600"
+      this.scoreBarTarget.className = "h-full bg-red-500 transition-all duration-1000"
+      this.scoreDescriptionTarget.innerText = "Múltiplos alertas de perigo na região."
     }
   }
 
-  refreshMarkers() {
+  refreshMarkers(alertsToDisplay = null) {
     this.clearMarkers()
     
-    const groupedAlerts = this.groupAlertsByPosition(this.allAlerts)
+    // Default to all alerts if no specific list is provided
+    let alerts = alertsToDisplay || this.allAlerts
+    
+    const now = Math.floor(Date.now() / 1000)
+    const maxAgeSeconds = 30 * 24 * 60 * 60 // 30 days
+
+    // Temporal filter: Only show alerts created within the last 30 days
+    alerts = alerts.filter(alert => {
+      const ageInSeconds = now - alert.timestamp
+      return ageInSeconds <= maxAgeSeconds
+    })
+
+    const groupedAlerts = this.groupAlertsByPosition(alerts)
     
     Object.keys(groupedAlerts).forEach(key => {
       const group = groupedAlerts[key]
-      // Sort group by ID descending to have newest first
       group.sort((a, b) => b.id - a.id)
       const marker = this.createGroupMarker(group)
       if (marker) this.markers.push(marker)
     })
-  }
-
-  groupAlertsByPosition(alerts) {
-    const groups = {}
-    alerts.forEach(alert => {
-      if (!alert.latitude || !alert.longitude) return
-      const key = `${parseFloat(alert.latitude).toFixed(6)},${parseFloat(alert.longitude).toFixed(6)}`
-      if (!groups[key]) groups[key] = []
-      groups[key].push(alert)
-    })
-    return groups
   }
 
   createGroupMarker(alerts, options = {}) {
@@ -95,11 +305,18 @@ export default class extends Controller {
     const position = { lat: parseFloat(newestAlert.latitude), lng: parseFloat(newestAlert.longitude) }
     const count = alerts.length
     
+    // Temporal Relevance: Calculate opacity based on age (now 30 days / 720 hours)
+    const now = Math.floor(Date.now() / 1000)
+    const ageInHours = (now - newestAlert.timestamp) / 3600
+    const maxAgeHours = 720 // 30 days
+    const opacity = Math.max(0.4, 1 - (ageInHours / maxAgeHours))
+    
     const marker = new google.maps.Marker({
       position: position,
       map: this.map,
       title: count > 1 ? `${count} alertas neste local` : newestAlert.title,
-      icon: this.getGroupMarkerIcon(alerts),
+      icon: this.getGroupMarkerIcon(alerts, opacity),
+      opacity: opacity,
       label: count > 1 ? {
         text: count.toString(),
         color: "#ffffff",
@@ -108,6 +325,8 @@ export default class extends Controller {
       ...options
     })
 
+    marker.alertIds = alerts.map(a => a.id)
+
     marker.addListener("click", () => {
       this.handleGroupClick(alerts, position)
     })
@@ -115,9 +334,9 @@ export default class extends Controller {
     return marker
   }
 
-  getGroupMarkerIcon(alerts) {
+  getGroupMarkerIcon(alerts, opacity = 1) {
     if (alerts.length === 1) {
-      return this.getMarkerIcon(alerts[0].alert_type)
+      return this.getMarkerIcon(alerts[0].alert_type, opacity)
     }
 
     const maxType = Math.max(...alerts.map(a => a.alert_type))
@@ -131,14 +350,15 @@ export default class extends Controller {
     return {
       path: google.maps.SymbolPath.CIRCLE,
       fillColor: color,
-      fillOpacity: 0.9,
+      fillOpacity: 0.9 * opacity,
       strokeWeight: 2,
       strokeColor: "#ffffff",
+      strokeOpacity: opacity,
       scale: 15
     }
   }
 
-  getMarkerIcon(type) {
+  getMarkerIcon(type, opacity = 1) {
     const colors = {
       1: "#10b981", // GOOD
       2: "#f59e0b", // ALERT
@@ -149,9 +369,10 @@ export default class extends Controller {
     return {
       path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
       fillColor: color,
-      fillOpacity: 0.9,
+      fillOpacity: 0.9 * opacity,
       strokeWeight: 2,
       strokeColor: "#ffffff",
+      strokeOpacity: opacity,
       scale: 10
     }
   }
@@ -197,8 +418,26 @@ export default class extends Controller {
       return
     }
     
+    // Validate coordinates
+    if (!alert || 
+        alert.latitude === null || 
+        alert.latitude === undefined || 
+        alert.longitude === null || 
+        alert.longitude === undefined || 
+        isNaN(parseFloat(alert.latitude)) || 
+        isNaN(parseFloat(alert.longitude))) {
+      console.warn("Received alert with invalid coordinates:", alert)
+      return
+    }
+    
     this.allAlerts.push(alert)
-    this.refreshMarkers()
+    
+    // Re-apply current filtering state
+    if (this.currentSearchLocation) {
+      this.updateSafetyScore(this.currentSearchLocation)
+    } else {
+      this.refreshMarkers()
+    }
     
     const position = { lat: parseFloat(alert.latitude), lng: parseFloat(alert.longitude) }
     
@@ -224,12 +463,20 @@ export default class extends Controller {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          // If the user has already searched for a location or typed in the search field, do not override it
+          if (this.currentSearchLocation || (this.hasSearchInputTarget && this.searchInputTarget.value.trim() !== "")) {
+            console.log("User is already searching or typing, ignoring geolocation centering.")
+            return
+          }
           const userPos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           }
           this.map.setCenter(userPos)
           this.addUserMarker(userPos)
+          
+          const latLng = new google.maps.LatLng(userPos.lat, userPos.lng)
+          this.updateSafetyScore(latLng)
         },
         () => {
           console.warn("Geolocation permission denied or error.")
@@ -299,6 +546,31 @@ export default class extends Controller {
     this.markers.forEach(marker => bounds.extend(marker.getPosition()))
     if (!bounds.isEmpty()) {
       this.map.fitBounds(bounds)
+      // Prevent too much zoom
+      const listener = google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        if (this.map.getZoom() > 16) {
+          this.map.setZoom(16)
+        }
+      })
+    }
+  }
+
+  groupAlertsByPosition(alerts) {
+    const groups = {}
+    alerts.forEach(alert => {
+      const key = `${parseFloat(alert.latitude).toFixed(5)},${parseFloat(alert.longitude).toFixed(5)}`
+      if (!groups[key]) {
+        groups[key] = []
+      }
+      groups[key].push(alert)
+    })
+    return groups
+  }
+
+  processQueuedAlerts() {
+    if (this.queuedAlerts && this.queuedAlerts.length > 0) {
+      this.queuedAlerts.forEach(alert => this.addAlertMarker(alert))
+      this.queuedAlerts = []
     }
   }
 }

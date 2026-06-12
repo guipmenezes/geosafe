@@ -53,33 +53,32 @@ RSpec.configure do |config|
 
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
-  config.include ActionView::Helpers::AssetUrlHelper
+  config.include ActionView::Helpers::AssetUrlHelper, type: :component
   config.include ControllerMacros, type: :request
   config.include SystemHelpers, type: :system
   config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:each, type: :system) do
-    driven_by(:cuprite)
+    driven_by :cuprite, screen_size: [1920, 1080]
   end
 
   Capybara.register_driver(:cuprite) do |app|
     Capybara::Cuprite::Driver.new(app,
-                                  window_size: [1200, 800],
+                                  window_size: [1920, 1080],
                                   timeout: 60,
-                                  process_timeout: 60,
+                                  process_timeout: 120,
                                   headless: true,
                                   browser_options: {
                                     'no-sandbox': nil,
                                     'disable-gpu': nil,
-                                    'disable-dev-shm-usage': nil
+                                    'disable-dev-shm-usage': nil,
+                                    'remote-debugging-port': 9222
                                   })
   end
 
   Capybara.javascript_driver = :cuprite
   Capybara.default_driver = :rack_test
 
-  Capybara.server_port = 3000
-  Capybara.app_host = 'http://localhost'
   Capybara.default_max_wait_time = 10 # Increase from default 2 seconds
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
