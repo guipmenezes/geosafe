@@ -8,9 +8,25 @@ export default class extends Controller {
   }
 
   connect() {
-    this.allAlerts = [...this.alertsValue]
+    this.allAlerts = (this.alertsValue || []).filter(alert => {
+      return alert && 
+             alert.latitude !== null && 
+             alert.latitude !== undefined && 
+             alert.longitude !== null && 
+             alert.longitude !== undefined && 
+             !isNaN(parseFloat(alert.latitude)) && 
+             !isNaN(parseFloat(alert.longitude))
+    })
     this.initMap()
     
+    // Resize observer to handle container size changes and stop "shaking"
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.map) {
+        google.maps.event.trigger(this.map, "resize")
+      }
+    })
+    this.resizeObserver.observe(this.containerTarget)
+
     this.alertCreatedHandler = (event) => {
       console.log("Alert received in map controller:", event.detail.alert)
       this.addAlertMarker(event.detail.alert)
@@ -32,6 +48,9 @@ export default class extends Controller {
   }
 
   disconnect() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+    }
     window.removeEventListener("alert:created", this.alertCreatedHandler)
     window.removeEventListener("map:move-marker", this.moveMarkerHandler)
   }
@@ -75,7 +94,9 @@ export default class extends Controller {
   }
 
   initMap() {
-    if (typeof google === 'undefined' || typeof google.maps.places === 'undefined') {
+    if (typeof google === 'undefined' || 
+        typeof google.maps.places === 'undefined' || 
+        typeof google.maps.geometry === 'undefined') {
       setTimeout(() => this.initMap(), 100)
       return
     }
@@ -85,10 +106,10 @@ export default class extends Controller {
     this.map = new google.maps.Map(this.containerTarget, {
       center: defaultCenter,
       zoom: 15,
-      mapId: 'GEOSAFE_MAP_ID',
-      mapTypeControl: false,
+      mapTypeControl: true,
       fullscreenControl: false,
-      streetViewControl: false
+      streetViewControl: false,
+      zoomControl: true
     })
 
     this.markers = []
@@ -397,6 +418,18 @@ export default class extends Controller {
       return
     }
     
+    // Validate coordinates
+    if (!alert || 
+        alert.latitude === null || 
+        alert.latitude === undefined || 
+        alert.longitude === null || 
+        alert.longitude === undefined || 
+        isNaN(parseFloat(alert.latitude)) || 
+        isNaN(parseFloat(alert.longitude))) {
+      console.warn("Received alert with invalid coordinates:", alert)
+      return
+    }
+    
     this.allAlerts.push(alert)
     
     // Re-apply current filtering state
@@ -430,12 +463,20 @@ export default class extends Controller {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          // If the user has already searched for a location or typed in the search field, do not override it
+          if (this.currentSearchLocation || (this.hasSearchInputTarget && this.searchInputTarget.value.trim() !== "")) {
+            console.log("User is already searching or typing, ignoring geolocation centering.")
+            return
+          }
           const userPos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           }
           this.map.setCenter(userPos)
           this.addUserMarker(userPos)
+          
+          const latLng = new google.maps.LatLng(userPos.lat, userPos.lng)
+          this.updateSafetyScore(latLng)
         },
         () => {
           console.warn("Geolocation permission denied or error.")
@@ -505,6 +546,12 @@ export default class extends Controller {
     this.markers.forEach(marker => bounds.extend(marker.getPosition()))
     if (!bounds.isEmpty()) {
       this.map.fitBounds(bounds)
+      // Prevent too much zoom
+      const listener = google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        if (this.map.getZoom() > 16) {
+          this.map.setZoom(16)
+        }
+      })
     }
   }
 

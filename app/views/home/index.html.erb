@@ -3,13 +3,13 @@
 <div data-controller="map bottom-sheet"
      data-map-alerts-value="<%= @alerts_json %>"
      data-map-current-user-id-value="<%= Current.user&.id %>"
-     class="flex flex-col lg:grid lg:grid-cols-2 lg:gap-6 w-full h-[calc(100vh-100px)] lg:h-[calc(100vh-140px)] overflow-hidden pb-2 lg:pb-0 relative">
+     class="flex flex-col lg:flex-row lg:gap-6 w-full h-[calc(100vh-120px)] lg:h-[calc(100vh-160px)] overflow-hidden pb-2 lg:pb-0 relative">
 
   <%# Main Content Area: Map %>
-  <div class="lg:col-span-1 w-full h-full rounded-2xl lg:rounded-3xl overflow-hidden shadow-sm border border-gray-100 relative order-1 mb-16 lg:mb-0">
+  <div class="w-full lg:w-[65%] flex-1 h-full rounded-2xl lg:rounded-3xl overflow-hidden shadow-sm border border-gray-100 relative order-1 mb-16 lg:mb-0">
 
-    <%# Lupa GeoSafe (Integrated Search) %>
-    <div class="absolute top-3 left-3 lg:top-4 lg:left-4 z-10 w-[calc(100%-1.5rem)] sm:w-80">
+    <%# Lupa GeoSafe (Integrated Search) - Increased Z-Index %>
+    <div class="absolute top-3 left-3 lg:top-4 lg:left-4 z-30 w-[calc(100%-1.5rem)] sm:w-80">
       <div class="relative group">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <svg class="h-5 w-5 text-gray-400 group-focus-within:text-primary600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,12 +20,12 @@
                data-map-target="searchInput"
                placeholder="Buscar endereço no GeoSafe..."
                autocomplete="off"
-               class="block w-full pl-10 pr-3 py-3 lg:py-2 border border-gray-200 rounded-2xl leading-5 bg-white shadow-lg focus:outline-none focus:ring-2 focus:ring-primary500 focus:border-primary500 text-sm transition-all">
+               class="block w-full pl-10 pr-3 py-3 lg:py-2 border border-gray-200 rounded-2xl leading-5 bg-white shadow-lg focus:outline-none focus:ring-2 focus:ring-primary500 focus:border-primary500 text-base lg:text-sm transition-all">
       </div>
     </div>
 
-    <%# Safety Score Indicator %>
-    <div data-map-target="safetyScore" class="absolute bottom-36 lg:bottom-4 left-3 lg:left-4 z-10 hidden max-w-[180px] sm:max-w-none">
+    <%# Safety Score Indicator - Increased Z-Index and adjusted position %>
+    <div data-map-target="safetyScore" class="absolute bottom-36 lg:bottom-6 left-3 lg:left-6 z-30 hidden max-w-[180px] sm:max-w-none">
       <div class="bg-white/95 backdrop-blur-sm p-3 lg:p-4 rounded-2xl shadow-xl border border-gray-100 flex flex-col gap-1 min-w-[160px] sm:min-w-[200px]">
         <div class="flex items-center justify-between">
           <span class="text-[10px] lg:text-xs font-bold uppercase tracking-wider text-gray-500">Clima de Segurança</span>
@@ -38,7 +38,8 @@
       </div>
     </div>
 
-    <div data-map-target="container" class="w-full h-full"></div>
+    <%# Map Container - No longer absolute, acts as base %>
+    <div data-map-target="container" class="w-full h-full z-10"></div>
 
     <%# Create Alert Button (Mobile Floating) %>
     <div class="lg:hidden absolute bottom-20 right-3 z-20">
@@ -56,9 +57,9 @@
   </div>
 
   <%# Sidebar Area: Alerts Feed & Filters %>
-  <%# Mobile: Bottom Sheet | Desktop: Fixed Sidebar %>
   <div data-bottom-sheet-target="sheet"
-       class="fixed inset-x-0 bottom-0 z-40 bg-white rounded-t-[2.5rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.3)] lg:relative lg:inset-auto lg:z-0 lg:bg-transparent lg:shadow-none lg:rounded-none lg:col-span-1 flex flex-col h-[85vh] lg:h-full transition-transform lg:translate-y-0 order-2">
+       class="fixed inset-x-0 bottom-0 z-40 bg-white rounded-t-[2.5rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.3)] lg:relative lg:inset-auto lg:z-0 lg:bg-transparent lg:shadow-none lg:rounded-none lg:w-[35%] flex flex-col h-[85vh] lg:h-full transition-transform lg:translate-y-0 order-2">
+
 
     <%# Drag Handle (Mobile Only) %>
     <div class="lg:hidden flex justify-center p-4 cursor-grab active:cursor-grabbing"
