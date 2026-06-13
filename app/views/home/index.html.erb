@@ -70,7 +70,29 @@
       <div class="flex flex-row items-center justify-between mb-4 lg:pr-2">
         <h2 class="text-xl font-bold text-gray-900 lg:hidden">Alertas Próximos</h2>
 
-        <%= render(Dropdown::DropdownComponent.new(title: "Filtro", options: @options)) %>
+        <%= render(Dropdown::DropdownComponent.new(title: "Minhas Zonas")) do %>
+          <% if Current.user.addresses.any? %>
+            <% Current.user.addresses.order(created_at: :asc).each do |address| %>
+              <%= link_to home_path(lat: address.latitude, lng: address.longitude), class: "flex items-center gap-3 px-4 py-3 text-sm text-grey700 hover:bg-primary50 hover:text-primary700 transition-colors group" do %>
+                <svg class="w-4 h-4 text-grey400 group-hover:text-primary500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <div class="flex flex-col">
+                  <span class="font-bold"><%= address.label %></span>
+                  <span class="text-[10px] text-grey500 truncate max-w-[150px]"><%= address.address %>, <%= address.number %></span>
+                </div>
+              <% end %>
+            <% end %>
+            <div class="border-t border-grey100 my-1"></div>
+          <% end %>
+          <%= link_to interest_zones_path, class: "flex items-center gap-3 px-4 py-3 text-sm text-primary600 font-bold hover:bg-primary50 transition-colors" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Gerenciar Zonas
+          <% end %>
+        <% end %>
 
         <div class="hidden lg:block">
           <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
