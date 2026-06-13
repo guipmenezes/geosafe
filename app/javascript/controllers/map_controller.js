@@ -115,7 +115,21 @@ export default class extends Controller {
     this.markers = []
     this.initAutocomplete()
     this.refreshMarkers()
-    this.getUserLocation()
+    
+    // Check for lat/lng in URL
+    const urlParams = new URLSearchParams(window.location.search)
+    const lat = parseFloat(urlParams.get("lat"))
+    const lng = parseFloat(urlParams.get("lng"))
+
+    if (!isNaN(lat) && !isNaN(lng)) {
+      const position = { lat, lng }
+      this.map.setCenter(position)
+      this.map.setZoom(17)
+      this.updateSafetyScore(new google.maps.LatLng(lat, lng))
+    } else {
+      this.getUserLocation()
+    }
+
     this.processQueuedAlerts()
     
     this.map.addListener("click", (event) => {

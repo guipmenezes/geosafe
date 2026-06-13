@@ -1,0 +1,20 @@
+<% if Current.user.addresses.count == 1 %>
+  <%= turbo_stream.append "remote_modal" do %>
+    <div data-controller="turbo-stream-actions" url="<%= plans_path %>"></div>
+  <% end %>
+<% else %>
+  <%= turbo_stream.update "interest_zones_list" do %>
+    <% 3.times do |i| %>
+      <% address = Current.user.addresses.order(created_at: :asc)[i] %>
+      <%= render(InterestZoneCard::InterestZoneCardComponent.new(address: address, index: i)) %>
+    <% end %>
+  <% end %>
+
+  <%= turbo_stream.update "flash" do %>
+    <%= render "layouts/flash" %>
+  <% end %>
+
+  <%= turbo_stream.append "remote_modal" do %>
+    <div data-controller="turbo-stream-actions" action="close"></div>
+  <% end %>
+<% end %>

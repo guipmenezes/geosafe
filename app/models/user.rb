@@ -11,11 +11,19 @@ class User < ApplicationRecord
   end
 
   has_many :sessions, dependent: :destroy
-  has_one :address, dependent: :destroy
+  has_many :addresses, dependent: :destroy
   has_many :plan_subscriptions
   has_many :plans, through: :plan_subscriptions
   has_many :alerts, dependent: :destroy
   has_many :alert_votes, dependent: :destroy
+
+  # Legacy compatibility after has_one :address -> has_many :addresses change
+  def address
+    addresses.first
+  end
+
+  # Limit to 3 addresses (Interest Zones)
+  validate :validate_addresses_count
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, allow_nil: true, length: { minimum: 12 },
@@ -57,6 +65,12 @@ class User < ApplicationRecord
   end
 
   private
+
+  def validate_addresses_count
+    return unless addresses.size > 3
+
+    errors.add(:addresses, 'Você pode cadastrar no máximo 3 zonas de interesse.')
+  end
 
   def password_matches_confirmation
     return if password.blank? || password_confirmation.blank?

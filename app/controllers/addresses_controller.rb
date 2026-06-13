@@ -1,30 +1,44 @@
 # frozen_string_literal: true
 
 class AddressesController < ApplicationController
-  before_action :set_address, only: %i[edit update]
+  before_action :set_address, only: %i[edit update destroy]
 
   def new
     @address = Address.new
+    @address.label = 'Casa' if Current.user.addresses.none?
   end
 
   def create
     @address = Address.new(address_params)
     @address.user = Current.user
 
-    if @address.save
-      redirect_to plans_path, notice: 'Endereço cadastrado com sucesso'
-    else
-      render :new, status: :unprocessable_content
+    respond_to do |format|
+      if @address.save
+        handle_create_success(format)
+      else
+        handle_create_failure(format)
+      end
     end
   end
 
   def edit; end
 
   def update
-    if @address.update(address_params)
-      redirect_to root_path, notice: 'Endereço atualizado com sucesso.'
-    else
-      render :edit, status: :unprocessable_content
+    respond_to do |format|
+      if @address.update(address_params)
+        handle_update_success(format)
+      else
+        handle_update_failure(format)
+      end
+    end
+  end
+
+  def destroy
+    @address.destroy
+    flash.now[:notice] = 'Zona de interesse removida com sucesso.'
+    respond_to do |format|
+      format.html { redirect_to interest_zones_path, notice: flash.now[:notice] }
+      format.turbo_stream
     end
   end
 
@@ -40,8 +54,41 @@ class AddressesController < ApplicationController
 
   private
 
+  def handle_create_success(format)
+    path = Current.user.addresses.count > 1 ? interest_zones_path : plans_path
+    flash.now[:notice] = 'Endereço cadastrado com sucesso'
+    format.html { redirect_to path, notice: flash.now[:notice] }
+    format.turbo_stream
+  end
+
+  def handle_create_failure(format)
+    format.html { render :new, status: :unprocessable_content }
+    format.turbo_stream do
+      render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form),
+                                                partial: 'addresses/form',
+                                                locals: { address: @address }),
+             status: :unprocessable_content
+    end
+  end
+
+  def handle_update_success(format)
+    flash.now[:notice] = 'Endereço atualizado com sucesso.'
+    format.html { redirect_to interest_zones_path, notice: flash.now[:notice] }
+    format.turbo_stream
+  end
+
+  def handle_update_failure(format)
+    format.html { render :edit, status: :unprocessable_content }
+    format.turbo_stream do
+      render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form),
+                                                partial: 'addresses/form',
+                                                locals: { address: @address }),
+             status: :unprocessable_content
+    end
+  end
+
   def set_address
-    @address = Current.user.address
+    @address = Current.user.addresses.find(params[:id])
   end
 
   def format_geocoded_address(result)
@@ -64,6 +111,6 @@ class AddressesController < ApplicationController
   end
 
   def address_params
-    params.require(:address).permit(:cep, :uf, :address, :number, :complement, :city, :state)
+    params.require(:address).permit(:cep, :uf, :address, :number, :complement, :city, :state, :label)
   end
 end

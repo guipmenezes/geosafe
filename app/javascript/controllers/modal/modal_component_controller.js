@@ -21,11 +21,17 @@ export default class extends Controller {
   }
 
   close(event) {
+    // Only block closing if it's a failed turbo submission
     if (event && event.type === "turbo:submit-end" && !event.detail.success) {
       return
     }
 
     this.modalTarget.classList.add("hidden")
     document.body.classList.remove("overflow-hidden")
+  }
+
+  // Action to close from external sources
+  forceClose() {
+    this.close()
   }
 }

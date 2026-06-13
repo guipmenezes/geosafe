@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :interest_zones, only: %i[index]
   resources :alerts, only: %i[create new show edit update] do
     resources :votes, only: %i[create], controller: 'alert_votes'
   end
@@ -12,7 +13,9 @@ Rails.application.routes.draw do
   get 'home', to: 'home#index'
   resources :sessions, only: %i[index show destroy]
   resource  :password, only: %i[edit update]
-  resource  :address,  only: %i[edit update]
+  resources :addresses, only: %i[new create edit update destroy] do
+    get :reverse_geocode, on: :collection
+  end
   namespace :identity do
     resource :email,              only: %i[edit update]
     resource :email_verification, only: %i[show create]
@@ -22,10 +25,6 @@ Rails.application.routes.draw do
   root 'homepage#index'
 
   get 'up' => 'rails/health#show', as: :rails_health_check
-
-  resources :addresses, only: %i[new create] do
-    get :reverse_geocode, on: :collection
-  end
 
   resources :plans, only: [:index]
 end

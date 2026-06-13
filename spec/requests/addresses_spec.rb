@@ -21,7 +21,7 @@ RSpec.describe 'Addresses', type: :request do
   describe 'POST /create' do
     context 'with valid parameters' do
       it 'creates a new address and redirects' do
-        address_params = { cep: '12345-678', uf: 'SP', city: 'São Paulo', state: 'SP', address: 'Rua Teste', number: '123', complement: 'Apto 1' }
+        address_params = { label: 'Casa', cep: '12345-678', uf: 'SP', city: 'São Paulo', state: 'SP', address: 'Rua Teste', number: '123', complement: 'Apto 1' }
         expect do
           post addresses_path, params: { address: address_params }
         end.to change(Address, :count).by(1)
@@ -42,29 +42,40 @@ RSpec.describe 'Addresses', type: :request do
 
   describe 'GET /edit' do
     it 'returns http success' do
-      user.create_address!(cep: '12345-678', uf: 'SP', city: 'São Paulo', state: 'SP', address: 'Rua Teste', number: '123')
-      get edit_address_path
+      address = user.addresses.create!(label: 'Casa', cep: '12345-678', uf: 'SP', city: 'São Paulo', state: 'SP', address: 'Rua Teste', number: '123')
+      get edit_address_path(address)
       expect(response).to have_http_status(:success)
       expect(response.body).to include('Meu Endereço')
     end
   end
 
   describe 'PATCH /update' do
-    let!(:address) { user.create_address!(cep: '12345-678', uf: 'SP', city: 'São Paulo', state: 'SP', address: 'Rua Teste', number: '123') }
+    let!(:address) { user.addresses.create!(label: 'Casa', cep: '12345-678', uf: 'SP', city: 'São Paulo', state: 'SP', address: 'Rua Teste', number: '123') }
 
     context 'with valid parameters' do
       it 'updates the address and redirects' do
-        patch address_path, params: { address: { number: '456' } }
+        patch address_path(address), params: { address: { number: '456' } }
         expect(address.reload.number).to eq(456)
-        expect(response).to redirect_to(root_path)
+        expect(response).to redirect_to(interest_zones_path)
       end
     end
 
     context 'with invalid parameters' do
       it 'does not update the address and re-renders the edit template' do
-        patch address_path, params: { address: { number: '' } }
+        patch address_path(address), params: { address: { number: '' } }
         expect(response).to have_http_status(:unprocessable_content)
       end
+    end
+  end
+
+  describe 'DELETE /destroy' do
+    let!(:address) { user.addresses.create!(label: 'Casa', cep: '12345-678', uf: 'SP', city: 'São Paulo', state: 'SP', address: 'Rua Teste', number: '123') }
+
+    it 'deletes the address and redirects' do
+      expect do
+        delete address_path(address)
+      end.to change(Address, :count).by(-1)
+      expect(response).to redirect_to(interest_zones_path)
     end
   end
 end
