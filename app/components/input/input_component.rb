@@ -42,9 +42,9 @@ module Input
 
     def value_from_object
       return nil unless @form&.object
-      
+
       # Extract field name from address[label] format if necessary
-      field_name = @name.to_s.match(/\[(.*)\]/) ? $1 : @name
+      field_name = @name.to_s.match(/\[(.*)\]/) ? ::Regexp.last_match(1) : @name
       @form.object.send(field_name) if @form.object.respond_to?(field_name)
     end
 
