@@ -18,6 +18,13 @@ O "cérebro" do nosso mapa. Ao buscar um endereço, o app não apenas localiza o
 - **Clima de Segurança (Safety Score):** Calcula um score de risco em tempo real baseado nos alertas dos últimos **1km**.
 - **Análise 24h:** O score prioriza eventos ocorridos nas últimas 24 horas para garantir que o "clima" reflita o momento atual.
 
+### 📍 Zonas de Interesse (Meus Lugares)
+Otimização do monitoramento pessoal através de locais salvos:
+- **Gestão de Zonas:** Cadastro de até **3 locais estratégicos** (ex: Casa, Trabalho, Escola) com identificação personalizada.
+- **Navegação Expressa:** Filtro inteligente na Home para alternar o foco do mapa instantaneamente entre as zonas salvas.
+- **Interface Modal:** Fluxo de criação e edição totalmente via modais Turbo, sem recarregamento de página, garantindo agilidade.
+- **Toasts de Feedback:** Sistema de notificações em tempo real (Toasts) para confirmação de ações de salvamento e exclusão.
+
 ### ⏳ Relevância Temporal
 Para manter o mapa sempre atualizado e confiável, os alertas possuem um ciclo de vida:
 - **Duração:** Cada alerta permanece visível no mapa por até **30 dias (720 horas)**.
@@ -36,10 +43,11 @@ A credibilidade é o nosso maior ativo. Usuários ganham pontos quando a comunid
 
 ## 🗺️ Próximos Passos (Roadmap)
 
-1.  **Zonas de Interesse (Meus Lugares):** Permitir que o usuário salve locais críticos (Casa, Trabalho, Escola) para monitoramento rápido.
+1.  **✅ Zonas de Interesse:** Implementado sistema de gestão de locais salvos com navegação rápida.
 2.  **Notificações Preventivas:** Avisar o usuário caso um alerta de "Perigo" seja gerado em uma de suas Zonas de Interesse.
 3.  **Categorização Semântica:** Refinar as categorias de alertas (Segurança, Trânsito, Utilidade Pública) para filtros mais precisos.
-4.  **Expansão Nacional:** Otimização de performance para suporte a grandes volumes de dados em múltiplas capitais simultaneamente.
+4.  **Integração de Notificações Push:** Enviar alertas diretamente para o dispositivo do usuário (PWA ou Mobile).
+5.  **Expansão Nacional:** Otimização de performance para suporte a grandes volumes de dados em múltiplas cidades.
 
 ---
 
