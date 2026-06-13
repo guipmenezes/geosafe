@@ -18,7 +18,7 @@
         <%# Desktop Links %>
         <div class="hidden lg:flex gap-8">
           <%= link_to "Home", home_path, class: "text-gray-600 hover:text-blue-500 font-medium #{nav_link_class(home_path)}" %>
-          <%= link_to "Lupa GeoSafe", root_path, class: "text-gray-600 hover:text-blue-500 font-medium #{nav_link_class(root_path)}" %>
+          <%= link_to "Zonas de Interesse", interest_zones_path, class: "text-gray-600 hover:text-blue-500 font-medium #{nav_link_class(interest_zones_path)}" %>
           <%= link_to "Loja", root_path, class: "text-gray-600 hover:text-blue-500 font-medium #{nav_link_class(root_path)}" %>
         </div>
 
@@ -55,12 +55,12 @@
                 </svg>
                 Alterar Senha
               <% end %>
-              <%= link_to edit_address_path, class: "flex items-center gap-3 px-4 py-2.5 text-sm text-grey700 hover:bg-primary50 hover:text-primary700 transition-colors group" do %>
+              <%= link_to interest_zones_path, class: "flex items-center gap-3 px-4 py-2.5 text-sm text-grey700 hover:bg-primary50 hover:text-primary700 transition-colors group" do %>
                 <svg class="w-4 h-4 text-grey400 group-hover:text-primary500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Meu Endereço
+                Zonas de Interesse
               <% end %>
               <%= link_to sessions_path, class: "flex items-center gap-3 px-4 py-2.5 text-sm text-grey700 hover:bg-primary50 hover:text-primary700 transition-colors group" do %>
                 <svg class="w-4 h-4 text-grey400 group-hover:text-primary500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +85,7 @@
       <div class="hidden lg:hidden pt-4 pb-2 border-t border-gray-100 mt-2" data-header-target="menu">
         <div class="flex flex-col gap-4 px-2">
           <%= link_to "Home", home_path, class: "text-base font-semibold text-gray-700 hover:text-primary600" %>
-          <%= link_to "Lupa GeoSafe", root_path, class: "text-base font-semibold text-gray-700 hover:text-primary600" %>
+          <%= link_to "Zonas de Interesse", interest_zones_path, class: "text-base font-semibold text-gray-700 hover:text-primary600" %>
           <%= link_to "Loja", root_path, class: "text-base font-semibold text-gray-700 hover:text-primary600" %>
 
           <div class="pt-4 border-t border-gray-100">
@@ -102,7 +102,7 @@
             <div class="grid grid-cols-2 gap-2">
               <%= link_to edit_identity_email_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Alterar E-mail<% end %>
               <%= link_to edit_password_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Alterar Senha<% end %>
-              <%= link_to edit_address_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Meu Endereço<% end %>
+              <%= link_to interest_zones_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Zonas de Interesse<% end %>
               <%= link_to sessions_path, class: "flex items-center justify-center p-2 text-xs font-semibold bg-gray-50 rounded-lg" do %>Sessões<% end %>
               <%= button_to session_path(Current.session), method: :delete, class: "flex items-center justify-center p-2 text-xs font-bold text-red-600 bg-red-50 rounded-lg w-full text-left col-span-2" do %>Sair<% end %>
             </div>

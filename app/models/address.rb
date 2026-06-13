@@ -3,7 +3,7 @@
 class Address < ApplicationRecord
   belongs_to :user
 
-  validates :cep, :uf, :city, :state, :address, :number, presence: true
+  validates :cep, :uf, :city, :state, :address, :number, :label, presence: true
 
   geocoded_by :geocoding_address
   after_validation :geocode, if: :geocoding_address_changed?
