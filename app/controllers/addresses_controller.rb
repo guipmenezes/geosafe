@@ -14,18 +14,9 @@ class AddressesController < ApplicationController
 
     respond_to do |format|
       if @address.save
-        path = Current.user.addresses.count > 1 ? interest_zones_path : plans_path
-        format.html do
-          flash[:notice] = 'Endereço cadastrado com sucesso'
-          redirect_to path
-        end
-        format.turbo_stream { flash.now[:notice] = 'Endereço cadastrado com sucesso' }
+        handle_create_success(format)
       else
-        format.html { render :new, status: :unprocessable_content }
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form), partial: 'addresses/form', locals: { address: @address }),
-                 status: :unprocessable_content
-        end
+        handle_create_failure(format)
       end
     end
   end
@@ -35,29 +26,19 @@ class AddressesController < ApplicationController
   def update
     respond_to do |format|
       if @address.update(address_params)
-        format.html do
-          flash[:notice] = 'Endereço atualizado com sucesso.'
-          redirect_to interest_zones_path
-        end
-        format.turbo_stream { flash.now[:notice] = 'Endereço atualizado com sucesso.' }
+        handle_update_success(format)
       else
-        format.html { render :edit, status: :unprocessable_content }
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form), partial: 'addresses/form', locals: { address: @address }),
-                 status: :unprocessable_content
-        end
+        handle_update_failure(format)
       end
     end
   end
 
   def destroy
     @address.destroy
+    flash.now[:notice] = 'Zona de interesse removida com sucesso.'
     respond_to do |format|
-      format.html do
-        flash[:notice] = 'Zona de interesse removida com sucesso.'
-        redirect_to interest_zones_path
-      end
-      format.turbo_stream { flash.now[:notice] = 'Zona de interesse removida com sucesso.' }
+      format.html { redirect_to interest_zones_path, notice: flash.now[:notice] }
+      format.turbo_stream
     end
   end
 
@@ -72,6 +53,39 @@ class AddressesController < ApplicationController
   end
 
   private
+
+  def handle_create_success(format)
+    path = Current.user.addresses.count > 1 ? interest_zones_path : plans_path
+    flash.now[:notice] = 'Endereço cadastrado com sucesso'
+    format.html { redirect_to path, notice: flash.now[:notice] }
+    format.turbo_stream
+  end
+
+  def handle_create_failure(format)
+    format.html { render :new, status: :unprocessable_content }
+    format.turbo_stream do
+      render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form),
+                                                partial: 'addresses/form',
+                                                locals: { address: @address }),
+             status: :unprocessable_content
+    end
+  end
+
+  def handle_update_success(format)
+    flash.now[:notice] = 'Endereço atualizado com sucesso.'
+    format.html { redirect_to interest_zones_path, notice: flash.now[:notice] }
+    format.turbo_stream
+  end
+
+  def handle_update_failure(format)
+    format.html { render :edit, status: :unprocessable_content }
+    format.turbo_stream do
+      render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form),
+                                                partial: 'addresses/form',
+                                                locals: { address: @address }),
+             status: :unprocessable_content
+    end
+  end
 
   def set_address
     @address = Current.user.addresses.find(params[:id])

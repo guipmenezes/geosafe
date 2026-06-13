@@ -67,9 +67,9 @@ class User < ApplicationRecord
   private
 
   def validate_addresses_count
-    if addresses.size > 3
-      errors.add(:addresses, 'Você pode cadastrar no máximo 3 zonas de interesse.')
-    end
+    return unless addresses.size > 3
+
+    errors.add(:addresses, 'Você pode cadastrar no máximo 3 zonas de interesse.')
   end
 
   def password_matches_confirmation

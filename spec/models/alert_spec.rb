@@ -46,7 +46,8 @@ RSpec.describe Alert, type: :model do
         city: 'São Paulo',
         state: 'São Paulo',
         address: 'Rua Teste',
-        number: '123'
+        number: '123',
+        label: 'Casa'
       )
       alert = Alert.new(
         title: 'Home Alert',
@@ -78,7 +79,8 @@ RSpec.describe Alert, type: :model do
         city: 'Nonexistent',
         state: 'Nonexistent',
         address: 'Nonexistent Street',
-        number: '0'
+        number: '0',
+        label: 'Casa'
       )
       # Mock Geocoder to return nothing for this address
       allow(Geocoder).to receive(:search).with(/Nonexistent Street/).and_return([])
@@ -120,6 +122,7 @@ RSpec.describe Alert, type: :model do
         state: 'São Paulo',
         address: 'Rua Teste',
         number: '123',
+        label: 'Casa',
         latitude: -23.5505,
         longitude: -46.6333
       )

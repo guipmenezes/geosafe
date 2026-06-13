@@ -9,6 +9,7 @@ FactoryBot.define do
     state { 'Distrito Federal' }
     address { 'Praça dos Três Poderes' }
     number { 'S/N' }
+    label { 'Casa' }
     latitude { -15.7991 }
     longitude { -47.8641 }
   end
