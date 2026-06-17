@@ -39,6 +39,10 @@
 
 /config/application.yml
 
+# Ignore keys and sensitive files
+/githubkey
+/githubkey.pub
+
 # Ignore all the IDE files
 /idea/*
 /node_modules/*
