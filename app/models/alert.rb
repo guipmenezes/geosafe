@@ -11,6 +11,7 @@ class Alert < ApplicationRecord
   has_many :alert_votes, dependent: :destroy
 
   after_create_commit -> { broadcast_prepend_to 'alerts', target: 'alerts', partial: 'home/alert_card', locals: { alert: self } }
+  after_create_commit :notify_users_in_interest_zones
 
   validates :alert, presence: true, inclusion: { in: [HOME, STREET] }
   validates :location, presence: true, if: :street_alert?
@@ -72,6 +73,25 @@ class Alert < ApplicationRecord
   end
 
   private
+
+  def notify_users_in_interest_zones
+    return unless alert_type == DANGER
+
+    # Raio de 5km para notificações preventivas
+    radius = 5
+    
+    # Busca os IDs de usuários que têm endereços próximos, ignorando a ordenação por distância
+    # que causa o erro com pluck/uniq em algumas situações
+    target_user_ids = Address.near([latitude, longitude], radius)
+                             .where.not(user_id: user_id)
+                             .reorder(nil) # Remove o ORDER BY distance
+                             .distinct
+                             .pluck(:user_id)
+
+    target_user_ids.each do |target_user_id|
+      Notification.create(user_id: target_user_id, alert: self)
+    end
+  end
 
   def user_has_address
     return errors.add(:base, 'Você precisa ter um endereço cadastrado para criar um alerta residencial.') if user&.address.nil?

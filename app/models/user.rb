@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :plans, through: :plan_subscriptions
   has_many :alerts, dependent: :destroy
   has_many :alert_votes, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 
   # Legacy compatibility after has_one :address -> has_many :addresses change
   def address

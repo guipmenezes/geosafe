@@ -1,4 +1,7 @@
 <div class="h-16 lg:h-20">
+  <% if Current.user %>
+    <%= turbo_stream_from [Current.user, :notifications] %>
+  <% end %>
   <nav class="fixed top-0 left-0 right-0 z-[100] bg-white lg:bg-gray-100 shadow-sm lg:border-s lg:rounded-2xl lg:top-[1.5%] lg:left-[5%] lg:right-[5%] lg:w-[90%]" data-controller="header">
     <div class="container mx-auto px-4 lg:px-6 py-3 lg:py-4">
       <div class="flex items-center justify-between">
@@ -25,6 +28,7 @@
         <%# User Profile / Auth %>
         <div class="hidden lg:flex items-center gap-4">
           <% if Current.user %>
+            <%= render "notifications/bell" %>
             <%= render(Dropdown::DropdownComponent.new) do |component| %>
               <% component.with_trigger do %>
                 <button type="button" class="flex items-center gap-3 pl-3 pr-4 py-2 bg-white border border-grey200 rounded-full hover:shadow-md transition-all group">

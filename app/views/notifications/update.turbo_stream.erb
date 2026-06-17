@@ -1,0 +1,2 @@
+<%= turbo_stream.replace dom_id(@notification), partial: "notifications/notification", locals: { notification: @notification } %>
+<%= turbo_stream.replace "notification-bell", partial: "notifications/bell", locals: { user: Current.user } %>
