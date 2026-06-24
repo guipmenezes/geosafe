@@ -116,12 +116,26 @@ export default class extends Controller {
     this.initAutocomplete()
     this.refreshMarkers()
     
-    // Check for lat/lng in URL
+    // Check for alert_id or lat/lng in URL
     const urlParams = new URLSearchParams(window.location.search)
+    const alertId = urlParams.get("alert_id")
     const lat = parseFloat(urlParams.get("lat"))
     const lng = parseFloat(urlParams.get("lng"))
 
-    if (!isNaN(lat) && !isNaN(lng)) {
+    if (alertId) {
+      const alert = this.allAlerts.find(a => a.id.toString() === alertId.toString())
+      if (alert) {
+        const position = { lat: parseFloat(alert.latitude), lng: parseFloat(alert.longitude) }
+        this.map.setCenter(position)
+        this.map.setZoom(17)
+        this.updateSafetyScore(new google.maps.LatLng(alert.latitude, alert.longitude))
+        setTimeout(() => {
+          this.scrollToAlert(alertId)
+        }, 500)
+      } else {
+        this.getUserLocation()
+      }
+    } else if (!isNaN(lat) && !isNaN(lng)) {
       const position = { lat, lng }
       this.map.setCenter(position)
       this.map.setZoom(17)

@@ -79,7 +79,7 @@ class Alert < ApplicationRecord
 
     # Raio de 5km para notificações preventivas
     radius = 5
-    
+
     # Busca os IDs de usuários que têm endereços próximos, ignorando a ordenação por distância
     # que causa o erro com pluck/uniq em algumas situações
     target_user_ids = Address.near([latitude, longitude], radius)

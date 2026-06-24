@@ -19,9 +19,9 @@ class NotificationsController < ApplicationController
     Current.user.notifications.unread.update_all(read_at: Time.current)
 
     respond_to do |format|
-      format.turbo_stream {
-        render turbo_stream: turbo_stream.replace("notification-bell", partial: "notifications/bell", locals: { user: Current.user })
-      }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace('notification-bell', partial: 'notifications/bell', locals: { user: Current.user })
+      end
       format.html { redirect_back fallback_location: notifications_path }
     end
   end

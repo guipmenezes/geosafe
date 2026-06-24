@@ -2,6 +2,8 @@
      data-alert-id="<%= @alert.id %>"
      data-latitude="<%= @alert.latitude %>"
      data-longitude="<%= @alert.longitude %>"
+     data-controller="realtime-alert"
+     data-realtime-alert-data-value="<%= marker_data %>"
      class="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 border-l-4 <%= case type
                                                                   when 1 then 'border-green-500'
                                                                   when 2 then 'border-yellow-500'
@@ -26,7 +28,8 @@
            data-alert-name="<%= alert_name %>"
            data-alert-type-name="<%= alert_type_name %>"
            data-alert-type="<%= type %>"
-           data-alert-creator="<%= creator_name %>"
+           data-alert-creator-level="<%= creator_level %>"
+           data-alert-creator-badge-color="<%= creator_badge_color %>"
            data-alert-date="<%= formatted_created_at %>">
         <h3 class="text-base font-semibold text-grey900 mt-2 group-hover:text-primary600 transition-colors"><%= title %></h3>
         <p class="text-xs text-grey600 mt-1 line-clamp-2"><%= description %></p>

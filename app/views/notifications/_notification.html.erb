@@ -14,7 +14,14 @@
         <span class="text-[10px] font-medium text-grey400"><%= time_ago_in_words(notification.created_at) %> atrás</span>
       </div>
 
-      <%= link_to alert_path(notification.alert), class: "block group-hover:text-primary600 transition-colors" do %>
+      <%= link_to home_path(alert_id: notification.alert.id),
+                  class: "block group-hover:text-primary600 transition-colors",
+                  data: {
+                    controller: "notification-item",
+                    action: "click->notification-item#handleClick",
+                    notification_item_alert_id_value: notification.alert.id,
+                    notification_item_url_value: notification_path(notification)
+                  } do %>
         <h3 class="text-sm font-bold text-grey900 line-clamp-1"><%= notification.alert.title %></h3>
         <p class="text-xs text-grey600 mt-0.5 line-clamp-2"><%= notification.alert.description %></p>
       <% end %>
