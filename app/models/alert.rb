@@ -89,7 +89,8 @@ class Alert < ApplicationRecord
                              .pluck(:user_id)
 
     target_user_ids.each do |target_user_id|
-      Notification.create(user_id: target_user_id, alert: self)
+      notification = Notification.create(user_id: target_user_id, alert: self)
+      notification.broadcast_notification if notification.persisted?
     end
   end
 
