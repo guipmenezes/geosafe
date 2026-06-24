@@ -1,4 +1,4 @@
-y# GeoSafe 🛡️
+# GeoSafe 🛡️
 
 ## 📍 O que é o GeoSafe
 
@@ -25,6 +25,15 @@ Otimização do monitoramento pessoal através de locais salvos:
 - **Interface Modal:** Fluxo de criação e edição totalmente via modais Turbo, sem recarregamento de página, garantindo agilidade.
 - **Toasts de Feedback:** Sistema de notificações em tempo real (Toasts) para confirmação de ações de salvamento e exclusão.
 
+### 🔔 Notificações em Tempo Real (Zonas de Interesse)
+Segurança preventiva ativa para locais de alta importância para o usuário:
+- **Detecção de Proximidade:** Quando um alerta de perigo (**DANGER**) é gerado em um raio de **5km** de qualquer Zona de Interesse cadastrada, o sistema dispara uma notificação automática.
+- **Transmissão Instantânea (ActionCable/Turbo Stream):** A notificação é entregue sem necessidade de recarregar a tela:
+  - **Sininho Inteligente:** Atualização do badge do sininho de notificações e de sua lista na barra de navegação.
+  - **Toast Deslizante (Push-Style):** Exibição temporária de um alerta vermelho flutuante que desaparece após 5 segundos.
+- **Integração Dinâmica com o Mapa:** Ao clicar no aviso flutuante ou no item do sininho, a aplicação impede recarregamentos de página (se o usuário já estiver na home), centraliza o mapa no alerta de destino e abre a modal de detalhes de segurança na hora.
+- **Privacidade do Usuário:** Para dar tranquilidade e segurança aos membros da comunidade, os dados do criador (como username/nome) são ocultados nos detalhes dos alertas, restando visível apenas o seu **nível de confiança (Bronze, Prata, Ouro, Verificado)**.
+
 ### ⏳ Relevância Temporal
 Para manter o mapa sempre atualizado e confiável, os alertas possuem um ciclo de vida:
 - **Duração:** Cada alerta permanece visível no mapa por até **30 dias (720 horas)**.
@@ -44,9 +53,9 @@ A credibilidade é o nosso maior ativo. Usuários ganham pontos quando a comunid
 ## 🗺️ Próximos Passos (Roadmap)
 
 1.  **✅ Zonas de Interesse:** Implementado sistema de gestão de locais salvos com navegação rápida.
-2.  **Notificações Preventivas:** Avisar o usuário caso um alerta de "Perigo" seja gerado em uma de suas Zonas de Interesse.
+2.  **✅ Notificações Preventivas em Tempo Real:** Concluído aviso instantâneo via ActionCable (bell/toasts) para alertas de perigo em raios de 5km das Zonas de Interesse do usuário, com foco e pan no mapa dinâmicos sem reloads.
 3.  **Categorização Semântica:** Refinar as categorias de alertas (Segurança, Trânsito, Utilidade Pública) para filtros mais precisos.
-4.  **Integração de Notificações Push:** Enviar alertas diretamente para o dispositivo do usuário (PWA ou Mobile).
+4.  **Integração de Notificações Push:** Enviar alertas diretamente para o dispositivo do usuário (PWA ou Mobile) mesmo com o navegador fechado.
 5.  **Expansão Nacional:** Otimização de performance para suporte a grandes volumes de dados em múltiplas cidades.
 
 ---
