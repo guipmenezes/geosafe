@@ -1,4 +1,4 @@
-y# GeoSafe 🛡️
+# GeoSafe 🛡️
 
 ## 📍 O que é o GeoSafe
 
