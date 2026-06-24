@@ -10,6 +10,7 @@
      data-alert-name="<%= @alert.alert_name %>"
      data-alert-type-name="<%= @alert.alert_type_name %>"
      data-alert-type="<%= @alert.alert_type %>"
-     data-alert-creator="<%= @alert.user.full_name %>"
+     data-alert-creator-level="<%= @alert.user.level %>"
+     data-alert-creator-badge-color="<%= @alert.user.badge_color %>"
      data-alert-date="<%= l(@alert.created_at, format: :short) %>">
 </div>

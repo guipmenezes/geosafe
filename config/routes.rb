@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :notifications, only: %i[index update] do
+    post :bulk_read, on: :collection
+  end
   resources :interest_zones, only: %i[index]
   resources :alerts, only: %i[create new show edit update] do
     resources :votes, only: %i[create], controller: 'alert_votes'

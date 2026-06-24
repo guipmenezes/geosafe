@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = [
-    "title", "description", "location", "type", "name", "creator", "date", 
+    "title", "description", "location", "type", "name", "creatorLevel", "date", 
     "modal", "singleView", "listView", "itemTemplate", "backButton"
   ]
 
@@ -28,8 +28,12 @@ export default class extends Controller {
     if (this.hasDescriptionTarget) this.descriptionTarget.textContent = data.alertDescription
     if (this.hasLocationTarget) this.locationTarget.textContent = data.alertLocation
     if (this.hasNameTarget) this.nameTarget.textContent = data.alertName
-    if (this.hasCreatorTarget) this.creatorTarget.textContent = data.alertCreator
     if (this.hasDateTarget) this.dateTarget.textContent = data.alertDate
+    
+    if (this.hasCreatorLevelTarget) {
+      this.creatorLevelTarget.textContent = data.alertCreatorLevel
+      this.creatorLevelTarget.className = `px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${data.alertCreatorBadgeColor}`
+    }
     
     // Type handling for colors
     if (this.hasTypeTarget) {
@@ -70,7 +74,8 @@ export default class extends Controller {
             alertName: alert.alert_name,
             alertTypeName: alert.alert_type_name,
             alertType: alert.alert_type,
-            alertCreator: alert.creator_name,
+            alertCreatorLevel: alert.creator_level,
+            alertCreatorBadgeColor: alert.creator_badge_color,
             alertDate: alert.date
           })
         })

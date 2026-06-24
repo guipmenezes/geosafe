@@ -32,9 +32,11 @@
       </div>
 
       <div class="flex items-center justify-between pt-4 border-t border-grey100">
-        <div class="text-xs text-grey500">
-          Criado por <span class="font-semibold"><%= @alert.user.username %></span>
-          em <%= l(@alert.created_at, format: :short) %>
+        <div class="text-xs text-grey500 flex flex-wrap items-center gap-2">
+          <span>Criado em <%= l(@alert.created_at, format: :short) %></span>
+          <span class="text-grey300">•</span>
+          <span>Nível do Criador:</span>
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider <%= @alert.user.badge_color %>"><%= @alert.user.level %></span>
         </div>
       </div>
     </div>
