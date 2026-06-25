@@ -5,6 +5,7 @@ FactoryBot.define do
     association :user
     alert_type { TypeCodes::GOOD }
     alert { AlertCodes::STREET }
+    category { CategoryCodes::SECURITY }
     title { 'Sample Alert Title' }
     description { 'This is a sample alert description for testing purposes.' }
     location { 'Sample Location' }

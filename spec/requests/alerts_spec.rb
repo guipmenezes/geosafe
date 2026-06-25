@@ -23,6 +23,7 @@ RSpec.describe 'Alerts', type: :request do
           alert: AlertCodes::HOME,
           location: 'Test Location',
           alert_type: TypeCodes::GOOD,
+          category: CategoryCodes::SECURITY,
           title: 'Test Title',
           description: 'Test Description'
         } }

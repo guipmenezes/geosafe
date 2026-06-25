@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
+# rubocop:disable Metrics/AbcSize
 class Alert < ApplicationRecord
   self.inheritance_column = :_type_disabled # Disable STI
 
