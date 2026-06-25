@@ -59,21 +59,17 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:each, type: :system) do
-    driven_by :cuprite, screen_size: [1920, 1080]
-  end
-
-  Capybara.register_driver(:cuprite) do |app|
-    Capybara::Cuprite::Driver.new(app,
-                                  window_size: [1920, 1080],
-                                  timeout: 60,
-                                  process_timeout: 120,
-                                  headless: true,
-                                  browser_options: {
-                                    'no-sandbox': nil,
-                                    'disable-gpu': nil,
-                                    'disable-dev-shm-usage': nil,
-                                    'remote-debugging-port': 9222
-                                  })
+    driven_by :cuprite, screen_size: [1920, 1080], options: {
+      timeout: 60,
+      process_timeout: 120,
+      headless: true,
+      browser_options: {
+        'no-sandbox': nil,
+        'disable-gpu': nil,
+        'disable-dev-shm-usage': nil,
+        'remote-debugging-port': 9222
+      }
+    }
   end
 
   Capybara.javascript_driver = :cuprite

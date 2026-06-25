@@ -54,7 +54,7 @@ A credibilidade é o nosso maior ativo. Usuários ganham pontos quando a comunid
 
 1.  **✅ Zonas de Interesse:** Implementado sistema de gestão de locais salvos com navegação rápida.
 2.  **✅ Notificações Preventivas em Tempo Real:** Concluído aviso instantâneo via ActionCable (bell/toasts) para alertas de perigo em raios de 5km das Zonas de Interesse do usuário, com foco e pan no mapa dinâmicos sem reloads.
-3.  **Categorização Semântica:** Refinar as categorias de alertas (Segurança, Trânsito, Utilidade Pública) para filtros mais precisos.
+3.  **✅ Categorização Semântica:** Implementado sistema de categorias para alertas (Segurança, Trânsito, Utilidade Pública) com filtros visuais no mapa e sidebar.
 4.  **Integração de Notificações Push:** Enviar alertas diretamente para o dispositivo do usuário (PWA ou Mobile) mesmo com o navegador fechado.
 5.  **Expansão Nacional:** Otimização de performance para suporte a grandes volumes de dados em múltiplas cidades.
 

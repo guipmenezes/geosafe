@@ -15,6 +15,7 @@ RSpec.describe Alert, type: :model do
         description: 'Description',
         location: 'Location',
         alert_type: TypeCodes::GOOD,
+        category: CategoryCodes::SECURITY,
         alert: AlertCodes::STREET,
         user: user
       )
@@ -53,6 +54,7 @@ RSpec.describe Alert, type: :model do
         title: 'Home Alert',
         description: 'Testing',
         alert_type: TypeCodes::GOOD,
+        category: CategoryCodes::SECURITY,
         alert: AlertCodes::HOME,
         user: user
       )

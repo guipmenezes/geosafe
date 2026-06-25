@@ -1,5 +1,6 @@
 <div id="<%= dom_id(@alert) %>"
      data-alert-id="<%= @alert.id %>"
+     data-category="<%= @alert.category %>"
      data-latitude="<%= @alert.latitude %>"
      data-longitude="<%= @alert.longitude %>"
      data-controller="realtime-alert"
@@ -14,6 +15,15 @@
     <div class="flex-1">
       <div class="flex items-center gap-2">
         <span class="text-[10px] font-bold uppercase tracking-widest text-grey500 px-2 py-0.5 bg-grey100 rounded-md"><%= alert_name %></span>
+        <% if category_name.present? %>
+          <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md
+            <%= case @alert.category
+                when 1 then 'bg-blue-50 text-blue-700'
+                when 2 then 'bg-orange-50 text-orange-700'
+                when 3 then 'bg-purple-50 text-purple-700'
+                else 'bg-grey100 text-grey500'
+                end %>"><%= category_name %></span>
+        <% end %>
         <% if can_edit? %>
           <%= link_to edit_alert_path(@alert), data: { turbo_frame: "remote_modal" }, class: "text-[10px] font-bold text-primary600 hover:text-primary700 underline" do %>
             Editar
@@ -28,6 +38,8 @@
            data-alert-name="<%= alert_name %>"
            data-alert-type-name="<%= alert_type_name %>"
            data-alert-type="<%= type %>"
+           data-alert-category="<%= @alert.category %>"
+           data-alert-category-name="<%= category_name %>"
            data-alert-creator-level="<%= creator_level %>"
            data-alert-creator-badge-color="<%= creator_badge_color %>"
            data-alert-date="<%= formatted_created_at %>">

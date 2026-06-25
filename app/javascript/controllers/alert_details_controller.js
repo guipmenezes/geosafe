@@ -51,6 +51,8 @@ export default class extends Controller {
       this.listViewTarget.classList.remove("hidden")
       this.listViewTarget.innerHTML = ""
       
+      const fragment = document.createDocumentFragment()
+      
       alerts.forEach(alert => {
         const clone = this.itemTemplateTarget.content.cloneNode(true)
         
@@ -80,8 +82,10 @@ export default class extends Controller {
           })
         })
         
-        this.listViewTarget.appendChild(clone)
+        fragment.appendChild(clone)
       })
+      
+      this.listViewTarget.appendChild(fragment)
     }
 
     this.openModal()

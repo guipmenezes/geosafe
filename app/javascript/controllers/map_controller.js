@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["container", "searchInput", "safetyScore", "scoreValue", "scoreBar", "scoreDescription", "alertList"]
+  static targets = ["container", "searchInput", "safetyScore", "scoreValue", "scoreBar", "scoreDescription", "alertList", "categoryFilter"]
   static values = {
     alerts: Array,
     currentUserId: String
@@ -45,6 +45,8 @@ export default class extends Controller {
 
     // Add mouse listeners for sidebar cards to highlight markers
     this.initSidebarListeners()
+    this.activeCategoryFilter = null
+    this.initCategoryFilters()
   }
 
   disconnect() {
@@ -67,6 +69,62 @@ export default class extends Controller {
         if (card) this.highlightMarker(card.dataset.alertId, false)
       }, true)
     }
+  }
+
+  initCategoryFilters() {
+    if (this.hasCategoryFilterTarget) {
+      this.categoryFilterTarget.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-category]")
+        if (!btn) return
+
+        const category = parseInt(btn.dataset.category)
+        const allBtns = this.categoryFilterTarget.querySelectorAll("[data-category]")
+
+        // Toggle: if same category clicked, deactivate filter
+        if (this.activeCategoryFilter === category) {
+          this.activeCategoryFilter = null
+          allBtns.forEach(b => {
+            b.classList.remove("ring-2", "ring-offset-1", "opacity-50")
+          })
+        } else {
+          this.activeCategoryFilter = category
+          allBtns.forEach(b => {
+            b.classList.remove("ring-2", "ring-offset-1")
+            b.classList.add("opacity-50")
+          })
+          btn.classList.remove("opacity-50")
+          btn.classList.add("ring-2", "ring-offset-1")
+        }
+
+        this.applyCategoryFilter()
+      })
+    }
+  }
+
+  applyCategoryFilter() {
+    let alertsToDisplay = this.currentSearchLocation ? (this.filteredAlerts || this.allAlerts) : this.allAlerts
+
+    if (this.activeCategoryFilter !== null) {
+      alertsToDisplay = alertsToDisplay.filter(a => a.category === this.activeCategoryFilter)
+    }
+
+    this.refreshMarkers(alertsToDisplay)
+    this.updateSidebarCategoryFilter()
+  }
+
+  updateSidebarCategoryFilter() {
+    if (!this.hasAlertListTarget) return
+
+    const cards = Array.from(this.alertListTarget.querySelectorAll("[data-alert-id]"))
+
+    cards.forEach(card => {
+      const cardCategory = parseInt(card.dataset.category)
+      if (this.activeCategoryFilter !== null && cardCategory !== this.activeCategoryFilter) {
+        card.classList.add("hidden")
+      } else {
+        card.classList.remove("hidden")
+      }
+    })
   }
 
   highlightMarker(alertId, active) {
@@ -245,8 +303,10 @@ export default class extends Controller {
     // Sort visible cards by distance
     visibleCards.sort((a, b) => parseFloat(a.dataset.distance) - parseFloat(b.dataset.distance))
     
-    // Re-order in the DOM
-    visibleCards.forEach(card => this.alertListTarget.appendChild(card))
+    // Re-order in the DOM efficiently using a DocumentFragment to prevent layout thrashing (freeze)
+    const fragment = document.createDocumentFragment()
+    visibleCards.forEach(card => fragment.appendChild(card))
+    this.alertListTarget.appendChild(fragment)
   }
 
   drawRadiusCircle(center, radius) {
@@ -367,7 +427,8 @@ export default class extends Controller {
       return this.getMarkerIcon(alerts[0].alert_type, opacity)
     }
 
-    const maxType = Math.max(...alerts.map(a => a.alert_type))
+    // Use reduce instead of spread operator to avoid 'Maximum call stack size exceeded' with thousands of alerts
+    const maxType = alerts.reduce((max, a) => Math.max(max, a.alert_type), 0)
     const colors = {
       1: "#10b981", // GOOD
       2: "#f59e0b", // ALERT

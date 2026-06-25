@@ -157,6 +157,7 @@ pt-BR:
       alert:
         alert_type: "Tipo de Alerta"
         alert: "Ambiente"
+        category: "Categoria"
         location: "Localização"
         title: "Título"
         description: "Descrição"

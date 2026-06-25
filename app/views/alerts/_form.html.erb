@@ -38,6 +38,15 @@
 
     <%= render Select::SelectComponent.new(
           form: form,
+          name: :category,
+          label: Alert.human_attribute_name(:category),
+          collection: Alert.category_options,
+          extra_classes: "pb-4",
+          prompt: "Selecione a categoria..."
+        ) %>
+
+    <%= render Select::SelectComponent.new(
+          form: form,
           name: :alert,
           label: Alert.human_attribute_name(:alert),
           collection: Alert.alert_options,

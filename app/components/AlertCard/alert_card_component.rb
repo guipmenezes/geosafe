@@ -34,6 +34,10 @@ module AlertCard
       @alert.alert_type_name
     end
 
+    def category_name
+      @alert.category_name
+    end
+
     def relevant_count
       @alert.relevant || 0
     end
