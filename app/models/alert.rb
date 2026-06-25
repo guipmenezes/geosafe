@@ -138,3 +138,5 @@ class Alert < ApplicationRecord
     self.location = user.address.anonymized_address
   end
 end
+# rubocop:enable Metrics/ClassLength
+# rubocop:enable Metrics/AbcSize
