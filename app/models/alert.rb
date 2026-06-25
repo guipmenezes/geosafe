@@ -6,6 +6,7 @@ class Alert < ApplicationRecord
   include TypeCodes
   include AlertCodes
   include AlertGeocoding
+  include CategoryCodes
 
   belongs_to :user
   has_many :alert_votes, dependent: :destroy
@@ -19,6 +20,7 @@ class Alert < ApplicationRecord
   validates :user_id, presence: true
   validates :title, presence: true
   validates :description, presence: true
+  validates :category, presence: true, inclusion: { in: [SECURITY, TRAFFIC, PUBLIC_UTILITY] }
   validate :user_has_address, if: :home_alert?
 
   before_validation :set_coordinates, if: :home_alert?
@@ -27,7 +29,7 @@ class Alert < ApplicationRecord
   after_validation :reverse_geocode_location, if: :should_reverse_geocode?
 
   def user_vote(user)
-    alert_votes.find_by(user: user)
+    alert_votes.find { |v| v.user_id == user.id }
   end
 
   def self.alert_type_options
@@ -36,6 +38,14 @@ class Alert < ApplicationRecord
 
   def self.alert_options
     { 'Residencial' => HOME, 'Na Rua' => STREET }
+  end
+
+  def self.category_options
+    { '🔒 Segurança' => SECURITY, '🚗 Trânsito' => TRAFFIC, '🏛️ Utilidade Pública' => PUBLIC_UTILITY }
+  end
+
+  def category_name
+    self.class.category_options.key(category)
   end
 
   def alert_type_name
@@ -65,6 +75,8 @@ class Alert < ApplicationRecord
       alert_name: alert_name,
       alert_type_name: alert_type_name,
       alert_type: alert_type,
+      category: category,
+      category_name: category_name,
       user_id: user_id,
       creator_name: user.full_name,
       date: I18n.l(created_at, format: :short),

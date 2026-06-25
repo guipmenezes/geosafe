@@ -110,6 +110,19 @@
         </div>
       </div>
 
+      <%# Category Filter Buttons %>
+      <div data-map-target="categoryFilter" class="flex gap-2 mb-4 flex-wrap">
+        <button data-category="1" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all cursor-pointer">
+          🔒 Segurança
+        </button>
+        <button data-category="2" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 transition-all cursor-pointer">
+          🚗 Trânsito
+        </button>
+        <button data-category="3" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all cursor-pointer">
+          🏛️ Utilidade Pública
+        </button>
+      </div>
+
       <div id="alerts"
            data-controller="alert-details"
            data-map-target="alertList"
