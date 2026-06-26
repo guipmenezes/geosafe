@@ -3,6 +3,7 @@
   <head>
     <title>Geosafe</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="manifest" href="/manifest.json">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
@@ -15,6 +16,7 @@
     <main class="w-full lg:w-[90%] mx-auto px-4 lg:px-0 mt-4 lg:mt-6">
       <%= render "layouts/flash" %>
       <%= yield %>
+      <%= render "shared/push_notification_prompt" %>
     </main>
     <%= turbo_frame_tag "remote_modal" %>
   </body>

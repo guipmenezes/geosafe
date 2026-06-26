@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_04_020344) do
+ActiveRecord::Schema[7.1].define(version: 2026_06_26_015752) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -27,6 +27,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_04_020344) do
     t.integer "number"
     t.float "latitude"
     t.float "longitude"
+    t.string "label"
   end
 
   create_table "alert_votes", force: :cascade do |t|
@@ -53,6 +54,18 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_04_020344) do
     t.text "description"
     t.float "latitude"
     t.float "longitude"
+    t.integer "category"
+    t.index ["category"], name: "index_alerts_on_category"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "alert_id", null: false
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["alert_id"], name: "index_notifications_on_alert_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "plan_subscriptions", force: :cascade do |t|
@@ -69,6 +82,17 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_04_020344) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "endpoint"
+    t.string "p256dh"
+    t.string "auth"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -94,5 +118,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_04_020344) do
 
   add_foreign_key "alert_votes", "alerts"
   add_foreign_key "alert_votes", "users"
+  add_foreign_key "notifications", "alerts"
+  add_foreign_key "notifications", "users"
+  add_foreign_key "push_subscriptions", "users"
   add_foreign_key "sessions", "users"
 end

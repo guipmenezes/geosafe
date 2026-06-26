@@ -30,4 +30,5 @@ Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   resources :plans, only: [:index]
+  resources :push_subscriptions, only: %i[create destroy]
 end

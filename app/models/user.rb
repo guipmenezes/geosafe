@@ -12,6 +12,8 @@ class User < ApplicationRecord
 
   has_many :sessions, dependent: :destroy
   has_many :addresses, dependent: :destroy
+  has_many :interest_zones, dependent: :destroy
+  has_many :push_subscriptions, dependent: :destroy
   has_many :plan_subscriptions
   has_many :plans, through: :plan_subscriptions
   has_many :alerts, dependent: :destroy
