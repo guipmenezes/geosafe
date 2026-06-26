@@ -105,6 +105,7 @@ class Alert < ApplicationRecord
     target_user_ids.each do |target_user_id|
       notification = Notification.create(user_id: target_user_id, alert: self)
       notification.broadcast_notification if notification.persisted?
+      PushNotificationJob.perform_later(target_user_id, id)
     end
   end
 
