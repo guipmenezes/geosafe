@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PushSubscriptionsController < ApplicationController
   before_action :authenticate
 
@@ -16,7 +18,7 @@ class PushSubscriptionsController < ApplicationController
   end
 
   def destroy
-    @subscription = Current.user.push_subscriptions.find_by(endpoint: params[:endpoint])
+    @subscription = Current.user.push_subscriptions.find_by(endpoint: params[:id])
     @subscription&.destroy
     head :ok
   end
