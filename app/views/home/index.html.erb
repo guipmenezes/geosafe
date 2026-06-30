@@ -42,7 +42,7 @@
     <div data-map-target="container" class="w-full h-full z-10"></div>
 
     <%# Create Alert Button (Mobile Floating) %>
-    <div class="lg:hidden absolute bottom-20 right-3 z-20">
+    <div class="lg:hidden absolute bottom-20 right-3 z-[150]">
       <%= render(Modal::ModalComponent.new(title: "Criar GeoAlerta")) do |component| %>
         <% component.with_trigger do %>
           <button class="w-12 h-12 sm:w-14 sm:h-14 bg-primary600 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-primary700 transition-transform active:scale-95">
