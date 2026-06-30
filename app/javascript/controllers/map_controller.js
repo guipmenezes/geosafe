@@ -467,6 +467,12 @@ export default class extends Controller {
   }
 
   handleGroupClick(alerts, position) {
+    // Open bottom sheet on mobile
+    const bottomSheetController = this.application.getControllerForElementAndIdentifier(this.element, "bottom-sheet")
+    if (bottomSheetController) {
+      bottomSheetController.expand()
+    }
+
     if (alerts.length > 1) {
       const alertsContainer = document.getElementById("alerts")
       const detailsController = this.application.getControllerForElementAndIdentifier(alertsContainer, "alert-details")
