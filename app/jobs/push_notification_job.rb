@@ -44,8 +44,8 @@ class PushNotificationJob < ApplicationJob
   def vapid_keys
     {
       subject: 'mailto:suporte@geosafe.com',
-      public_key: ENV.fetch('VAPID_PUBLIC_KEY', nil),
-      private_key: ENV.fetch('VAPID_PRIVATE_KEY', nil)
+      public_key: Rails.application.credentials.vapid_public_key,
+      private_key: Rails.application.credentials.vapid_private_key
     }
   end
 end
