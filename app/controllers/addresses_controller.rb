@@ -2,6 +2,7 @@
 
 class AddressesController < ApplicationController
   before_action :set_address, only: %i[edit update destroy]
+  layout :resolve_layout
 
   def new
     @address = Address.new
@@ -53,6 +54,14 @@ class AddressesController < ApplicationController
   end
 
   private
+
+  def resolve_layout
+    if action_name.in?(%w[new create]) && Current.user.addresses.none?
+      'application'
+    else
+      'logged_in'
+    end
+  end
 
   def handle_create_success(format)
     path = Current.user.addresses.count > 1 ? interest_zones_path : plans_path
