@@ -64,7 +64,7 @@ class AddressesController < ApplicationController
   end
 
   def handle_create_success(format)
-    path = Current.user.addresses.count > 1 ? interest_zones_path : plans_path
+    path = Current.user.addresses.count > 1 ? interest_zones_path : home_path
     flash.now[:notice] = 'Endereço cadastrado com sucesso'
     format.html { redirect_to path, notice: flash.now[:notice] }
     format.turbo_stream
