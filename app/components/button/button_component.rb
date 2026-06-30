@@ -32,7 +32,7 @@ module Button
 
     def base_classes
       'inline-flex items-center justify-center font-bold tracking-wide transition-all duration-300 ' \
-        'active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100'
+        'active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 whitespace-nowrap'
     end
 
     def size_classes
@@ -47,9 +47,9 @@ module Button
       case @style
       when 'secondary' then 'bg-primary50 text-primary700 hover:bg-primary100'
       when 'outline' then 'border-2 border-primary500 text-primary500 hover:bg-primary50'
-      when 'danger' then 'bg-red-500 text-white hover:bg-red-600 shadow-md shadow-red-100'
+      when 'danger' then 'bg-red-500 text-white hover:bg-red-600 shadow-md shadow-red-500/30'
       when 'ghost' then 'text-grey600 hover:bg-grey100 hover:text-grey900'
-      else 'bg-primary500 text-white hover:bg-primary600 shadow-lg shadow-primary100'
+      else 'bg-primary500 text-white hover:bg-primary600 shadow-lg shadow-primary500/30'
       end
     end
   end
