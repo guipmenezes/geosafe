@@ -1,11 +1,11 @@
-<div class="grid grid-cols-2 w-full h-screen" data-controller="registrations--form">
-  <div class="h-full relative">
+<div class="grid grid-cols-1 lg:grid-cols-2 w-full min-h-screen" data-controller="registrations--form">
+  <div class="hidden lg:block h-full relative">
     <%= image_tag "daniel-costa-wz5XO9Lo3E8-unsplash.jpg", alt: "Imagem do Catedral Metropolitana Nossa Senhora Aparecida, em Brasília. Foto tirada pelo fotógrafo Daniel Costa.", class: "w-full h-full object-cover" %>
     <a href="https://unsplash.com/pt-br/@danielpcosta"><p class="absolute bottom-4 left-4 text-white bg-black bg-opacity-50 px-2 py-1 rounded">Foto por Daniel Costa</p></a>
   </div>
-  <div class="flex flex-col justify-center items-center">
-    <div class="flex flex-col items-start gap-8 p-20 w-full">
-      <h1 class="font-semibold text-2xl">Seja bem-vindo(a), para começar nós precisamos que você preencha os seguintes campos</h1>
+  <div class="flex flex-col justify-center items-center bg-white px-4">
+    <div class="flex flex-col items-start gap-6 sm:gap-8 py-8 w-full max-w-md lg:max-w-xl mx-auto">
+      <h1 class="font-semibold text-xl sm:text-2xl text-gray-900">Seja bem-vindo(a), para começar nós precisamos que você preencha os seguintes campos</h1>
       <div class="w-full">
         <%= form_with(model: @user, url: sign_up_path) do |form| %>
           <div class="flex flex-col gap-2 pb-4">
@@ -28,8 +28,8 @@
             <%= render(Input::InputComponent.new(name: :password_confirmation, form: form, required: true, autofocus: true, autocomplete: "new-password", label: "Confirme a sua senha:", placeholder: "Digite a mesma senha criada no passo anterior.", password: true)) %>
           </div>
 
-          <div class="flex justify-center items-center">
-            <%= render(Button::ButtonComponent.new(text: "AVANÇAR", type: "submit", extra_classes: "w-1/3 h-10 pt-5")) %>
+          <div class="flex justify-center items-center mt-6">
+            <%= render(Button::ButtonComponent.new(text: "AVANÇAR", type: "submit", extra_classes: "w-full sm:w-2/3 md:w-1/2")) %>
           </div>
           <div class="flex justify-center w-full pt-4">
             <%= link_to "Já possui uma conta? Entre", sign_in_path, class: "text-blue-500 hover:text-blue-700" %>

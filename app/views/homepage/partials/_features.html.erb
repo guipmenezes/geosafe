@@ -1,53 +1,36 @@
-<div class="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-  <div id="funcionalidades" class="pb-8">
-    <div class="py-6 sm:py-8">
-      <h1 class="text-3xl sm:text-4xl font-semibold text-center text-secondary300">Funcionalidades:</h1>
+<div class="w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-24 max-w-7xl mx-auto">
+  <div id="funcionalidades" class="mb-16">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">O que o GeoSafe oferece?</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Recursos pensados para manter você sempre um passo à frente, com informações validadas por quem está lá.</p>
     </div>
-    <div class="flex flex-col sm:flex-row justify-around gap-4">
-      <div class="flex flex-col max-w-full sm:max-w-[40%] p-4 items-center justify-center text-center">
-        <%= render Icon::IconComponent.new(name: "location", size: "lg", classes: "pb-2") %>
-        <p class="text-center text-sm sm:text-base">Com os alertas <span class="font-bold text-primary300">Geosafe</span> você pode estar <b>sempre ciente</b> do que está acontecendo ao seu redor com os <b>alertas gerados pelos próprios usuários</b>, podendo ser alertas de moradores ou <b>alertas de transitantes</b>.</p>
-      </div>
-      <div class="flex flex-col max-w-full sm:max-w-[40%] p-4 items-center justify-center text-center">
-        <%= render Icon::IconComponent.new(name: "search", size: "md", classes: "pb-2") %>
-        <p class="text-center text-sm sm:text-base">Está pretendendo ir para algum local e não tem certeza de como está a <b>segurança nas proximidades?</b> Com a funcionalidade <b>Pesquisa Safe, os membros Geosafe+</b> não ficam na mão e conseguem saber os incidentes que estão ocorrendo no local em que estão planejando ir.</p>
-      </div>
-    </div>
-  </div>
-  <div id="por-que-contribuir" class="border-t-2 border-b-2 py-5">
-    <div class="py-6 sm:py-8">
-      <h1 class="text-3xl sm:text-4xl font-semibold text-center text-secondary300">Por que contribuir?</h1>
-    </div>
-    <div class="flex flex-col sm:flex-row justify-around gap-4">
-      <div class="flex flex-col max-w-full sm:max-w-[40%] p-4 items-center justify-center text-center">
-        <%= render Icon::IconComponent.new(name: "group", size: "lg", classes: "pb-2") %>
-        <div class="text-center text-sm sm:text-base">
-          <p>Ao acumular <b>pontos de alertas pertinentes (Geopontos)</b>, torne-se um dos <b>Guardiões</b> da sua cidade, município ou região. Os <b>Guardiões</b> são personalidades verificadas que geram alertas relevantes e são apoiadas pelos moradores da cidade.</p>
-          <p><b>Guardiões ganham destaque e reconhecimento na Geosafe. Torne-se um Guardião!</b></p>
-        </div>
-      </div>
-      <div class="flex flex-col max-w-full sm:max-w-[40%] p-4 items-center justify-center text-center">
-        <%= render Icon::IconComponent.new(name: "money", size: "lg", classes: "pb-2") %>
-        <div class="text-center text-sm sm:text-base">
-          <p>Com os <b>Geopontos</b>, você tem o direito de trocá-los por diversos prêmios na plataforma, incluindo descontos em restaurantes, bares e até eletrodomésticos.</p>
-          <p>Lembrando que, para resgatar os prêmios da loja, você precisa ser <span class="font-bold text-primary300">Geosafe+</span></p>
-          <p>Para usuários sem assinatura, é possível resgatar assinaturas <span class="font-bold text-primary300">Geosafe+</span> na loja <span class="font-bold text-primary300">Geosafe</span></p>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div id="planos" class="border-t-2 py-5">
-    <div class="py-6 sm:py-8">
-      <h1 class="text-3xl sm:text-4xl font-semibold text-center text-secondary300">Planos</h1>
-    </div>
-    <div class="flex flex-row justify-around">
-      <div class="flex flex-col w-full sm:w-1/3 bg-primary200 shadow-lg rounded-xl color p-4 items-center justify-center text-center gap-6 sm:gap-10">
-        <div class="w-full h-auto p-4 bg-primary100 shadow-lg rounded-xl">
-          <span class="text-secondary300 text-2xl sm:text-3xl font-semibold">Geosafe+</span>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+      <!-- Lupa GeoSafe -->
+      <div class="flex flex-col items-center text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <div class="p-4 bg-primary50 rounded-full mb-6">
+          <%= render Icon::IconComponent.new(name: "search", size: "md", classes: "text-primary500") %>
         </div>
-        <p class="text-secondary300 text-xs sm:text-sm font-medium">Tenha acesso aos benefícios Geosafe+ de pesquisa e acesso às recompensas da loja de Geopontos</p>
-        <h1 class="text-secondary300 text-3xl sm:text-4xl pb-4 font-semibold">R$ 9,90/mês</h1>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Lupa GeoSafe</h3>
+        <p class="text-gray-600">Busca inteligente com filtros de proximidade de 10km e cálculo de <span class="font-semibold text-primary500">Safety Score</span> em tempo real para os locais que você deseja visitar.</p>
+      </div>
+
+      <!-- Zonas de Interesse -->
+      <div class="flex flex-col items-center text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <div class="p-4 bg-secondary50 rounded-full mb-6">
+          <%= render Icon::IconComponent.new(name: "location", size: "md", classes: "text-secondary500") %>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Zonas de Interesse</h3>
+        <p class="text-gray-600">Cadastre locais estratégicos (como Casa e Trabalho) e receba <span class="font-semibold text-secondary500">notificações push preventivas</span> quando houver perigo num raio de 5km.</p>
+      </div>
+
+      <!-- Comunidade -->
+      <div class="flex flex-col items-center text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <div class="p-4 bg-blue-50 rounded-full mb-6">
+          <%= render Icon::IconComponent.new(name: "group", size: "md", classes: "text-blue-500") %>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Sistema de Reputação</h3>
+        <p class="text-gray-600">Contribua com alertas relevantes e ganhe <span class="font-semibold text-blue-500">Geopontos</span>. Evolua do nível Bronze até tornar-se um membro <span class="font-semibold text-blue-500">Verificado</span> e Guardião da sua região.</p>
       </div>
     </div>
   </div>

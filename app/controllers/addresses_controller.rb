@@ -2,6 +2,7 @@
 
 class AddressesController < ApplicationController
   before_action :set_address, only: %i[edit update destroy]
+  layout :resolve_layout
 
   def new
     @address = Address.new
@@ -54,21 +55,23 @@ class AddressesController < ApplicationController
 
   private
 
+  def resolve_layout
+    if action_name.in?(%w[new create]) && Current.user.addresses.none?
+      'application'
+    else
+      'logged_in'
+    end
+  end
+
   def handle_create_success(format)
-    path = Current.user.addresses.count > 1 ? interest_zones_path : plans_path
+    path = Current.user.addresses.count > 1 ? interest_zones_path : home_path
     flash.now[:notice] = 'Endereço cadastrado com sucesso'
     format.html { redirect_to path, notice: flash.now[:notice] }
     format.turbo_stream
   end
 
   def handle_create_failure(format)
-    format.html { render :new, status: :unprocessable_content }
-    format.turbo_stream do
-      render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form),
-                                                partial: 'addresses/form',
-                                                locals: { address: @address }),
-             status: :unprocessable_content
-    end
+    handle_failure(format, :new)
   end
 
   def handle_update_success(format)
@@ -78,7 +81,11 @@ class AddressesController < ApplicationController
   end
 
   def handle_update_failure(format)
-    format.html { render :edit, status: :unprocessable_content }
+    handle_failure(format, :edit)
+  end
+
+  def handle_failure(format, action)
+    format.html { render action, status: :unprocessable_content }
     format.turbo_stream do
       render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form),
                                                 partial: 'addresses/form',

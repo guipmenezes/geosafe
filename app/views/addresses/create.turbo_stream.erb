@@ -1,6 +1,6 @@
 <% if Current.user.addresses.count == 1 %>
   <%= turbo_stream.append "remote_modal" do %>
-    <div data-controller="turbo-stream-actions" url="<%= plans_path %>"></div>
+    <div data-controller="turbo-stream-actions" url="<%= home_path %>"></div>
   <% end %>
 <% else %>
   <%= turbo_stream.update "interest_zones_list" do %>
