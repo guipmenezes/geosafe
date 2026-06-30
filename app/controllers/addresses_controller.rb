@@ -71,13 +71,7 @@ class AddressesController < ApplicationController
   end
 
   def handle_create_failure(format)
-    format.html { render :new, status: :unprocessable_content }
-    format.turbo_stream do
-      render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form),
-                                                partial: 'addresses/form',
-                                                locals: { address: @address }),
-             status: :unprocessable_content
-    end
+    handle_failure(format, :new)
   end
 
   def handle_update_success(format)
@@ -87,7 +81,11 @@ class AddressesController < ApplicationController
   end
 
   def handle_update_failure(format)
-    format.html { render :edit, status: :unprocessable_content }
+    handle_failure(format, :edit)
+  end
+
+  def handle_failure(format, action)
+    format.html { render action, status: :unprocessable_content }
     format.turbo_stream do
       render turbo_stream: turbo_stream.replace(helpers.dom_id(@address, :form),
                                                 partial: 'addresses/form',

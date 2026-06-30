@@ -25,7 +25,7 @@ RSpec.describe 'Addresses', type: :request do
         expect do
           post addresses_path, params: { address: address_params }
         end.to change(Address, :count).by(1)
-        expect(response).to redirect_to(plans_path)
+        expect(response).to redirect_to(home_path)
       end
     end
 
