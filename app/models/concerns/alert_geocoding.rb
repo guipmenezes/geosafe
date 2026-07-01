@@ -5,15 +5,18 @@ module AlertGeocoding
 
   private
 
+  # rubocop:disable Metrics/AbcSize
   def reverse_geocode_location
     result = Geocoder.search([latitude, longitude], language: 'pt-BR').first
     return unless result
 
     data = extract_address_components(result.data['address_components'] || [])
     self.location = format_location(data, result.address)
+    self.uf = data[:state] if data[:state].present?
   rescue StandardError => e
     Rails.logger.error "Reverse geocoding failed: #{e.message}"
   end
+  # rubocop:enable Metrics/AbcSize
 
   def extract_address_components(components)
     {

@@ -26,7 +26,15 @@ class Alert < ApplicationRecord
   validate :user_has_address, if: :home_alert?
 
   before_validation :set_coordinates, if: :home_alert?
-  geocoded_by :location
+  geocoded_by :location do |obj, results|
+    if (geo = results.first)
+      obj.latitude = geo.latitude
+      obj.longitude = geo.longitude
+      components = geo.data['address_components'] || []
+      state = components.find { |c| c['types'].include?('administrative_area_level_1') }&.dig('short_name')
+      obj.uf = state if state.present?
+    end
+  end
   after_validation :geocode, if: :street_alert_and_location_changed?
   after_validation :reverse_geocode_location, if: :should_reverse_geocode?
 
@@ -137,6 +145,7 @@ class Alert < ApplicationRecord
     self.latitude = user.address.latitude
     self.longitude = user.address.longitude
     self.location = user.address.anonymized_address
+    self.uf = user.address.uf
   end
 end
 # rubocop:enable Metrics/ClassLength

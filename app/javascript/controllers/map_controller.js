@@ -4,7 +4,39 @@ export default class extends Controller {
   static targets = ["container", "searchInput", "safetyScore", "scoreValue", "scoreBar", "scoreDescription", "alertList", "categoryFilter"]
   static values = {
     alerts: Array,
-    currentUserId: String
+    currentUserId: String,
+    currentUf: String
+  }
+
+  ufCoordinates = {
+    "AC": { lat: -8.77, lng: -70.55 },
+    "AL": { lat: -9.71, lng: -35.73 },
+    "AM": { lat: -3.47, lng: -65.10 },
+    "AP": { lat: 1.41, lng: -51.77 },
+    "BA": { lat: -12.96, lng: -38.51 },
+    "CE": { lat: -3.71, lng: -38.54 },
+    "DF": { lat: -15.83, lng: -47.86 },
+    "ES": { lat: -19.19, lng: -40.34 },
+    "GO": { lat: -16.64, lng: -49.31 },
+    "MA": { lat: -2.55, lng: -44.30 },
+    "MT": { lat: -12.64, lng: -55.42 },
+    "MS": { lat: -20.51, lng: -54.54 },
+    "MG": { lat: -18.10, lng: -44.38 },
+    "PA": { lat: -5.53, lng: -52.29 },
+    "PB": { lat: -7.06, lng: -36.65 },
+    "PR": { lat: -24.89, lng: -51.55 },
+    "PE": { lat: -8.28, lng: -35.07 },
+    "PI": { lat: -8.28, lng: -43.68 },
+    "RJ": { lat: -22.84, lng: -43.15 },
+    "RN": { lat: -5.22, lng: -36.52 },
+    "RO": { lat: -11.22, lng: -62.80 },
+    "RS": { lat: -30.01, lng: -51.22 },
+    "RR": { lat: 1.89, lng: -61.22 },
+    "SC": { lat: -27.33, lng: -49.44 },
+    "SE": { lat: -10.90, lng: -37.07 },
+    "SP": { lat: -23.55, lng: -46.64 },
+    "TO": { lat: -10.25, lng: -48.25 },
+    "BR": { lat: -14.23, lng: -51.92 }
   }
 
   connect() {
@@ -195,9 +227,14 @@ export default class extends Controller {
       }
     } else if (!isNaN(lat) && !isNaN(lng)) {
       const position = { lat, lng }
+      this.currentSearchLocation = new google.maps.LatLng(lat, lng)
       this.map.setCenter(position)
       this.map.setZoom(17)
-      this.updateSafetyScore(new google.maps.LatLng(lat, lng))
+      this.updateSafetyScore(this.currentSearchLocation)
+    } else if (this.hasCurrentUfValue && this.ufCoordinates[this.currentUfValue]) {
+      const position = this.ufCoordinates[this.currentUfValue]
+      this.map.setCenter(position)
+      this.map.setZoom(this.currentUfValue === 'BR' ? 4 : 7)
     } else {
       this.getUserLocation()
     }
@@ -207,6 +244,59 @@ export default class extends Controller {
     this.map.addListener("click", (event) => {
       this.handleMapClick(event.latLng)
     })
+
+    this.map.addListener("idle", () => {
+      this.fetchAlertsInBounds()
+    })
+  }
+
+  fetchAlertsInBounds() {
+    if (!this.map || this.map.getZoom() < 12) return
+
+    const bounds = this.map.getBounds()
+    if (!bounds) return
+
+    const ne = bounds.getNorthEast()
+    const sw = bounds.getSouthWest()
+    
+    const boundsStr = `${sw.lat()},${sw.lng()},${ne.lat()},${ne.lng()}`
+    const url = new URL(window.location.origin + '/home.json')
+    url.searchParams.set('bounds', boundsStr)
+    
+    fetch(url)
+      .then(response => response.json())
+      .then(newAlerts => {
+        let added = false
+        const fragment = document.createDocumentFragment()
+        
+        newAlerts.forEach(alert => {
+          if (!this.allAlerts.find(a => a.id === alert.id)) {
+            this.allAlerts.push(alert)
+            added = true
+            
+            if (this.hasAlertListTarget && alert.html) {
+              const temp = document.createElement('div')
+              temp.innerHTML = alert.html.trim()
+              if (temp.firstChild) {
+                fragment.appendChild(temp.firstChild)
+              }
+            }
+          }
+        })
+        
+        if (added) {
+          if (this.hasAlertListTarget) {
+            this.alertListTarget.appendChild(fragment)
+          }
+          if (this.currentSearchLocation) {
+            this.updateSafetyScore(this.currentSearchLocation)
+          } else {
+            this.refreshMarkers()
+            this.applyCategoryFilter()
+          }
+        }
+      })
+      .catch(err => console.error("Error fetching dynamic alerts:", err))
   }
 
   initAutocomplete() {
@@ -245,6 +335,7 @@ export default class extends Controller {
     
     // Filter alerts by proximity to show only those in the 10km radius
     this.filteredAlerts = this.allAlerts.filter(alert => {
+      if (!this.currentSearchLocation) return true; // Do not hide markers if no explicit search is active
       const alertPos = new google.maps.LatLng(alert.latitude, alert.longitude)
       const distance = google.maps.geometry.spherical.computeDistanceBetween(location, alertPos)
       return distance <= radius
@@ -261,7 +352,11 @@ export default class extends Controller {
     console.log(`Filtering: ${this.filteredAlerts.length} alerts in 10km. Score: ${scoreAlerts.length} alerts in 1km.`)
     
     this.refreshMarkers(this.filteredAlerts)
-    this.drawRadiusCircle(location, scoreRadius)
+    if (this.currentSearchLocation) {
+      this.drawRadiusCircle(location, scoreRadius) // Draw 1km circle for score calculation
+    } else {
+      if (this.currentRadiusCircle) this.currentRadiusCircle.setMap(null)
+    }
     this.renderSafetyScore(scoreAlerts)
     this.updateSidebarList(location, radius)
   }
@@ -289,12 +384,12 @@ export default class extends Controller {
       const cardPos = new google.maps.LatLng(cardLat, cardLng)
       const distance = google.maps.geometry.spherical.computeDistanceBetween(location, cardPos)
 
-      if (distance <= radius) {
+      if (this.currentSearchLocation && distance > radius) {
+        card.classList.add("hidden")
+      } else {
         card.classList.remove("hidden")
         card.dataset.distance = distance
         visibleCards.push(card)
-      } else {
-        card.classList.add("hidden")
       }
     })
 

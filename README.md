@@ -85,3 +85,32 @@ A aplicação é construída com **Ruby on Rails 7**, **Hotwire (Turbo/Stimulus)
     bin/dev
     ```
     *A aplicação estará disponível em `http://localhost:3000`.*
+
+---
+
+## 🚀 Deploy (Produção)
+
+A arquitetura do GeoSafe foi desenhada para ser escalável e de baixo custo, utilizando a ferramenta oficial da comunidade Rails: **Kamal**. Nosso ambiente de produção alvo é um servidor próprio (VPS) na **DigitalOcean**.
+
+O Kamal se encarrega de empacotar a aplicação via Docker e orquestrar a infraestrutura (Rails, PostgreSQL, Redis e Traefik para SSL) em uma única máquina, garantindo o melhor custo-benefício.
+
+Para preparar e realizar o deploy do GeoSafe, siga estes passos:
+
+1. **Configuração da Infraestrutura (DigitalOcean):**
+   - Crie um *Droplet* (Ubuntu) na DigitalOcean e configure acesso SSH root.
+   - Adicione o IP do Droplet ao seu domínio via DNS.
+2. **Variáveis de Ambiente (Credentials & .env):**
+   - O Kamal gerencia os segredos através de um arquivo `.env` local e da `RAILS_MASTER_KEY`.
+   - Configure as chaves de API necessárias (como Google Maps), garantindo que as restrições de domínio estejam adequadas para o ambiente de produção.
+3. **Serviços Acessórios (Postgres e Redis):**
+   - O Kamal subirá os containers do PostgreSQL e Redis automaticamente no servidor através da configuração no `config/deploy.yml`.
+   - Isso garante que o ActionCable (notificações WebSocket) funcione perfeitamente.
+4. **Executando o Deploy:**
+   - Com o Kamal instalado no seu computador, o deploy inicial é feito com:
+     ```bash
+     kamal setup
+     ```
+   - Para atualizações subsequentes de código:
+     ```bash
+     kamal deploy
+     ```
