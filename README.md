@@ -85,3 +85,22 @@ A aplicação é construída com **Ruby on Rails 7**, **Hotwire (Turbo/Stimulus)
     bin/dev
     ```
     *A aplicação estará disponível em `http://localhost:3000`.*
+
+---
+
+## 🚀 Deploy (Produção)
+
+Para preparar o GeoSafe para um ambiente de produção (como Heroku, Render, AWS ou Fly.io), certifique-se de realizar e configurar os seguintes passos iniciais:
+
+1. **Banco de Dados de Produção:**
+   - Provisione uma instância de banco de dados PostgreSQL.
+   - Configure a URL de conexão na variável de ambiente `DATABASE_URL`.
+2. **Variáveis de Ambiente (Credentials):**
+   - Configure a `RAILS_MASTER_KEY` no ambiente para descriptografar as credenciais.
+   - Configure as chaves de API necessárias (como Google Maps), garantindo que as restrições de domínio estejam adequadas para o ambiente de produção.
+3. **Websockets e Redis (ActionCable):**
+   - As notificações em tempo real exigem um servidor Redis em produção.
+   - Provisione o Redis e defina a variável `REDIS_URL` para que o ActionCable consiga processar o envio de dados via websocket.
+4. **Assets e Servidor:**
+   - O processo de build (CI/CD ou da plataforma) deve pré-compilar os assets rodando `rails assets:precompile`.
+   - Certifique-se de que o servidor web (Puma) e o banco de dados estejam devidamente dimensionados para o tráfego inicial.

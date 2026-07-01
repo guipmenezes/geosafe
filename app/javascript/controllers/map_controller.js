@@ -195,9 +195,10 @@ export default class extends Controller {
       }
     } else if (!isNaN(lat) && !isNaN(lng)) {
       const position = { lat, lng }
+      this.currentSearchLocation = new google.maps.LatLng(lat, lng)
       this.map.setCenter(position)
       this.map.setZoom(17)
-      this.updateSafetyScore(new google.maps.LatLng(lat, lng))
+      this.updateSafetyScore(this.currentSearchLocation)
     } else {
       this.getUserLocation()
     }
@@ -245,6 +246,7 @@ export default class extends Controller {
     
     // Filter alerts by proximity to show only those in the 10km radius
     this.filteredAlerts = this.allAlerts.filter(alert => {
+      if (!this.currentSearchLocation) return true; // Do not hide markers if no explicit search is active
       const alertPos = new google.maps.LatLng(alert.latitude, alert.longitude)
       const distance = google.maps.geometry.spherical.computeDistanceBetween(location, alertPos)
       return distance <= radius
@@ -261,7 +263,11 @@ export default class extends Controller {
     console.log(`Filtering: ${this.filteredAlerts.length} alerts in 10km. Score: ${scoreAlerts.length} alerts in 1km.`)
     
     this.refreshMarkers(this.filteredAlerts)
-    this.drawRadiusCircle(location, scoreRadius)
+    if (this.currentSearchLocation) {
+      this.drawRadiusCircle(location, radius) // Draw 10km circle only when searching
+    } else {
+      if (this.currentRadiusCircle) this.currentRadiusCircle.setMap(null)
+    }
     this.renderSafetyScore(scoreAlerts)
     this.updateSidebarList(location, radius)
   }
@@ -289,12 +295,12 @@ export default class extends Controller {
       const cardPos = new google.maps.LatLng(cardLat, cardLng)
       const distance = google.maps.geometry.spherical.computeDistanceBetween(location, cardPos)
 
-      if (distance <= radius) {
+      if (this.currentSearchLocation && distance > radius) {
+        card.classList.add("hidden")
+      } else {
         card.classList.remove("hidden")
         card.dataset.distance = distance
         visibleCards.push(card)
-      } else {
-        card.classList.add("hidden")
       }
     })
 

@@ -11,6 +11,7 @@ module AlertGeocoding
 
     data = extract_address_components(result.data['address_components'] || [])
     self.location = format_location(data, result.address)
+    self.uf = data[:state] if data[:state].present?
   rescue StandardError => e
     Rails.logger.error "Reverse geocoding failed: #{e.message}"
   end

@@ -67,8 +67,19 @@
     </div>
 
     <div class="flex flex-col h-full px-4 lg:px-0 overflow-visible">
-      <div class="flex flex-row items-center justify-between mb-4 lg:pr-2">
-        <h2 class="text-xl font-bold text-gray-900 lg:hidden">Alertas Próximos</h2>
+      <div class="flex flex-row items-center justify-between mb-4 lg:pr-2 mt-4 lg:mt-0">
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-bold text-gray-900 lg:hidden">Alertas</h2>
+          
+          <form action="/home" method="get" class="m-0">
+            <select name="uf" onchange="this.form.submit()" class="text-sm font-bold bg-gray-50 text-gray-700 border border-gray-200 rounded-lg focus:ring-primary500 focus:border-primary500 py-1.5 pl-3 pr-8 cursor-pointer">
+              <option value="BR" <%= 'selected' if @current_uf == 'BR' %>>Brasil Todo</option>
+              <% @ufs.each do |uf| %>
+                <option value="<%= uf %>" <%= 'selected' if @current_uf == uf %>><%= uf %></option>
+              <% end %>
+            </select>
+          </form>
+        </div>
 
         <%= render(Dropdown::DropdownComponent.new(title: "Minhas Zonas")) do %>
           <div class="w-72 sm:w-80">
