@@ -11,13 +11,29 @@ class HomeController < ApplicationController
     @alerts = Alert.includes(:user, :alert_votes)
                    .where('created_at >= ?', 30.days.ago)
                    
-    @alerts = @alerts.where(uf: @current_uf) unless @current_uf == 'BR'
+    if params[:bounds].present?
+      bounds = params[:bounds].split(',')
+      @alerts = @alerts.within_bounding_box(bounds)
+    else
+      @alerts = @alerts.where(uf: @current_uf) unless @current_uf == 'BR'
+    end
     
     @alerts = @alerts.order(created_at: :desc)
                    .limit(1000)
-    @alerts_json = @alerts.map(&:as_json_for_map).to_json
 
-    mark_notifications_as_read if params[:alert_id].present?
+    respond_to do |format|
+      format.html do
+        @alerts_json = @alerts.map(&:as_json_for_map).to_json
+        mark_notifications_as_read if params[:alert_id].present?
+      end
+      format.json do
+        render json: @alerts.map { |a|
+          a.as_json_for_map.merge(
+            html: render_to_string(AlertCard::AlertCardComponent.new(alert: a), layout: false)
+          )
+        }
+      end
+    end
   end
 
   private

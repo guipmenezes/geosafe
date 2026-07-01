@@ -208,6 +208,59 @@ export default class extends Controller {
     this.map.addListener("click", (event) => {
       this.handleMapClick(event.latLng)
     })
+
+    this.map.addListener("idle", () => {
+      this.fetchAlertsInBounds()
+    })
+  }
+
+  fetchAlertsInBounds() {
+    if (!this.map || this.map.getZoom() < 12) return
+
+    const bounds = this.map.getBounds()
+    if (!bounds) return
+
+    const ne = bounds.getNorthEast()
+    const sw = bounds.getSouthWest()
+    
+    const boundsStr = `${sw.lat()},${sw.lng()},${ne.lat()},${ne.lng()}`
+    const url = new URL(window.location.origin + '/home.json')
+    url.searchParams.set('bounds', boundsStr)
+    
+    fetch(url)
+      .then(response => response.json())
+      .then(newAlerts => {
+        let added = false
+        const fragment = document.createDocumentFragment()
+        
+        newAlerts.forEach(alert => {
+          if (!this.allAlerts.find(a => a.id === alert.id)) {
+            this.allAlerts.push(alert)
+            added = true
+            
+            if (this.hasAlertListTarget && alert.html) {
+              const temp = document.createElement('div')
+              temp.innerHTML = alert.html.trim()
+              if (temp.firstChild) {
+                fragment.appendChild(temp.firstChild)
+              }
+            }
+          }
+        })
+        
+        if (added) {
+          if (this.hasAlertListTarget) {
+            this.alertListTarget.appendChild(fragment)
+          }
+          if (this.currentSearchLocation) {
+            this.updateSafetyScore(this.currentSearchLocation)
+          } else {
+            this.refreshMarkers()
+            this.applyCategoryFilter()
+          }
+        }
+      })
+      .catch(err => console.error("Error fetching dynamic alerts:", err))
   }
 
   initAutocomplete() {
