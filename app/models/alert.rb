@@ -27,11 +27,11 @@ class Alert < ApplicationRecord
 
   before_validation :set_coordinates, if: :home_alert?
   geocoded_by :location do |obj, results|
-    if geo = results.first
+    if (geo = results.first)
       obj.latitude = geo.latitude
       obj.longitude = geo.longitude
       components = geo.data['address_components'] || []
-      state = components.find { |c| c['types'].intersect?(%w[administrative_area_level_1]) }&.dig('short_name')
+      state = components.find { |c| c['types'].include?('administrative_area_level_1') }&.dig('short_name')
       obj.uf = state if state.present?
     end
   end

@@ -4,22 +4,22 @@ class HomeController < ApplicationController
   def index
     @options = %w[20km 50km 100km 200km]
     @alert = Alert.new
-    
+
     @ufs = %w[AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO]
     @current_uf = params[:uf].presence || Current.user&.address&.uf || 'SP'
 
     @alerts = Alert.includes(:user, :alert_votes)
                    .where('created_at >= ?', 30.days.ago)
-                   
+
     if params[:bounds].present?
       bounds = params[:bounds].split(',')
       @alerts = @alerts.within_bounding_box(bounds)
     else
       @alerts = @alerts.where(uf: @current_uf) unless @current_uf == 'BR'
     end
-    
+
     @alerts = @alerts.order(created_at: :desc)
-                   .limit(1000)
+                     .limit(1000)
 
     respond_to do |format|
       format.html do

@@ -90,17 +90,27 @@ A aplicação é construída com **Ruby on Rails 7**, **Hotwire (Turbo/Stimulus)
 
 ## 🚀 Deploy (Produção)
 
-Para preparar o GeoSafe para um ambiente de produção (como Heroku, Render, AWS ou Fly.io), certifique-se de realizar e configurar os seguintes passos iniciais:
+A arquitetura do GeoSafe foi desenhada para ser escalável e de baixo custo, utilizando a ferramenta oficial da comunidade Rails: **Kamal**. Nosso ambiente de produção alvo é um servidor próprio (VPS) na **DigitalOcean**.
 
-1. **Banco de Dados de Produção:**
-   - Provisione uma instância de banco de dados PostgreSQL.
-   - Configure a URL de conexão na variável de ambiente `DATABASE_URL`.
-2. **Variáveis de Ambiente (Credentials):**
-   - Configure a `RAILS_MASTER_KEY` no ambiente para descriptografar as credenciais.
+O Kamal se encarrega de empacotar a aplicação via Docker e orquestrar a infraestrutura (Rails, PostgreSQL, Redis e Traefik para SSL) em uma única máquina, garantindo o melhor custo-benefício.
+
+Para preparar e realizar o deploy do GeoSafe, siga estes passos:
+
+1. **Configuração da Infraestrutura (DigitalOcean):**
+   - Crie um *Droplet* (Ubuntu) na DigitalOcean e configure acesso SSH root.
+   - Adicione o IP do Droplet ao seu domínio via DNS.
+2. **Variáveis de Ambiente (Credentials & .env):**
+   - O Kamal gerencia os segredos através de um arquivo `.env` local e da `RAILS_MASTER_KEY`.
    - Configure as chaves de API necessárias (como Google Maps), garantindo que as restrições de domínio estejam adequadas para o ambiente de produção.
-3. **Websockets e Redis (ActionCable):**
-   - As notificações em tempo real exigem um servidor Redis em produção.
-   - Provisione o Redis e defina a variável `REDIS_URL` para que o ActionCable consiga processar o envio de dados via websocket.
-4. **Assets e Servidor:**
-   - O processo de build (CI/CD ou da plataforma) deve pré-compilar os assets rodando `rails assets:precompile`.
-   - Certifique-se de que o servidor web (Puma) e o banco de dados estejam devidamente dimensionados para o tráfego inicial.
+3. **Serviços Acessórios (Postgres e Redis):**
+   - O Kamal subirá os containers do PostgreSQL e Redis automaticamente no servidor através da configuração no `config/deploy.yml`.
+   - Isso garante que o ActionCable (notificações WebSocket) funcione perfeitamente.
+4. **Executando o Deploy:**
+   - Com o Kamal instalado no seu computador, o deploy inicial é feito com:
+     ```bash
+     kamal setup
+     ```
+   - Para atualizações subsequentes de código:
+     ```bash
+     kamal deploy
+     ```
