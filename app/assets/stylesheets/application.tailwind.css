@@ -4,7 +4,6 @@
 
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
-@plugin "@tailwindcss/container-queries";
 
 @tailwind base;
 @tailwind components;
