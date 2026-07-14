@@ -87,4 +87,4 @@ production:
   <<: *default
   database: geosafe_production
   username: geosafe
-  password: <%= ENV["GEOSAFE_DATABASE_PASSWORD"] %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
