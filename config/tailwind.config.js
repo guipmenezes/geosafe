@@ -54,10 +54,5 @@ module.exports = {
         'grey1000':'#1D2939',
       },
     },
-  },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/container-queries'),
-  ]
+  }
 }
