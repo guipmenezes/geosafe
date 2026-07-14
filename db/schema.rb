@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_06_26_015752) do
+ActiveRecord::Schema[7.1].define(version: 2026_07_01_012434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -55,7 +55,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_06_26_015752) do
     t.float "latitude"
     t.float "longitude"
     t.integer "category"
+    t.string "uf"
     t.index ["category"], name: "index_alerts_on_category"
+    t.index ["uf", "created_at"], name: "index_alerts_on_uf_and_created_at"
   end
 
   create_table "notifications", force: :cascade do |t|
