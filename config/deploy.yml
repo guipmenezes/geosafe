@@ -11,6 +11,7 @@ servers:
 
 # Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
 proxy:
+  app_port: 3000
   ssl: false # Mude para true quando tiver o domínio apontando para o IP
   # host: geosafe.seudominio.com.br
 
