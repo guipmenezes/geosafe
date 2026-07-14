@@ -99,3 +99,5 @@ gem 'browser', '~> 6.2'
 gem 'web-push'
 
 gem 'resend', '~> 1.5'
+
+gem "kamal", "~> 2.12", group: :development
