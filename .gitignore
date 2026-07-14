@@ -49,3 +49,6 @@
 
 # Ignore Kamal secrets
 .kamal/secrets
+
+# Ignore deploy file
+/config/deploy.yml
