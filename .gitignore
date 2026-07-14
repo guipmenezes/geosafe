@@ -52,3 +52,7 @@
 
 # Ignore deploy file
 /config/deploy.yml
+
+# Ignore AI agent guidelines
+/CLAUDE.md
+/GEMINI.md
