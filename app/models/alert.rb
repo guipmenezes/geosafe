@@ -37,6 +37,15 @@ class Alert < ApplicationRecord
   end
   after_validation :geocode, if: :street_alert_and_location_changed?
   after_validation :reverse_geocode_location, if: :should_reverse_geocode?
+  before_save :sync_lonlat, if: -> { latitude_changed? || longitude_changed? }
+
+  scope :within_radius, lambda { |lat, lon, km|
+    where('ST_DWithin(lonlat, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)', lon, lat, km * 1000)
+  }
+
+  scope :in_bounds, lambda { |sw_lat, sw_lon, ne_lat, ne_lon|
+    where('lonlat && ST_MakeEnvelope(?, ?, ?, ?, 4326)', sw_lon, sw_lat, ne_lon, ne_lat)
+  }
 
   def user_vote(user)
     alert_votes.find { |v| v.user_id == user.id }
@@ -102,11 +111,9 @@ class Alert < ApplicationRecord
     # Raio de 5km para notificações preventivas
     radius = 5
 
-    # Busca os IDs de usuários que têm endereços próximos, ignorando a ordenação por distância
-    # que causa o erro com pluck/uniq em algumas situações
-    target_user_ids = Address.near([latitude, longitude], radius)
+    # Busca os IDs de usuários que têm endereços próximos, usando PostGIS
+    target_user_ids = Address.within_radius(latitude, longitude, radius)
                              .where.not(user_id: user_id)
-                             .reorder(nil) # Remove o ORDER BY distance
                              .distinct
                              .pluck(:user_id)
 
@@ -146,6 +153,10 @@ class Alert < ApplicationRecord
     self.longitude = user.address.longitude
     self.location = user.address.anonymized_address
     self.uf = user.address.uf
+  end
+
+  def sync_lonlat
+    self.lonlat = "POINT(#{longitude} #{latitude})" if latitude.present? && longitude.present?
   end
 end
 # rubocop:enable Metrics/ClassLength
