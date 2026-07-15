@@ -35,7 +35,7 @@ class HomeController < ApplicationController
 
     if params[:bounds].present?
       bounds = params[:bounds].split(',')
-      alerts = alerts.within_bounding_box(bounds)
+      alerts = alerts.in_bounds(*bounds)
     else
       alerts = alerts.where(uf: @current_uf) unless @current_uf == 'BR'
     end
