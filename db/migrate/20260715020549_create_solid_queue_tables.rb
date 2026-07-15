@@ -132,3 +132,4 @@ class CreateSolidQueueTables < ActiveRecord::Migration[7.1]
     add_foreign_key 'solid_queue_scheduled_executions', 'solid_queue_jobs', column: 'job_id', on_delete: :cascade
   end
 end
+# rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/ClassLength

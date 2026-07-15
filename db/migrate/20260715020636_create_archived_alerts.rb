@@ -25,3 +25,4 @@ class CreateArchivedAlerts < ActiveRecord::Migration[7.1]
     end
   end
 end
+# rubocop:enable Metrics/AbcSize
