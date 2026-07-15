@@ -101,3 +101,5 @@ gem 'web-push'
 gem 'resend', '~> 1.5'
 
 gem "kamal", "~> 2.12", group: :development
+
+gem "activerecord-postgis-adapter", "~> 9.0"
