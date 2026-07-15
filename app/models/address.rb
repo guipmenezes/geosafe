@@ -9,8 +9,8 @@ class Address < ApplicationRecord
   after_validation :geocode, if: :geocoding_address_changed?
   before_save :sync_lonlat, if: -> { latitude_changed? || longitude_changed? }
 
-  scope :within_radius, ->(lat, lon, km) {
-    where("ST_DWithin(lonlat, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)", lon, lat, km * 1000)
+  scope :within_radius, lambda { |lat, lon, km|
+    where('ST_DWithin(lonlat, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)', lon, lat, km * 1000)
   }
 
   def full_address

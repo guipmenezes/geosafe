@@ -39,12 +39,12 @@ class Alert < ApplicationRecord
   after_validation :reverse_geocode_location, if: :should_reverse_geocode?
   before_save :sync_lonlat, if: -> { latitude_changed? || longitude_changed? }
 
-  scope :within_radius, ->(lat, lon, km) {
-    where("ST_DWithin(lonlat, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)", lon, lat, km * 1000)
+  scope :within_radius, lambda { |lat, lon, km|
+    where('ST_DWithin(lonlat, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)', lon, lat, km * 1000)
   }
 
-  scope :in_bounds, ->(sw_lat, sw_lon, ne_lat, ne_lon) {
-    where("lonlat && ST_MakeEnvelope(?, ?, ?, ?, 4326)", sw_lon, sw_lat, ne_lon, ne_lat)
+  scope :in_bounds, lambda { |sw_lat, sw_lon, ne_lat, ne_lon|
+    where('lonlat && ST_MakeEnvelope(?, ?, ?, ?, 4326)', sw_lon, sw_lat, ne_lon, ne_lat)
   }
 
   def user_vote(user)

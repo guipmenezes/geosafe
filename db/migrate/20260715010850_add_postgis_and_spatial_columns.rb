@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class AddPostgisAndSpatialColumns < ActiveRecord::Migration[7.1]
   def up
-    enable_extension "postgis" unless extension_enabled?("postgis")
+    enable_extension 'postgis' unless extension_enabled?('postgis')
 
     add_column :alerts, :lonlat, :st_point, geographic: true, srid: 4326
     add_column :addresses, :lonlat, :st_point, geographic: true, srid: 4326
@@ -27,6 +29,6 @@ class AddPostgisAndSpatialColumns < ActiveRecord::Migration[7.1]
     remove_column :addresses, :lonlat
     remove_column :alerts, :lonlat
 
-    disable_extension "postgis" if extension_enabled?("postgis")
+    disable_extension 'postgis' if extension_enabled?('postgis')
   end
 end
