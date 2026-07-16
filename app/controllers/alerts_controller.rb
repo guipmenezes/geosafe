@@ -56,10 +56,6 @@ class AlertsController < ApplicationController
 
   def handle_save_failure(format)
     format.html { render :new, status: :unprocessable_entity }
-    format.turbo_stream do
-      render turbo_stream: turbo_stream.replace(helpers.dom_id(@alert, :form), partial: 'alerts/form', locals: { alert: @alert }),
-             status: :unprocessable_entity
-    end
   end
 
   def set_alert
