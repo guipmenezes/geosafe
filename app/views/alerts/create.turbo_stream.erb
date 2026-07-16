@@ -1,7 +1,8 @@
-<%= turbo_stream.replace "new_alert_form", partial: "alerts/form", locals: { alert: Alert.new } %>
+<%= turbo_stream.replace ActionView::RecordIdentifier.dom_id(Alert.new, :form), partial: "alerts/form", locals: { alert: Alert.new } %>
 
 <script>
   window.dispatchEvent(new CustomEvent("alert:created", {
     detail: { alert: <%= @alert.as_json_for_map.to_json.html_safe %> }
   }))
+  window.dispatchEvent(new CustomEvent("modal:close"))
 </script>

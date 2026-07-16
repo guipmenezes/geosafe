@@ -104,6 +104,10 @@ export default class extends Controller {
 
   getLocation() {
     if ("geolocation" in navigator) {
+      if (this.hasLocationTarget && !this.manuallyPicked) {
+        this.locationTarget.value = "Obtendo sua localização..."
+      }
+      
       navigator.geolocation.getCurrentPosition(
         (position) => {
           if (this.manuallyPicked) return
@@ -111,18 +115,26 @@ export default class extends Controller {
           const lat = position.coords.latitude
           const lng = position.coords.longitude
 
-          this.latitudeTarget.value = lat
-          this.longitudeTarget.value = lng
+          if (this.hasLatitudeTarget) this.latitudeTarget.value = lat
+          if (this.hasLongitudeTarget) this.longitudeTarget.value = lng
           
           this.fetchAddress(lat, lng)
         },
         (error) => {
           console.error("Error getting location:", error)
-          // Don't alert here to avoid annoying the user if they want to pick on map instead
+          if (this.hasLocationTarget && !this.manuallyPicked) {
+            if (error.code === error.PERMISSION_DENIED) {
+              this.locationTarget.value = "Permissão de localização negada."
+            } else if (error.code === error.TIMEOUT) {
+              this.locationTarget.value = "Tempo esgotado ao buscar localização."
+            } else {
+              this.locationTarget.value = "Não foi possível obter a localização."
+            }
+          }
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
+          timeout: 15000,
           maximumAge: 0
         }
       )

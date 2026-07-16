@@ -1,4 +1,4 @@
-<div data-controller="modal--modal-component" data-modal--modal-component-open-value="<%= @open %>" class="relative">
+<div data-controller="modal--modal-component" data-action="modal:close@window->modal--modal-component#forceClose" data-modal--modal-component-open-value="<%= @open %>" class="relative">
   <div data-action="click->modal--modal-component#open">
     <%= trigger %>
   </div>
