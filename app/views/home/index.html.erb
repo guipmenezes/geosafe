@@ -59,12 +59,12 @@
 
   <%# Sidebar Area: Alerts Feed & Filters %>
   <div data-bottom-sheet-target="sheet"
-       class="fixed inset-x-0 bottom-0 z-40 bg-white rounded-t-[2.5rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.3)] lg:relative lg:inset-auto lg:z-[40] lg:bg-transparent lg:shadow-none lg:rounded-none lg:w-[35%] flex flex-col h-[85vh] lg:h-full transition-transform lg:translate-y-0 order-2 overflow-visible">
+       class="fixed inset-x-0 bottom-0 z-40 bg-white rounded-t-[2.5rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.3)] lg:relative lg:inset-auto lg:z-[40] lg:bg-transparent lg:shadow-none lg:rounded-none lg:w-[35%] flex flex-col h-[calc(100dvh-5rem)] lg:h-full transition-transform lg:translate-y-0 order-2 overflow-visible">
 
     <%# Drag Handle (Mobile Only) %>
-    <div class="lg:hidden flex justify-center p-4 cursor-grab active:cursor-grabbing"
-         data-action="touchstart->bottom-sheet#touchStart touchmove->bottom-sheet#touchMove touchend->bottom-sheet#touchEnd">
-      <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+    <div class="lg:hidden flex justify-center p-4 cursor-grab active:cursor-grabbing touch-none"
+         data-action="click->bottom-sheet#toggle touchstart->bottom-sheet#touchStart touchmove->bottom-sheet#touchMove touchend->bottom-sheet#touchEnd">
+      <div class="w-12 h-1.5 bg-gray-300 rounded-full pointer-events-none"></div>
     </div>
 
     <div class="flex flex-col h-full px-4 lg:px-0 overflow-visible">
@@ -72,14 +72,14 @@
         <div class="flex items-center gap-2">
           <h2 class="text-xl font-bold text-gray-900 lg:hidden">Alertas</h2>
 
-          <form action="/home" method="get" class="m-0">
-            <select name="uf" onchange="this.form.submit()" class="text-sm font-bold bg-gray-50 text-gray-700 border border-gray-200 rounded-lg focus:ring-primary500 focus:border-primary500 py-1.5 pl-3 pr-8 cursor-pointer">
-              <option value="BR" <%= 'selected' if @current_uf == 'BR' %>>Brasil Todo</option>
+          <%= render(Dropdown::DropdownComponent.new(title: @current_uf == 'BR' ? 'Brasil Todo' : @current_uf)) do %>
+            <div class="max-h-96 overflow-y-auto w-40">
+              <%= link_to 'Brasil Todo', home_path(uf: 'BR'), class: "block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary50 hover:text-primary700 transition-colors #{'bg-primary50 text-primary700 font-bold' if @current_uf == 'BR'}" %>
               <% @ufs.each do |uf| %>
-                <option value="<%= uf %>" <%= 'selected' if @current_uf == uf %>><%= uf %></option>
+                <%= link_to uf, home_path(uf: uf), class: "block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary50 hover:text-primary700 transition-colors #{'bg-primary50 text-primary700 font-bold' if @current_uf == uf}" %>
               <% end %>
-            </select>
-          </form>
+            </div>
+          <% end %>
         </div>
 
         <%= render(Dropdown::DropdownComponent.new(title: "Minhas Zonas")) do %>

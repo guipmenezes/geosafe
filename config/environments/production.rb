@@ -44,7 +44,7 @@ Rails.application.configure do
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://example.com/cable"
-  config.action_cable.allowed_request_origins = [ "https://geosafe.app.br", /http:\/\/geosafe.*/ ]
+  config.action_cable.allowed_request_origins = ['https://geosafe.app.br', %r{http://geosafe.*}]
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.

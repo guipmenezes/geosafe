@@ -5,18 +5,43 @@ export default class extends Controller {
 
   connect() {
     this.startY = 0
-    this.currentY = 0
     this.isDragging = false
-    this.state = "collapsed" // collapsed, partial, expanded
+    this.state = "collapsed" // collapsed, expanded
     
     this.setupInitialState()
   }
 
   setupInitialState() {
-    // Mobile only initialization
-    if (window.innerWidth >= 1024) return
+    if (window.innerWidth >= 1024) {
+      this.sheetTarget.style.transform = ''
+      return
+    }
     
-    this.sheetTarget.style.transform = `translateY(calc(100% - 80px))`
+    this.calculateCollapsedY()
+    this.collapse()
+    
+    // Handle resize events to recalculate heights
+    this.resizeHandler = () => {
+      if (window.innerWidth >= 1024) {
+        this.sheetTarget.style.transform = ''
+      } else {
+        this.calculateCollapsedY()
+        this.state === "expanded" ? this.expand() : this.collapse()
+      }
+    }
+    window.addEventListener('resize', this.resizeHandler)
+  }
+
+  disconnect() {
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler)
+    }
+  }
+
+  calculateCollapsedY() {
+    // 80px of the sheet is visible when collapsed.
+    const visibleHeight = 80
+    this.collapsedY = this.sheetTarget.offsetHeight - visibleHeight
   }
 
   toggle() {
@@ -30,47 +55,71 @@ export default class extends Controller {
   expand() {
     this.state = "expanded"
     this.sheetTarget.style.transform = `translateY(0px)`
-    this.sheetTarget.classList.add("duration-300")
+    this.sheetTarget.classList.add("transition-transform", "duration-300", "ease-out")
   }
 
   collapse() {
     this.state = "collapsed"
-    this.sheetTarget.style.transform = `translateY(calc(100% - 80px))`
-    this.sheetTarget.classList.add("duration-300")
+    this.calculateCollapsedY()
+    this.sheetTarget.style.transform = `translateY(${this.collapsedY}px)`
+    this.sheetTarget.classList.add("transition-transform", "duration-300", "ease-out")
   }
 
-  // Touch handlers for the "drag" feel
   touchStart(e) {
+    if (window.innerWidth >= 1024) return
     this.startY = e.touches[0].clientY
+    this.startTimeStamp = e.timeStamp
     this.isDragging = true
-    this.sheetTarget.classList.remove("duration-300")
+    this.calculateCollapsedY()
+    
+    // Remove transition for 1-to-1 tracking
+    this.sheetTarget.classList.remove("transition-transform", "duration-300", "ease-out")
+    
+    this.startTransformY = this.state === "expanded" ? 0 : this.collapsedY
   }
 
   touchMove(e) {
-    if (!this.isDragging) return
+    if (!this.isDragging || window.innerWidth >= 1024) return
     
     const deltaY = e.touches[0].clientY - this.startY
-    if (this.state === "collapsed" && deltaY > 0) return
+    let newY = this.startTransformY + deltaY
     
-    const newY = this.state === "expanded" ? Math.max(0, deltaY) : Math.min(window.innerHeight - 80, window.innerHeight - 80 + deltaY)
+    // Add resistance (rubber band effect) if pulling up past the top
+    if (newY < 0) {
+      newY = newY * 0.3 
+    } else {
+      // Bound the translation to not go below the collapsed state
+      newY = Math.min(newY, this.collapsedY)
+    }
     
     this.sheetTarget.style.transform = `translateY(${newY}px)`
   }
 
   touchEnd(e) {
+    if (!this.isDragging || window.innerWidth >= 1024) return
     this.isDragging = false
-    const endY = e.changedTouches[0].clientY
-    const diff = this.startY - endY
+    
+    const deltaY = e.changedTouches[0].clientY - this.startY
+    const deltaTime = e.timeStamp - this.startTimeStamp
+    const velocity = deltaY / (deltaTime || 1)
+    
+    // Restore transitions for the snap animation
+    this.sheetTarget.classList.add("transition-transform", "duration-300", "ease-out")
 
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        this.expand()
-      } else {
+    if (this.state === "expanded") {
+      // If we drag down enough or fast enough, collapse it
+      if (deltaY > 50 || velocity > 0.5) {
         this.collapse()
+      } else {
+        this.expand() // Snap back up
       }
     } else {
-      // Snap back to current state
-      this.state === "expanded" ? this.expand() : this.collapse()
+      // If we drag up enough or fast enough, expand it
+      if (deltaY < -50 || velocity < -0.5) {
+        this.expand()
+      } else {
+        this.collapse() // Snap back down
+      }
     }
   }
 }
