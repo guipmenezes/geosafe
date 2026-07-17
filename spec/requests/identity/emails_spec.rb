@@ -21,7 +21,7 @@ RSpec.describe 'Identity::Emails', type: :request do
     context 'with valid parameters' do
       it 'updates the email and redirects to the root url' do
         patch identity_email_path, params: { email: 'new_email@hey.com', password_challenge: 'Secret1*3*5*' }
-        expect(response).to redirect_to(identity_email_url)
+        expect(response).to redirect_to(edit_identity_email_url)
       end
     end
 

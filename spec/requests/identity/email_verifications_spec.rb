@@ -16,7 +16,7 @@ RSpec.describe 'Identity::EmailVerifications', type: :request do
       expect do
         post identity_email_verification_path
       end.to have_enqueued_mail(UserMailer, :email_verification).with(params: { user: user }, args: [])
-      expect(response).to redirect_to(identity_email_url)
+      expect(response).to redirect_to(edit_identity_email_url)
     end
   end
 

@@ -13,7 +13,7 @@ module Identity
 
     def create
       send_email_verification
-      redirect_to identity_email_path, notice: 'Enviamos um e-mail de verificação para o seu endereço de e-mail.'
+      redirect_to edit_identity_email_path, notice: 'Enviamos um e-mail de verificação para o seu endereço de e-mail.'
     end
 
     private
