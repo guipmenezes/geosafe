@@ -2,7 +2,7 @@
 
 <script>
   window.dispatchEvent(new CustomEvent("alert:created", {
-    detail: { alert: <%= @alert.as_json_for_map.to_json.html_safe %> }
+    detail: { alert: JSON.parse('<%= j @alert.as_json_for_map.to_json %>') }
   }))
   window.dispatchEvent(new CustomEvent("modal:close"))
 </script>

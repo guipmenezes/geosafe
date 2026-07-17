@@ -6,10 +6,15 @@ class AlertVotesController < ApplicationController
   def create
     @vote = @alert.alert_votes.find_or_initialize_by(user: Current.user)
 
-    if @vote.vote_type == params[:vote_type]
-      @vote.destroy
-    else
-      @vote.update(vote_type: params[:vote_type])
+    begin
+      if @vote.vote_type == params[:vote_type]
+        @vote.destroy
+      else
+        @vote.update(vote_type: params[:vote_type])
+      end
+    rescue ArgumentError
+      head :bad_request
+      return
     end
 
     respond_to do |format|
