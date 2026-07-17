@@ -114,3 +114,32 @@ Para preparar e realizar o deploy do GeoSafe, siga estes passos:
      ```bash
      kamal deploy
      ```
+
+---
+
+## 🔒 Histórico e Log de Configurações de Produção
+
+Para registro e referência futura no desenvolvimento do GeoSafe, as seguintes arquiteturas, correções e otimizações já foram estabelecidas no ambiente de produção:
+
+### 1. Infraestrutura e Estabilidade
+- **Gestão de Memória:** A stack (Rails Puma + Solid Queue + Postgres + Redis + Traefik) necessita de pelo menos ~1GB de RAM. Rodar em 512MB causa OOM (Out Of Memory) killers no kernel do Linux, o que acarreta no erro 502 Bad Gateway no Traefik. O problema foi resolvido e mitigado via *Resize* do Droplet na DigitalOcean.
+
+### 2. Tempo Real (Action Cable & Redis)
+- **Origens de WebSocket:** Em produção, o Action Cable bloqueia conexões WebSocket por padrão se a origem não estiver listada. O domínio (`geosafe.app.br`) está configurado no `config.action_cable.allowed_request_origins`.
+- **Rede do Docker:** O `REDIS_URL` foi mapeado apontando para o IP do *Host* no `deploy.yml`. Usar `localhost` faria o contêiner Rails procurar o Redis dentro de si mesmo, quebrando o broadcast das Turbo Streams.
+
+### 3. Blindagem de Segurança (OWASP Top 10)
+A aplicação passou por uma auditoria básica e está protegida contra:
+- **XSS em Turbo Streams (A03):** Renderização de JSON dentro de tags `<script>` usando string literals perfeitamente escapados pelo Rails (`JSON.parse('<%= j ... %>')`), impedindo injeção de script via descrições de alertas maliciosos.
+- **DNS Rebinding & Host Injection (A05):** `config.hosts` ativado para rejeitar cabeçalhos forjados, aceitando apenas conexões destinadas a `geosafe.app.br`.
+- **Tratamento de Enums (A04):** Captura segura de `ArgumentError` na passagem de parâmetros para *enums* (como tipos de Votos de alertas), devolvendo HTTP 400 em vez de colapsar a *thread* do Puma com um erro 500 (DoS mitigation).
+- **IDOR (A01):** Utilização correta do *Pundit* e escopos do `Current.user` (Ex: `Current.user.addresses.find`) em todas as edições/deleções, impedindo manipulação de IDs.
+
+### 4. UX Mobile e Front-end
+- **Bottom Sheet:** Comportamento nativo no mobile (JS) com cálculo dinâmico baseado em `dvh` para não encobrir navbars. Inclui tração 1:1, *rubber banding* e detecção de gestos (velocidade vs distância) desativando o pull-to-refresh nativo do iOS/Android na área de arraste (`touch-none`).
+- **Design System:** O GeoSafe adota um visual *clean* e utilitário, com uso extensivo de drop-downs consistentes e um ícone Favicon unificado.
+
+### 5. E-mails e Mailer
+- Integração ativa via **Resend**.
+- Domínio principal 100% verificado (`DNS Verified`).
+- URL Options setadas no ambiente de produção (`geosafe.app.br`) garantindo que todos os links em envios de "Recuperação de Senha" funcionem perfeitamente.
