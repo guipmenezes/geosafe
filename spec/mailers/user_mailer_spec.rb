@@ -12,7 +12,7 @@ RSpec.describe UserMailer, type: :mailer do
     it 'renders the headers' do
       expect(mail.subject).to eq('Reset your password')
       expect(mail.to).to eq([user.email])
-      expect(mail.from).to eq(['contato@geosafe.com.br'])
+      expect(mail.from).to eq(['contato@geosafe.app.br'])
     end
 
     it 'renders the body' do
@@ -26,7 +26,7 @@ RSpec.describe UserMailer, type: :mailer do
     it 'renders the headers' do
       expect(mail.subject).to eq('Verify your email')
       expect(mail.to).to eq([user.email])
-      expect(mail.from).to eq(['contato@geosafe.com.br'])
+      expect(mail.from).to eq(['contato@geosafe.app.br'])
     end
 
     it 'renders the body' do
