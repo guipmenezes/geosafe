@@ -16,7 +16,7 @@ RSpec.describe 'Identity::EmailVerifications', type: :request do
       expect do
         post identity_email_verification_path
       end.to have_enqueued_mail(UserMailer, :email_verification).with(params: { user: user }, args: [])
-      expect(response).to redirect_to(root_url)
+      expect(response).to redirect_to(identity_email_url)
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.describe 'Identity::EmailVerifications', type: :request do
       sid = user.generate_token_for(:email_verification)
       get identity_email_verification_path(sid: sid, email: user.email)
       expect(user.reload.verified?).to be(true)
-      expect(response).to redirect_to(root_url)
+      expect(response).to redirect_to(home_url)
     end
 
     it 'does not verify with an expired token' do

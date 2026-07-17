@@ -1,11 +1,13 @@
-<p>Hey there,</p>
+<h2 style="margin-top: 0; color: #111827;">Olá!</h2>
 
-<p>This is to confirm that <%= @user.email %> is the email you want to use on your account. If you ever lose your password, that's where we'll email a reset link.</p>
+<p>Este e-mail é para confirmar que <strong><%= @user.email %></strong> é o endereço que você deseja utilizar na sua conta do GeoSafe. É através dele que você receberá alertas e links de recuperação de senha.</p>
 
-<p><strong>You must hit the link below to confirm that you received this email.</strong></p>
+<p><strong>Por favor, clique no botão abaixo para confirmar seu e-mail:</strong></p>
 
-<p><%= link_to "Yes, use this email for my account", identity_email_verification_url(sid: @signed_id) %></p>
+<div style="text-align: center;">
+  <%= link_to "Confirmar meu E-mail", identity_email_verification_url(sid: @signed_id), class: "button" %>
+</div>
 
 <hr>
 
-<p>Have questions or need help? Just reply to this email and our support team will help you sort it out.</p>
+<p style="font-size: 14px; color: #4b5563;">Tem dúvidas ou precisa de ajuda? Apenas responda a este e-mail e nossa equipe de suporte irá te ajudar.</p>

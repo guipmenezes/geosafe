@@ -16,7 +16,7 @@ RSpec.describe UserMailer, type: :mailer do
     end
 
     it 'renders the body' do
-      expect(mail.body.encoded).to match('reset your password')
+      expect(mail.body.encoded).to match('Redefinir minha senha')
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe UserMailer, type: :mailer do
     end
 
     it 'renders the body' do
-      expect(mail.body.encoded).to match('You must hit the link below to confirm that you received this email.')
+      expect(mail.body.encoded).to match('Confirmar meu E-mail')
     end
   end
 end
