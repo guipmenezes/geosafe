@@ -8,12 +8,12 @@ module Identity
 
     def show
       @user.update! verified: true
-      redirect_to root_path, notice: 'Obrigado por verificar seu endereço de e-mail.'
+      redirect_to home_path, notice: 'Obrigado por verificar seu endereço de e-mail.'
     end
 
     def create
       send_email_verification
-      redirect_to root_path, notice: 'Enviamos um e-mail de verificação para o seu endereço de e-mail.'
+      redirect_to identity_email_path, notice: 'Enviamos um e-mail de verificação para o seu endereço de e-mail.'
     end
 
     private
